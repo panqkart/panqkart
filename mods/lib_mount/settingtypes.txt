@@ -1,0 +1,6 @@
+# Mouselook settings
+
+#	When enabled, mouselook will be used when driving the car (going left/right)
+#	If this option gets disabled, it will use the left/right keys to move.
+#	Note that mouselook moves faster than using the left/right keys.
+lib_mount.use_mouselook (Use mouselook when driving, otherwise right/left keys) bool true

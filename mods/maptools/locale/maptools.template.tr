@@ -1,0 +1,46 @@
+# textdomain: maptools
+[maptools] loaded.=
+
+Cloud=Nuage
+Infinite Fuel=
+Admin Pickaxe=
+Admin Pickaxe With Drops=
+Copper Coin=
+Silver Coin=
+Gold Coin=
+Super Apple=
+Fake Ladder=
+Smoke Block=
+Damaging Block: %s=
+Kill Block=
+Build Prevention=
+Interact Prevention=
+Climb Block=
+Light Block=
+Light Bulb=
+Player Clip=
+Player Clip Bottom Face=
+Player Clip Top Face=
+Full Clip=
+Full Clip Face=
+Permanent Fire=
+Fake Fire=
+Igniter=
+Pusher: %s=
+
+Unbreakable Stone=
+Unbreakable Sand=
+Unbreakable Desert Stone=
+Unbreakable Desert Sand=
+Unbreakable Gravel=
+Unbreakable Dirt=
+Unbreakable Dirt with Grass=
+Unbreakable Full Grass=
+Unbreakable Brick=
+Unbreakable Wooden Planks=
+Unbreakable Tree=
+Unbreakable Glass=
+Unbreakable Sandstone=
+Unbreakable Leaves=
+Unbreakable Cobblestone=
+Unbreakable Mossy Cobblestone=

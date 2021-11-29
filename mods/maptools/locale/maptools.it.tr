@@ -1,0 +1,46 @@
+# textdomain: maptools
+[maptools] loaded.=[maptools] caricato.
+
+Cloud=Nuvola
+Infinite Fuel=Combustibile infinito
+Admin Pickaxe=Piccone della amministrazione
+Admin Pickaxe With Drops=Piccone della amministrazione che lascia cadere a terra
+Copper Coin=Moneta di rame
+Silver Coin=Moneta di argento
+Gold Coin=Moneta di oro
+Super Apple=Super mela
+Fake Ladder=Finta scala a pioli
+Smoke Block=Blocco di fumo
+Damaging Block: %s=Blocco che danneggia : %s
+Kill Block=Blocco che uccide
+Build Prevention=Impedimento alla costruzione
+Interact Prevention=Impedimento alla interazione
+Climb Block=Blocco su cui ci si può arrampicare
+Light Block=Blocco di luce
+Light Bulb=Lampadina
+Player Clip=Blocca giocatori
+Player Clip Bottom Face=Blocca giocatori - faccia inferiore
+Player Clip Top Face=Glocca giocatori - faccia superiore
+Full Clip=Blocca tutti
+Full Clip Face=Faccia del blocca tutti
+Permanent Fire=Fuoco eterno
+Fake Fire=Fuoco finto
+Igniter=Accendino
+Pusher: %s=Che ha spinto : %s
+
+Unbreakable Stone=Pietra infrangibile
+Unbreakable Sand=Sabbia infrangibile
+Unbreakable Desert Stone=Pietra del deserto infrangibile
+Unbreakable Desert Sand=Sabbia del deserto infrangibile
+Unbreakable Gravel=Ghiaia infrangibile
+Unbreakable Dirt=Terra infrangibile
+Unbreakable Dirt with Grass=Erba infrangibile
+Unbreakable Full Grass=Blocco d'erba infrangibile
+Unbreakable Brick=Mattoni infrangibile
+Unbreakable Wooden Planks=Assi in legno infrangibili
+Unbreakable Tree=Albero infrangibile
+Unbreakable Glass=Vetro infrangibile
+Unbreakable Sandstone=Arenaria infrangibile
+Unbreakable Leaves=Foglie infrangibili
+Unbreakable Cobblestone=Ciottolo infrangibile
+Unbreakable Mossy Cobblestone=Ciottolo muschioso infrangibile
