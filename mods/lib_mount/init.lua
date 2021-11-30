@@ -449,13 +449,46 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	--entity.max_speed_forward = car_updates.max_speed_forward
 	--minetest.chat_send_all(car_updates.max_speed_forward)
 
-	-- enforce speed limit forward and reverse
-	local max_spd = car_updates.max_speed_reverse--entity.max_speed_reverse
-	if get_sign(entity.v) >= 0 then
-		max_spd = car_updates.max_speed_forward--entity.max_speed_forward
-	end
-	if math.abs(entity.v) > max_spd then
-		entity.v = entity.v - get_sign(entity.v)
+	if entity.driver and entity.owner then
+		local meta = entity.driver:get_meta()
+		if minetest.get_modpath("car_updates") then
+			local data = minetest.deserialize(meta:get_string("speed"))
+			if data then
+				car_updates.max_speed_forward = data.forward_speed
+				entity.max_speed_forward = data.forward_speed
+
+				car_updates.max_speed_reverse = data.reverse_speed
+				entity.max_speed_reverse = data.reverse_speed
+
+				local max_spd = data.reverse_speed--car_updates.max_speed_reverse--entity.max_speed_reverse
+				if get_sign(entity.v) >= 0 then
+					max_spd = data.forward_speed--car_updates.max_speed_forward--entity.max_speed_forward
+				end
+				if math.abs(entity.v) > max_spd then
+					entity.v = entity.v - get_sign(entity.v)
+				end
+
+				minetest.chat_send_all(data.reverse_speed)
+			else
+				-- enforce speed limit forward and reverse
+				local max_spd = entity.max_speed_reverse--car_updates.max_speed_reverse--entity.max_speed_reverse
+				if get_sign(entity.v) >= 0 then
+					max_spd = entity.max_speed_forward--car_updates.max_speed_forward--entity.max_speed_forward
+				end
+				if math.abs(entity.v) > max_spd then
+					entity.v = entity.v - get_sign(entity.v)
+				end
+			end
+		end
+	else
+		-- enforce speed limit forward and reverse
+		local max_spd = entity.max_speed_reverse--car_updates.max_speed_reverse--entity.max_speed_reverse
+		if get_sign(entity.v) >= 0 then
+			max_spd = entity.max_speed_forward--car_updates.max_speed_forward--entity.max_speed_forward
+		end
+		if math.abs(entity.v) > max_spd then
+			entity.v = entity.v - get_sign(entity.v)
+		end
 	end
 
 	-- Enforce speed limit when going upwards or downwards (applies only if `can_fly` is enabled)
