@@ -105,7 +105,7 @@ function vehicle_mash.register_vehicle(name, def)
 			-- if there is no driver
 			else
 				-- attach driver
-				if self.owner == clicker:get_player_name() then
+				if clicker:get_player_name() then-- self.owner == clicker:get_player_name() then
 					lib_mount.attach(self, clicker, false, 0)
 				end
 			end

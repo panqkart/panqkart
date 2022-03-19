@@ -68,12 +68,12 @@ local other_car_names = {
 	"f1",
 }
 
-for _, name in ipairs(other_car_names) do
+--[[for _, name in ipairs(other_car_names) do
 	local check_enabled = minetest.settings:get_bool("vehicle_mash.enable_" .. name .. "_car")
 	if check_enabled or check_enabled == nil then
 		loadfile(mpath.. "/other_cars/" .. name .. ".lua")(table.copy(cars_def))
 	end
-end
+end]]
 
 -- ** CAR01s **
 ------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ vehicle_mash.car01_def = {
 	player_rotation = {x=0,y=90,z=0},
 	driver_attach_at = {x=3.5,y=3.7,z=3.5},
 	driver_eye_offset = {x=-4, y=0, z=0},
-	number_of_passengers = 3,
+	number_of_passengers = 0,
 	passenger_attach_at = {x=3.5,y=3.7,z=-3.5},
 	passenger_eye_offset = {x=4, y=0, z=0},
 
@@ -181,13 +181,13 @@ local mesecar_names = {
 	"mese_yellow",
 }
 
--- Load all Mese Cars if enabled
+--[[ Load all Mese Cars if enabled
 for _, name in ipairs(mesecar_names) do
 	local check_enabled = minetest.settings:get_bool("vehicle_mash.enable_" .. name .. "_car")
 	if check_enabled or check_enabled == nil then
 		loadfile(mpath .. "/mesecars/" .. name .. ".lua")(table.copy(mesecar_def))
 	end
-end
+end]]
 
 -- ** Boats **
 ------------------------------------------------------------------------------
@@ -228,26 +228,26 @@ local boat_names = {
 	"rowboat",
 }
 
--- Load boats if enabled
+--[[ Load boats if enabled
 for _, name in ipairs(boat_names) do
 	local check_enabled = minetest.settings:get_bool("vehicle_mash.enable_" .. name)
 	if check_enabled or check_enabled == nil then
 		loadfile(mpath .. "/boats/" .. name .. ".lua")(table.copy(boat_def))
 	end
-end
+end]]
 
 -- ** Hovercraft **
 ------------------------------------------------------------------------------
 -- create hovercraft common def
-local hover_def = {
+vehicle_mash.hover_def = {
 	-- adjust to change how vehicle reacts while driving
 	terrain_type = 3,
-	max_speed_forward = 10,
-	max_speed_reverse = 0,
-	accel = 3,
-	braking = 1,
-	turn_speed = 2,
-	stepheight = 1.1,
+	max_speed_forward = 12.5,
+	max_speed_reverse = 5,
+	accel = 4,
+	braking = 0.7,
+	turn_speed = 4,
+	stepheight = 0.9,
 	-- model specific stuff
 	visual = "mesh",
 	mesh = "hovercraft.x",
@@ -269,6 +269,8 @@ local hover_def = {
 	passenger3_attach_at = {x=0,y=0,z=0},
 	passenger3_eye_offset = {x=0, y=0, z=0},
 
+	enable_crash = false,
+
 	-- recipe
 	recipe = nil
 }
@@ -284,7 +286,7 @@ local hover_names = {
 for _, name in ipairs(hover_names) do
 	local check_enabled = minetest.settings:get_bool("vehicle_mash.enable_" .. name)
 	if check_enabled or check_enabled == nil then
-		loadfile(mpath .. "/hovers/" .. name .. ".lua")(table.copy(hover_def))
+		loadfile(mpath .. "/hovers/" .. name .. ".lua")(table.copy(vehicle_mash.hover_def))
 	end
 end
 end

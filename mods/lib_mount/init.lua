@@ -49,6 +49,9 @@ local function node_is(pos)
 	if node.name == "air" then
 		return "air"
 	end
+	if node.name == "default:dirt_with_grass" then
+		return "grass"
+	end
 	if minetest.get_item_group(node.name, "liquid") ~= 0 then
 		return "liquid"
 	end
@@ -236,6 +239,12 @@ end--]]
 
 local aux_timer = 0
 local is_sneaking = {}
+local is_hovercraft = {
+	"vehicle_mash:hover_blue",
+	"vehicle_mash:hover_red",
+	"vehicle_mash:hover_yellow",
+	"vehicle_mash:hover_green",
+}
 
 function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_height, can_fly, can_go_down, can_go_up, enable_crash, moveresult)
 	-- After driver getting killed, entity.driver is not nil when it should be.
@@ -446,45 +455,81 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		end
 	end
 
-	--entity.max_speed_forward = car_updates.max_speed_forward
-	--minetest.chat_send_all(car_updates.max_speed_forward)
+	--entity.max_speed_forward = car_shop.max_speed_forward
+	--minetest.chat_send_all(car_shop.max_speed_forward)
 
 	if entity.driver and entity.owner then
 		local meta = entity.driver:get_meta()
-		if minetest.get_modpath("car_updates") then
+		if minetest.get_modpath("car_shop") then
+			local hover_bought = minetest.deserialize(meta:get_string("hovercraft_bought"))
+			local hover_speed = minetest.deserialize(meta:get_string("hover_speed"))
+
+			-- Hovercraft
+			if entity.name == "vehicle_mash:hover_blue" or entity.name == "vehicle_mash:hover_green"
+				or entity.name == "vehicle_mash:hover_yellow" or entity.name == "vehicle_mash:hover_red" then
+				if hover_bought and hover_bought.bought_already == true then
+					if hover_speed then
+						car_shop.hovercraft.max_speed_forward = hover_speed.forward_speed
+						entity.max_speed_forward = hover_speed.forward_speed
+		
+						car_shop.hovercraft.max_speed_reverse = hover_speed.reverse_speed
+						entity.max_speed_reverse = hover_speed.reverse_speed
+		
+						local max_spd = hover_speed.reverse_speed--car_shop.max_speed_reverse--entity.max_speed_reverse
+						if get_sign(entity.v) >= 0 then
+							max_spd = hover_speed.forward_speed--car_shop.max_speed_forward--entity.max_speed_forward
+						end
+						if math.abs(entity.v) > max_spd then
+							entity.v = entity.v - get_sign(entity.v)
+						end
+					else
+						local max_spd = entity.max_speed_reverse--car_shop.max_speed_reverse--entity.max_speed_reverse
+						if get_sign(entity.v) >= 0 then
+							max_spd = entity.max_speed_forward--car_shop.max_speed_forward--entity.max_speed_forward
+						end
+						if math.abs(entity.v) > max_spd then
+							entity.v = entity.v - get_sign(entity.v)
+						end
+					end
+				end
+
+			else
+
+			-- CAR01
 			local data = minetest.deserialize(meta:get_string("speed"))
 			if data then
-				car_updates.max_speed_forward = data.forward_speed
+				car_shop.max_speed_forward = data.forward_speed
 				entity.max_speed_forward = data.forward_speed
 
-				car_updates.max_speed_reverse = data.reverse_speed
+				car_shop.max_speed_reverse = data.reverse_speed
 				entity.max_speed_reverse = data.reverse_speed
 
-				local max_spd = data.reverse_speed--car_updates.max_speed_reverse--entity.max_speed_reverse
+				local max_spd = data.reverse_speed--car_shop.max_speed_reverse--entity.max_speed_reverse
 				if get_sign(entity.v) >= 0 then
-					max_spd = data.forward_speed--car_updates.max_speed_forward--entity.max_speed_forward
+					max_spd = data.forward_speed--car_shop.max_speed_forward--entity.max_speed_forward
 				end
 				if math.abs(entity.v) > max_spd then
 					entity.v = entity.v - get_sign(entity.v)
 				end
 
-				minetest.chat_send_all(data.reverse_speed)
+				--minetest.chat_send_all(entity.name)
 			else
 				-- enforce speed limit forward and reverse
-				local max_spd = entity.max_speed_reverse--car_updates.max_speed_reverse--entity.max_speed_reverse
+				local max_spd = entity.max_speed_reverse--car_shop.max_speed_reverse--entity.max_speed_reverse
 				if get_sign(entity.v) >= 0 then
-					max_spd = entity.max_speed_forward--car_updates.max_speed_forward--entity.max_speed_forward
+					max_spd = entity.max_speed_forward--car_shop.max_speed_forward--entity.max_speed_forward
 				end
 				if math.abs(entity.v) > max_spd then
 					entity.v = entity.v - get_sign(entity.v)
 				end
 			end
 		end
+	end
 	else
 		-- enforce speed limit forward and reverse
-		local max_spd = entity.max_speed_reverse--car_updates.max_speed_reverse--entity.max_speed_reverse
+		local max_spd = entity.max_speed_reverse--car_shop.max_speed_reverse--entity.max_speed_reverse
 		if get_sign(entity.v) >= 0 then
-			max_spd = entity.max_speed_forward--car_updates.max_speed_forward--entity.max_speed_forward
+			max_spd = entity.max_speed_forward--car_shop.max_speed_forward--entity.max_speed_forward
 		end
 		if math.abs(entity.v) > max_spd then
 			entity.v = entity.v - get_sign(entity.v)
@@ -559,6 +604,11 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 --		v = 0
 --		new_acce.y = 1
 	end
+	if node_is(p) == "grass" then
+		--minetest.chat_send_all("TOTAL PERDEDOR :D") -- kekw
+		--velo.y = 6 -- This will make the vehicle jump :D
+		--entity.object:set_pos({x = -94.3, y = 3.5, z = 149.7})
+	end
 
 	new_velo = get_velocity(v, entity.object:get_yaw() - rot_view, velo.y)
 	new_acce.y = new_acce.y + acce_y
@@ -570,7 +620,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	if enable_crash then
 		local intensity = entity.v2 - v
 		if intensity >= crash_threshold then
-			-- Start code taken from https://gitlab.com/fearthesky/fts-game/-/blob/master/mods/falling_anvil/init.lua
+			--[[ Start code taken from https://gitlab.com/fearthesky/fts-game/-/blob/master/mods/falling_anvil/init.lua
 			local collisions = moveresult.collisions
 			for _, collision in ipairs(collisions) do
 				if collision.type == "object" and collision.object:get_hp() > 0 then
@@ -591,6 +641,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				end
 			end
 			-- End code taken from https://gitlab.com/fearthesky/fts-game/-/blob/master/mods/falling_anvil/init.lua
+			--]]
 
 			if is_mob then
 				entity.object:set_hp(entity.object:get_hp() - intensity)
