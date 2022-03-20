@@ -469,12 +469,12 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				or entity.name == "vehicle_mash:hover_yellow" or entity.name == "vehicle_mash:hover_red" then
 				if hover_bought and hover_bought.bought_already == true then
 					if hover_speed then
-						car_shop.hovercraft.max_speed_forward = hover_speed.forward_speed
+						--car_shop.hovercraft.max_speed_forward = hover_speed.forward_speed
 						entity.max_speed_forward = hover_speed.forward_speed
-		
-						car_shop.hovercraft.max_speed_reverse = hover_speed.reverse_speed
+
+						--car_shop.hovercraft.max_speed_reverse = hover_speed.reverse_speed
 						entity.max_speed_reverse = hover_speed.reverse_speed
-		
+
 						local max_spd = hover_speed.reverse_speed--car_shop.max_speed_reverse--entity.max_speed_reverse
 						if get_sign(entity.v) >= 0 then
 							max_spd = hover_speed.forward_speed--car_shop.max_speed_forward--entity.max_speed_forward
@@ -491,6 +491,14 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 							entity.v = entity.v - get_sign(entity.v)
 						end
 					end
+				else
+					local max_spd = entity.max_speed_reverse--car_shop.max_speed_reverse--entity.max_speed_reverse
+					if get_sign(entity.v) >= 0 then
+						max_spd = entity.max_speed_forward--car_shop.max_speed_forward--entity.max_speed_forward
+					end
+					if math.abs(entity.v) > max_spd then
+						entity.v = entity.v - get_sign(entity.v)
+					end
 				end
 
 			else
@@ -498,10 +506,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 			-- CAR01
 			local data = minetest.deserialize(meta:get_string("speed"))
 			if data then
-				car_shop.max_speed_forward = data.forward_speed
+				--car_shop.max_speed_forward = data.forward_speed
 				entity.max_speed_forward = data.forward_speed
 
-				car_shop.max_speed_reverse = data.reverse_speed
+				--car_shop.max_speed_reverse = data.reverse_speed
 				entity.max_speed_reverse = data.reverse_speed
 
 				local max_spd = data.reverse_speed--car_shop.max_speed_reverse--entity.max_speed_reverse
@@ -608,6 +616,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		--minetest.chat_send_all("TOTAL PERDEDOR :D") -- kekw
 		--velo.y = 6 -- This will make the vehicle jump :D
 		--entity.object:set_pos({x = -94.3, y = 3.5, z = 149.7})
+		core_game.is_end = false
 	end
 
 	new_velo = get_velocity(v, entity.object:get_yaw() - rot_view, velo.y)

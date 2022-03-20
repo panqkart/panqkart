@@ -8,7 +8,7 @@ minetest.register_privilege("core_admin", {
 })
 
 local game_started = true
-local is_end = false
+core_game.is_end = false
 local count = 0
 
 local use_hovercraft = false
@@ -123,6 +123,18 @@ function core_game.start_game(player)
 	-- End: HUD stuff
 
 	-- Start: count stuff
+	for i = 1,50, 1
+	do
+		if count >= 49 then
+			minetest.chat_send_all("You lost!")
+			minetest.chat_send_all("Your count was: " .. count)
 
+			return
+		end
+		minetest.after(i, function()
+			count = count + 1
+			minetest.chat_send_all(count)
+		end)
+	end
 	-- End: count stuff
 end
