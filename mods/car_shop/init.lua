@@ -1,10 +1,7 @@
-car_shop = {}
-
+car_shop = { }
 car_shop.max_speed_forward = vehicle_mash.car01_def.max_speed_forward -- Library Mount will access this, so let's
 																	  -- use the normal speed. When updating, this will change.
 car_shop.max_speed_reverse = vehicle_mash.car01_def.max_speed_reverse -- Same here as above.
-car_shop.accel = vehicle_mash.car01_def.accel -- Same here.
-
 car_shop.hovercraft = {}
 
 car_shop.hovercraft.max_speed_forward = vehicle_mash.hover_def.max_speed_forward
@@ -61,8 +58,8 @@ local function update_speed(player, fields)
 	meta:set_string("speed", minetest.serialize(data))
 	data = minetest.deserialize(meta:get_string("speed"))
 
-	car_shop.max_speed_forward = vehicle_mash.car01.max_speed_forward
-	car_shop.max_speed_reverse = vehicle_mash.car01.max_speed_reverse
+	car_shop.max_speed_forward = vehicle_mash.car01_def.max_speed_forward
+	car_shop.max_speed_reverse = vehicle_mash.car01_def.max_speed_reverse
 	--minetest.chat_send_all(data.forward_speed)
 end
 
@@ -328,34 +325,44 @@ sfinv.register_page("car_shop:upgrade_car", {
         	formspec[#formspec + 1] = "button[2.1,3.3;2.25,1;hover_reverse;Upgrade reverse (hover)]"
 		end--]]
 		-- No updates for CAR01, with no Hovercraft
-		if data and not data.forward_speed == 16 and not data.reverse_speed == 13
-			and not hover_bought.bought_already == true then
+		if not data and not hover_bought then--data and not data.forward_speed == 16 and not data.reverse_speed == 13
+			--and not hover_bought.bought_already == true then
 			formspec[#formspec + 1] = ",Silver coins needed: 10 for speed and 10 gold for Hovercraft,"
 			formspec[#formspec + 1] = "Ready to upgrade your CAR01's speed and buy Hovercraft]"
-        	formspec[#formspec + 1] = "button[0.1,3.3;3.25,1;update_speed;Upgrade speed (CAR01)]"
-			formspec[#formspec + 1] = "button[3.25,3.3;3.25,1;buy_hovercraft;Buy Hovercraft vehicle]"
+			formspec[#formspec + 1] = "button[0.15,3.3;3.50,1;update_speed;    Upgrade speed (CAR01)]"
+			formspec[#formspec + 1] = "button[3.50,3.3;3.60,1;buy_hovercraft;    Buy Hovercraft vehicle]"
+			formspec[#formspec + 1] = "image[0.15,3.43;0.65,0.65;inv_car_red.png]" -- CAR01 red
+			formspec[#formspec + 1] = "image[0.40,3.33;0.5,0.5;car_shop_arrow_update.png]" -- Arrow update
+			formspec[#formspec + 1] = "image[3.50,3.43;0.63,0.63;hovercraft_blue_inv.png]" -- Blue Hovercraft
 		-- No updates for CAR01, with Hovercraft
-		elseif data and not data.forward_speed == 16 and not data.reverse_speed == 13
-			and hover_bought.bought_already == true then
-				formspec[#formspec + 1] = ",Silver coins needed: 20,"
+		elseif not data and hover_bought and hover_bought.bought_already == true then --data and not data.forward_speed == 16 and not data.reverse_speed == 13
+			--and hover_bought.bought_already == true then
+				formspec[#formspec + 1] = ",Silver coins needed: 10 for CAR01 and 10 for Hovercraft,"
 				formspec[#formspec + 1] = "Ready to upgrade your vehicles' speed]"
-				formspec[#formspec + 1] = "button[0.1,3.3;3.25,1;update_speed;Upgrade speed (CAR01)]"
-				if not hover_speed.forward_speed == 20 and not hover_speed.reverse_speed == 7 then
-					formspec[#formspec + 1] = "button[3.25,3.3;3.25,1;hover_speed;Upgrade speed (Hover)]"
+				formspec[#formspec + 1] = "button[0.15,3.3;3.50,1;update_speed;    Upgrade speed (CAR01)]"
+				formspec[#formspec + 1] = "image[0.15,3.43;0.65,0.65;inv_car_red.png]" -- CAR01 red
+				formspec[#formspec + 1] = "image[0.40,3.33;0.5,0.5;car_shop_arrow_update.png]" -- Arrow update
+				if not hover_speed then--hover_speed.forward_speed == 20 and not hover_speed.reverse_speed == 7 then
+					formspec[#formspec + 1] = "button[3.50,3.3;3.50,1;hover_speed;    Upgrade speed (Hover)]"
+					formspec[#formspec + 1] = "image[3.50,3.43;0.63,0.63;hovercraft_blue_inv.png]" -- Blue Hovercraft
+					formspec[#formspec + 1] = "image[3.75,3.33;0.5,0.5;car_shop_arrow_update.png]" -- Arrow update
 				end
 		-- Updates for CAR01, with no Hovercraft
 		elseif data and data.forward_speed == 16 and data.reverse_speed == 13
-			and not hover_bought.bought_already == true then
+			and not hover_bought then--and not hover_bought.bought_already == true then
 			formspec[#formspec + 1] = ",Silver coins needed: 10,"
 			formspec[#formspec + 1] = "Ready to buy Hovercraft. All CAR01 updates done]"
-			formspec[#formspec + 1] = "button[0.1,3.3;3.25,1;buy_hovercraft;Buy Hovercraft vehicle]"
+			formspec[#formspec + 1] = "button[0.15,3.3;3.60,1;buy_hovercraft;Buy Hovercraft vehicle]"
+			formspec[#formspec + 1] = "image[0.15,3.43;0.63,0.63;hovercraft_blue_inv.png]" -- Blue Hovercraft
 		-- Updates for CAR01, with Hovercraft
 		elseif data and data.forward_speed == 16 and data.reverse_speed == 13
-			and hover_bought.bought_already == true then
-				if not hover_speed.forward_speed == 20 and not hover_speed.reverse_speed == 7 then
+			and hover_bought and hover_bought.bought_already == true then
+				if not hover_speed then--not hover_speed.forward_speed == 20 and not hover_speed.reverse_speed == 7 then
 					formspec[#formspec + 1] = ",Silver coins needed: 10,"
 					formspec[#formspec + 1] = "Ready to upgrade your Hovercraft. All CAR01 updates done]"
-					formspec[#formspec + 1] = "button[0.1,3.3;3.25,1;hover_speed;Upgrade speed (Hover)]"
+					formspec[#formspec + 1] = "button[0.15,3.3;3.50,1;hover_speed;Upgrade speed (Hover)]"
+					formspec[#formspec + 1] = "image[0.15,3.43;0.63,0.63;hovercraft_blue_inv.png]" -- Blue Hovercraft
+					formspec[#formspec + 1] = "image[0.40,3.33;0.5,0.5;car_shop_arrow_update.png]" -- Arrow update
 				else
 					formspec[#formspec + 1] = ",,Nothing to see here. All updates done!]"
 				end
@@ -363,8 +370,11 @@ sfinv.register_page("car_shop:upgrade_car", {
 		elseif not data or not hover_bought or not hover_speed then
 			formspec[#formspec + 1] = ",Silver coins needed: 10 for speed and 10 gold for Hovercraft,"
 			formspec[#formspec + 1] = "Ready to upgrade your CAR01's speed and buy Hovercraft]"
-        	formspec[#formspec + 1] = "button[0.1,3.3;3.25,1;update_speed;Upgrade speed (CAR01)]"
-			formspec[#formspec + 1] = "button[3.25,3.3;3.25,1;buy_hovercraft;Buy Hovercraft vehicle]"
+        	formspec[#formspec + 1] = "button[0.15,3.3;3.50,1;update_speed;    Upgrade speed (CAR01)]"
+			formspec[#formspec + 1] = "button[3.50,3.3;3.60,1;buy_hovercraft;    Buy Hovercraft vehicle]"
+			formspec[#formspec + 1] = "image[0.15,3.43;0.65,0.65;inv_car_red.png]" -- CAR01 red
+			formspec[#formspec + 1] = "image[0.40,3.33;0.5,0.5;car_shop_arrow_update.png]" -- Arrow update
+			formspec[#formspec + 1] = "image[3.50,3.43;0.63,0.63;hovercraft_blue_inv.png]" -- Blue Hovercraft
 		-- All updates done.
 		else
 			formspec[#formspec + 1] = ",,Nothing to see here. All updates done!]"

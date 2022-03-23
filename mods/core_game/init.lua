@@ -9,10 +9,7 @@ minetest.register_privilege("core_admin", {
 
 local game_started = true
 core_game.is_end = false
-local count = 0
-
-local use_hovercraft = false
-local use_car01 = false
+local count = {}
 
 function core_game.get_formspec(name)
     -- TODO: display whether the last guess was higher or lower
@@ -23,8 +20,8 @@ function core_game.get_formspec(name)
         "size[7,3.75]",
         "label[0.5,0.5;", minetest.formspec_escape(text), "]",
         --"field[0.375,1.25;5.25,0.8;number;Number;]",
-        "button[0.3,2.3;3,0.8;use_hovercraft;Hovercraft]",
-		"button[3.8,2.3;3,0.8;use_car;Car01]"
+        "button_exit[0.3,2.3;3,0.8;use_hovercraft;Hovercraft]",
+		"button_exit[3.8,2.3;3,0.8;use_car;Car01]"
     }
 
     -- table.concat is faster than string concatenation - `..`
@@ -91,21 +88,15 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
         local pname = player:get_player_name()
         minetest.chat_send_player(pname, "You will use Hovercraft in the next race.")
 
-		use_hovercraft = true
-	elseif fields.use_car then
-		local pname = player:get_player_name()
-        minetest.chat_send_player(pname, "You will use Car01 in the next race.")
-
-		use_car01 = true
-    end
-
-	if use_car01 == true then
-		local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:car_dark_grey", nil)
-		lib_mount.attach(obj:get_luaentity(), player, false, 0)
-	elseif use_hovercraft == true then
 		local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:hover_blue", nil)
 		lib_mount.attach(obj:get_luaentity(), player, false, 0)
-	end
+	elseif fields.use_car then
+		local pname = player:get_player_name()
+        minetest.chat_send_player(pname, "You will use CAR01 in the next race.")
+
+		local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:car_dark_grey", nil)
+		lib_mount.attach(obj:get_luaentity(), player, false, 0)
+    end
 end)
 
 function core_game.start_game(player)
@@ -117,7 +108,6 @@ function core_game.start_game(player)
 		minetest.show_formspec(player:get_player_name(), "core_game:choose_car", core_game.get_formspec(player))
 	end
 
-
 	-- Start: HUD stuff
 	hud_321(player)
 	-- End: HUD stuff
@@ -125,15 +115,17 @@ function core_game.start_game(player)
 	-- Start: count stuff
 	for i = 1,50, 1
 	do
-		if count >= 49 then
-			minetest.chat_send_all("You lost!")
-			minetest.chat_send_all("Your count was: " .. count)
-
-			return
-		end
 		minetest.after(i, function()
-			count = count + 1
-			minetest.chat_send_all(count)
+			count[player] = i
+			minetest.chat_send_player(player:get_player_name(), count[player])
+			hud_fs.show_hud(player, "core_game:race_count", {
+				{type = "size", w = 3, h = 0.5},
+				{type = "position", x = 0.9, y = 0.9},
+				{
+					type = "label", x = 0, y = 0,
+					label = "Race count: " .. count[player]
+				}
+			})
 		end)
 	end
 	-- End: count stuff

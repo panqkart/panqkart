@@ -108,9 +108,9 @@ vehicle_mash.car01_def = {
 	passenger3_attach_at = {x=-4,y=3.7,z=-3.5},
 	passenger3_eye_offset = {x=4, y=3, z=0},
 
-	hp_min = 25,
-	hp_max = 50,
-	armor = 50,
+	--hp_min = 25,
+	--hp_max = 50,
+	--armor = 50,
 	enable_crash = false,
 
 	-- drop and recipe
