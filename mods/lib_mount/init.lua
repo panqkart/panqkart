@@ -49,8 +49,13 @@ local function node_is(pos)
 	if node.name == "air" then
 		return "air"
 	end
-	if node.name == "default:dirt_with_grass" then
-		return "grass"
+	-- End/win blocks: white
+	if node.name == "maptools:white" then
+		return "maptools_white"
+	end
+	-- End/win blocks: black
+	if node.name == "maptools:black" then
+		return "maptools_black"
 	end
 	if minetest.get_item_group(node.name, "liquid") ~= 0 then
 		return "liquid"
@@ -247,6 +252,7 @@ local is_hovercraft = {
 }
 
 function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_height, can_fly, can_go_down, can_go_up, enable_crash, moveresult)
+	if core_game.game_started == false then return end
 	-- After driver getting killed, entity.driver is not nil when it should be.
 	-- When attaching the driver, entity.driver will be inside the lib_mount.passengers
 	-- table. With this check, we can verify driver is "not" there.
@@ -612,11 +618,13 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 --		v = 0
 --		new_acce.y = 1
 	end
-	if node_is(p) == "grass" then
+	if node_is(p) == "maptools_black" or node_is(p) == "maptools_white" and entity.driver then
+		if core_game.is_end[entity.driver] == true then return end
 		--minetest.chat_send_all("TOTAL PERDEDOR :D") -- kekw
 		--velo.y = 6 -- This will make the vehicle jump :D
 		--entity.object:set_pos({x = -94.3, y = 3.5, z = 149.7})
-		core_game.is_end = false
+		core_game.is_end[entity.driver] = true
+		minetest.chat_send_player(entity.driver:get_player_name(), "Game's up! You finished the race at " .. core_game.count[entity.driver] .. " seconds.")
 	end
 
 	new_velo = get_velocity(v, entity.object:get_yaw() - rot_view, velo.y)

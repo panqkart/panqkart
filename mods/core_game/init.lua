@@ -7,9 +7,9 @@ minetest.register_privilege("core_admin", {
 	give_to_admin = true,
 })
 
-local game_started = true
-core_game.is_end = false
-local count = {}
+core_game.game_started = false
+core_game.is_end = {}
+core_game.count = {}
 
 function core_game.get_formspec(name)
     -- TODO: display whether the last guess was higher or lower
@@ -62,6 +62,34 @@ minetest.register_on_newplayer(function(player)
 	minetest.chat_send_all(player:get_player_name() .. " just joined! Welcome to the Racing Game!")
 end)
 
+local function count(player)
+	for i = 1,50, 1
+	do
+		minetest.after(i, function()
+			if core_game.is_end[player] == true then
+				hud_fs.show_hud(player, "core_game:race_count", {
+					{type = "size", w = 40, h = 0.5},
+					{type = "position", x = 0.9, y = 0.9},
+					{
+						type = "label", x = 0, y = 0,
+						label = "You finished at: " .. core_game.count[player] .. " seconds!"
+					}
+				})
+				return
+			end
+			core_game.count[player] = i
+			hud_fs.show_hud(player, "core_game:race_count", {
+				{type = "size", w = 40, h = 0.5},
+				{type = "position", x = 0.9, y = 0.9},
+				{
+					type = "label", x = 0, y = 0,
+					label = "Race count: " .. core_game.count[player]
+				}
+			})
+		end)
+	end
+end
+
 local function hud_321(player)
 	local hud = player:hud_add({
 		hud_elem_type = "image",
@@ -74,9 +102,8 @@ local function hud_321(player)
    minetest.after(3, function() player:hud_change(hud, "text", "core_game_2.png")
 	   minetest.after(1, function() player:hud_change(hud, "text", "core_game_1.png") end) -- Change text to `1` AFTER the text is `2`
    end)
-   minetest.after(5, function() player:hud_change(hud, "text", "core_game_go.png") end)
+   minetest.after(5, function() player:hud_change(hud, "text", "core_game_go.png") count(player) core_game.game_started = true end)
    minetest.after(7, function() player:hud_remove(hud) end)
-   game_started = true
 end
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
@@ -100,6 +127,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 end)
 
 function core_game.start_game(player)
+	-- Start: car selection formspec
 	-- Ask the player which car they want to use
 	local meta = player:get_meta()
 	local data = minetest.deserialize(meta:get_string("hovercraft_bought"))
@@ -107,26 +135,42 @@ function core_game.start_game(player)
 	if data and data.bought_already == true then
 		minetest.show_formspec(player:get_player_name(), "core_game:choose_car", core_game.get_formspec(player))
 	end
+	-- End: car selection formspec
 
-	-- Start: HUD stuff
+	-- Start: cleanup race count and ending booleans
+	core_game.is_end = {}
+	core_game.count = {}
+	-- End: cleanup race count and ending booleans
+
+	-- Start: HUD/count stuff
 	hud_321(player)
-	-- End: HUD stuff
+	-- End: HUD/count stuff
 
-	-- Start: count stuff
+	--[[ Start: count stuff
 	for i = 1,50, 1
 	do
 		minetest.after(i, function()
-			count[player] = i
-			minetest.chat_send_player(player:get_player_name(), count[player])
+			if core_game.is_end[player] == true then
+				hud_fs.show_hud(player, "core_game:race_count", {
+					{type = "size", w = 40, h = 0.5},
+					{type = "position", x = 0.9, y = 0.9},
+					{
+						type = "label", x = 0, y = 0,
+						label = "You finished at: " .. core_game.count[player] .. " seconds!"
+					}
+				})
+				return
+			end
+			core_game.count[player] = i
 			hud_fs.show_hud(player, "core_game:race_count", {
-				{type = "size", w = 3, h = 0.5},
+				{type = "size", w = 40, h = 0.5},
 				{type = "position", x = 0.9, y = 0.9},
 				{
 					type = "label", x = 0, y = 0,
-					label = "Race count: " .. count[player]
+					label = "Race count: " .. core_game.count[player]
 				}
 			})
 		end)
 	end
-	-- End: count stuff
+	-- End: count stuff]]
 end

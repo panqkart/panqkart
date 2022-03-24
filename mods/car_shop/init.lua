@@ -19,11 +19,11 @@ local function update_speed(player, fields)
 	end
 
 	if fields.update_speed then --forward_speed then
-		if not inv:contains_item("main", "maptools:silver_coin 10") and not already_upgraded_forward == true and not already_upgraded_reverse == true then
+		if not inv:contains_item("main", "maptools:silver_coin 20") and not already_upgraded_forward == true and not already_upgraded_reverse == true then
 			minetest.chat_send_player(player:get_player_name(), "You don't have the enough silver coins to upgrade")
 			return
 		elseif inv:contains_item("main", "maptools:silver_coin 10") and not already_upgraded_forward == true and not already_upgraded_reverse == true then
-			local taken = inv:remove_item("main", ItemStack("maptools:silver_coin 10"))
+			local taken = inv:remove_item("main", ItemStack("maptools:silver_coin 20"))
 			print("Took " .. taken:get_count())
 			minetest.chat_send_player(player:get_player_name(), "Successfully updated car's forward speed to 16!")
 			minetest.chat_send_player(player:get_player_name(), "Successfully updated car's reverse speed to 13!")
@@ -76,11 +76,11 @@ local function buy_hovercraft(player, fields)
 	end
 
 	if fields.buy_hovercraft then
-		if not inv:contains_item("main", "maptools:gold_coin 10") and not already_bought == true then
+		if not inv:contains_item("main", "maptools:gold_coin 5") and not already_bought == true then
 			minetest.chat_send_player(player:get_player_name(), "You don't have the enough gold coins to buy the Hovercraft")
 			return
-		elseif inv:contains_item("main", "maptools:gold_coin 10") and not already_bought == true then
-			local taken = inv:remove_item("main", ItemStack("maptools:gold_coin 10"))
+		elseif inv:contains_item("main", "maptools:gold_coin 5") and not already_bought == true then
+			local taken = inv:remove_item("main", ItemStack("maptools:gold_coin 5"))
 			print("Took " .. taken:get_count())
 			minetest.chat_send_player(player:get_player_name(), "Successfully bought the Hovercraft vehicle!")
 			already_bought = true
@@ -109,11 +109,11 @@ local function update_hover(player, fields)
 	end
 
 	if fields.hover_speed then
-		if not inv:contains_item("main", "maptools:silver_coin 10") and not already_upgraded_forward == true and not already_upgraded_reverse == true then
+		if not inv:contains_item("main", "maptools:silver_coin 20") and not already_upgraded_forward == true and not already_upgraded_reverse == true then
 			minetest.chat_send_player(player:get_player_name(), "You don't have the enough silver coins to upgrade")
 			return
-		elseif inv:contains_item("main", "maptools:silver_coin 10") and not already_upgraded_forward == true and not already_upgraded_reverse == true then
-			local taken = inv:remove_item("main", ItemStack("maptools:silver_coin 10"))
+		elseif inv:contains_item("main", "maptools:silver_coin 20") and not already_upgraded_forward == true and not already_upgraded_reverse == true then
+			local taken = inv:remove_item("main", ItemStack("maptools:silver_coin 20"))
 			print("Took " .. taken:get_count())
 			minetest.chat_send_player(player:get_player_name(), "Successfully updated car's forward speed to 20!")
 			minetest.chat_send_player(player:get_player_name(), "Successfully updated car's reverse speed to 7!")
@@ -327,7 +327,7 @@ sfinv.register_page("car_shop:upgrade_car", {
 		-- No updates for CAR01, with no Hovercraft
 		if not data and not hover_bought then--data and not data.forward_speed == 16 and not data.reverse_speed == 13
 			--and not hover_bought.bought_already == true then
-			formspec[#formspec + 1] = ",Silver coins needed: 10 for speed and 10 gold for Hovercraft,"
+			formspec[#formspec + 1] = ",Silver coins needed: 20 for speed and 10 gold for Hovercraft,"
 			formspec[#formspec + 1] = "Ready to upgrade your CAR01's speed and buy Hovercraft]"
 			formspec[#formspec + 1] = "button[0.15,3.3;3.50,1;update_speed;    Upgrade speed (CAR01)]"
 			formspec[#formspec + 1] = "button[3.50,3.3;3.60,1;buy_hovercraft;    Buy Hovercraft vehicle]"
@@ -337,7 +337,7 @@ sfinv.register_page("car_shop:upgrade_car", {
 		-- No updates for CAR01, with Hovercraft
 		elseif not data and hover_bought and hover_bought.bought_already == true then --data and not data.forward_speed == 16 and not data.reverse_speed == 13
 			--and hover_bought.bought_already == true then
-				formspec[#formspec + 1] = ",Silver coins needed: 10 for CAR01 and 10 for Hovercraft,"
+				formspec[#formspec + 1] = ",Silver coins needed: 20 for CAR01 and 20 for Hovercraft,"
 				formspec[#formspec + 1] = "Ready to upgrade your vehicles' speed]"
 				formspec[#formspec + 1] = "button[0.15,3.3;3.50,1;update_speed;    Upgrade speed (CAR01)]"
 				formspec[#formspec + 1] = "image[0.15,3.43;0.65,0.65;inv_car_red.png]" -- CAR01 red
@@ -350,7 +350,7 @@ sfinv.register_page("car_shop:upgrade_car", {
 		-- Updates for CAR01, with no Hovercraft
 		elseif data and data.forward_speed == 16 and data.reverse_speed == 13
 			and not hover_bought then--and not hover_bought.bought_already == true then
-			formspec[#formspec + 1] = ",Silver coins needed: 10,"
+			formspec[#formspec + 1] = ",Silver coins needed: 20,"
 			formspec[#formspec + 1] = "Ready to buy Hovercraft. All CAR01 updates done]"
 			formspec[#formspec + 1] = "button[0.15,3.3;3.60,1;buy_hovercraft;Buy Hovercraft vehicle]"
 			formspec[#formspec + 1] = "image[0.15,3.43;0.63,0.63;hovercraft_blue_inv.png]" -- Blue Hovercraft
@@ -358,7 +358,7 @@ sfinv.register_page("car_shop:upgrade_car", {
 		elseif data and data.forward_speed == 16 and data.reverse_speed == 13
 			and hover_bought and hover_bought.bought_already == true then
 				if not hover_speed then--not hover_speed.forward_speed == 20 and not hover_speed.reverse_speed == 7 then
-					formspec[#formspec + 1] = ",Silver coins needed: 10,"
+					formspec[#formspec + 1] = ",Silver coins needed: 20,"
 					formspec[#formspec + 1] = "Ready to upgrade your Hovercraft. All CAR01 updates done]"
 					formspec[#formspec + 1] = "button[0.15,3.3;3.50,1;hover_speed;Upgrade speed (Hover)]"
 					formspec[#formspec + 1] = "image[0.15,3.43;0.63,0.63;hovercraft_blue_inv.png]" -- Blue Hovercraft
@@ -368,7 +368,7 @@ sfinv.register_page("car_shop:upgrade_car", {
 				end
 		-- No data found. The user can buy/upgrade
 		elseif not data or not hover_bought or not hover_speed then
-			formspec[#formspec + 1] = ",Silver coins needed: 10 for speed and 10 gold for Hovercraft,"
+			formspec[#formspec + 1] = ",Silver coins needed: 20 for speed and 5 gold for Hovercraft,"
 			formspec[#formspec + 1] = "Ready to upgrade your CAR01's speed and buy Hovercraft]"
         	formspec[#formspec + 1] = "button[0.15,3.3;3.50,1;update_speed;    Upgrade speed (CAR01)]"
 			formspec[#formspec + 1] = "button[3.50,3.3;3.60,1;buy_hovercraft;    Buy Hovercraft vehicle]"
