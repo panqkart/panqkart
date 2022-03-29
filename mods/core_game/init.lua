@@ -1,5 +1,6 @@
 core_game = { }
 core_game.position = { x = -95.6, y = 3.5, z = 198.5 } -- Default lobby position
+core_game.players_on_race = {}
 
 minetest.register_privilege("core_admin", {
     description = "Can manage the lobby position and core game configurations.",
@@ -135,8 +136,12 @@ local function count(player)
 				}
 			})
 			if core_game.count[player] == 50 then
-				minetest.chat_send_player(player:get_player_name(), "You lost the race for ending out of time.")
-				core_game.player_lost(player)
+				for _,name in pairs(core_game.players_on_race) do
+					if core_game.is_end[name] == false then
+						minetest.chat_send_player(player:get_player_name(), "You lost the race for ending out of time.")
+					end
+					core_game.player_lost(name)
+				end
 				return
 			end
 		end)
@@ -205,6 +210,8 @@ local function start(player)
 	-- Start: HUD/count stuff
 	hud_321(player)
 	-- End: HUD/count stuff
+
+	core_game.players_on_race[player] = player
 end
 
 function core_game.start_game(player)

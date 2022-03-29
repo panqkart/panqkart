@@ -649,7 +649,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				end
 
 				core_game.player_count = 0
-				core_game.player_lost(entity.driver)
+				for _,name in pairs(core_game.players_on_race) do
+					core_game.player_lost(name)
+					core_game.players_on_race = {}
+				end
 				return
 			end
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 2nd place!")
@@ -666,7 +669,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				end
 
 				core_game.player_count = 0
-				core_game.player_lost(entity.driver)
+				for _,name in pairs(core_game.players_on_race) do
+					core_game.player_lost(name)
+					core_game.players_on_race = {}
+				end
 				return
 			end
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 3rd place!")
@@ -683,7 +689,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				end
 
 				core_game.player_count = 0
-				core_game.player_lost(entity.driver)
+				for _,name in pairs(core_game.players_on_race) do
+					core_game.player_lost(name)
+					core_game.players_on_race = {}
+				end
 				return
 			end
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 4rd place!")
@@ -700,7 +709,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				end
 
 				core_game.player_count = 0
-				core_game.player_lost(entity.driver)
+				for _,name in pairs(core_game.players_on_race) do
+					core_game.player_lost(name)
+					core_game.players_on_race = {}
+				end
 				return
 			end
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 5th place!")
@@ -717,7 +729,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				end
 
 				core_game.player_count = 0
-				core_game.player_lost(entity.driver)
+				for _,name in pairs(core_game.players_on_race) do
+					core_game.player_lost(name)
+					core_game.players_on_race = {}
+				end
 				return
 			end
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 6th place!")
@@ -734,7 +749,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				end
 
 				core_game.player_count = 0
-				core_game.player_lost(entity.driver)
+				for _,name in pairs(core_game.players_on_race) do
+					core_game.player_lost(name)
+					core_game.players_on_race = {}
+				end
 				return
 			end
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 7th place!")
@@ -751,7 +769,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				end
 
 				core_game.player_count = 0
-				core_game.player_lost(entity.driver)
+				for _,name in pairs(core_game.players_on_race) do
+					core_game.player_lost(name)
+					core_game.players_on_race = {}
+				end
 				return
 			end
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 8th place!")
@@ -768,7 +789,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				end
 
 				core_game.player_count = 0
-				core_game.player_lost(entity.driver)
+				for _,name in pairs(core_game.players_on_race) do
+					core_game.player_lost(name)
+					core_game.players_on_race = {}
+				end
 				return
 			end
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 9th place!")
@@ -785,7 +809,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				end
 
 				core_game.player_count = 0
-				core_game.player_lost(entity.driver)
+				for _,name in pairs(core_game.players_on_race) do
+					core_game.player_lost(name)
+					core_game.players_on_race = {}
+				end
 				return
 			end
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 10th place!")
@@ -802,7 +829,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				end
 
 				core_game.player_count = 0
-				core_game.player_lost(entity.driver)
+				for _,name in pairs(core_game.players_on_race) do
+					core_game.player_lost(name)
+					core_game.players_on_race = {}
+				end
 				return
 			end
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 11th place!")
@@ -818,7 +848,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 			end
 
 			core_game.player_count = 0
-			core_game.player_lost(entity.driver)
+			for _,name in pairs(core_game.players_on_race) do
+				core_game.player_lost(name)
+				core_game.players_on_race = {}
+			end
 		end
 		--velo.y = 6 -- This will make the vehicle jump :D
 		--entity.object:set_pos({x = -94.3, y = 3.5, z = 149.7})
