@@ -10,6 +10,8 @@ minetest.register_privilege("core_admin", {
 core_game.game_started = false
 core_game.is_end = {}
 core_game.count = {}
+core_game.is_waiting = {}
+core_game.player_count = 0
 
 function core_game.get_formspec(name)
     -- TODO: display whether the last guess was higher or lower
@@ -51,6 +53,11 @@ minetest.register_chatcommand("change_position", {
 minetest.register_on_joinplayer(function(player)
 	player:set_pos(core_game.position)
 	minetest.log("action", "[RACING GAME] Player " .. player:get_player_name() .. " joined and was teleported to the lobby successfully.")
+	core_game.player_count = core_game.player_count + 1
+	if core_game.player_count > 2 then
+		core_game.waiting_to_end(player)
+		return
+	end
 	core_game.start_game(player)
 end)
 
@@ -61,6 +68,22 @@ end)
 minetest.register_on_newplayer(function(player)
 	minetest.chat_send_all(player:get_player_name() .. " just joined! Welcome to the Racing Game!")
 end)
+
+minetest.register_on_leaveplayer(function(player)
+	core_game.player_count = core_game.player_count - 1
+end)
+
+function core_game.waiting_to_end(player)
+	hud_fs.show_hud(player, "core_game:pending_race", {
+		{type = "size", w = 40, h = 0.5},
+		{type = "position", x = 0.9, y = 0.9},
+		{
+			type = "label", x = 0, y = 0,
+			label = "Waiting for the current race to finish..."
+		}
+	})
+	core_game.is_waiting[player] = true
+end
 
 local function count(player)
 	for i = 1,50, 1
@@ -86,6 +109,9 @@ local function count(player)
 					label = "Race count: " .. core_game.count[player]
 				}
 			})
+			if core_game.count[player] == 50 then
+				minetest.chat_send_player(player:get_player_name(), "You lost the race!")
+			end
 		end)
 	end
 end
@@ -127,6 +153,20 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 end)
 
 function core_game.start_game(player)
+	-- Start: player count checks
+	if core_game.player_count < 4 then
+		hud_fs.show_hud(player, "core_game:waiting_for_players", {
+			{type = "size", w = 40, h = 0.5},
+			{type = "position", x = 0.9, y = 0.9},
+			{
+				type = "label", x = 0, y = 0,
+				label = "Waiting for players (4 required)..."
+			}
+		})
+		return
+	end
+	-- End: player count checks
+
 	-- Start: car selection formspec
 	-- Ask the player which car they want to use
 	local meta = player:get_meta()
@@ -140,6 +180,7 @@ function core_game.start_game(player)
 	-- Start: cleanup race count and ending booleans
 	core_game.is_end = {}
 	core_game.count = {}
+	lib_mount.win_count = 1
 	-- End: cleanup race count and ending booleans
 
 	-- Start: HUD/count stuff

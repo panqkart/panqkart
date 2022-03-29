@@ -21,7 +21,8 @@
 --]]
 
 lib_mount = {
-	passengers = {}
+	passengers = {},
+	win_count = 1
 }
 
 local crash_threshold = 6.5		-- ignored if enable_crash is disabled
@@ -253,6 +254,7 @@ local is_hovercraft = {
 
 function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_height, can_fly, can_go_down, can_go_up, enable_crash, moveresult)
 	if core_game.game_started == false then return end
+	if entity.driver and core_game.is_waiting[entity.driver] == true then return end
 	-- After driver getting killed, entity.driver is not nil when it should be.
 	-- When attaching the driver, entity.driver will be inside the lib_mount.passengers
 	-- table. With this check, we can verify driver is "not" there.
@@ -620,10 +622,61 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	end
 	if node_is(p) == "maptools_black" or node_is(p) == "maptools_white" and entity.driver then
 		if core_game.is_end[entity.driver] == true then return end
-		--minetest.chat_send_all("TOTAL PERDEDOR :D") -- kekw
+		--[[for _,player in ipairs(minetest.get_connected_players()) do
+			local name = player:get_player_name()
+			--if name == entity.owner then return end
+			if not name == entity.owner and not core_game.count[entity.driver] == core_game.count[player] then
+				minetest.chat_send_player(entity.driver:get_player_name(), "You are in 1st place!")
+			elseif not core_game.is_end[entity.driver] == true then
+				minetest.chat_send_player(entity.driver:get_player_name(), "You are in 2nd place!")
+			end
+		end--]]
+		core_game.is_end[entity.driver] = true
+		-- Maximum 12 players per race, so let's do this twelve times
+		if lib_mount.win_count == 1 then
+			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 1st place! Congratulations!")
+			lib_mount.win_count = lib_mount.win_count + 1
+		elseif lib_mount.win_count == 2 then
+			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 2nd place!")
+			lib_mount.win_count = lib_mount.win_count + 1
+		elseif lib_mount.win_count == 3 then
+			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 3rd place!")
+			lib_mount.win_count = lib_mount.win_count + 1
+		elseif lib_mount.win_count == 4 then
+			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 4rd place!")
+			lib_mount.win_count = lib_mount.win_count + 1
+		elseif lib_mount.win_count == 5 then
+			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 5th place!")
+			lib_mount.win_count = lib_mount.win_count + 1
+		elseif lib_mount.win_count == 6 then
+			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 6th place!")
+			lib_mount.win_count = lib_mount.win_count + 1
+		elseif lib_mount.win_count == 7 then
+			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 7th place!")
+			lib_mount.win_count = lib_mount.win_count + 1
+		elseif lib_mount.win_count == 8 then
+			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 8th place!")
+			lib_mount.win_count = lib_mount.win_count + 1
+		elseif lib_mount.win_count == 9 then
+			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 9th place!")
+			lib_mount.win_count = lib_mount.win_count + 1
+		elseif lib_mount.win_count == 10 then
+			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 10th place!")
+			lib_mount.win_count = lib_mount.win_count + 1
+		elseif lib_mount.win_count == 11 then
+			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 11th place!")
+			lib_mount.win_count = lib_mount.win_count + 1
+		elseif lib_mount.win_count == 12 then -- Here races end. Run end race code
+			minetest.chat_send_player(entity.driver:get_player_name(), "You are in the last place! You lost.")
+
+			core_game.game_started = false
+			hud_fs.close_hud(entity.driver, "core_game:pending_race")
+			for _,player in ipairs(minetest.get_connected_players()) do
+				core_game.is_waiting[player] = false
+			end
+		end
 		--velo.y = 6 -- This will make the vehicle jump :D
 		--entity.object:set_pos({x = -94.3, y = 3.5, z = 149.7})
-		core_game.is_end[entity.driver] = true
 		minetest.chat_send_player(entity.driver:get_player_name(), "Game's up! You finished the race at " .. core_game.count[entity.driver] .. " seconds.")
 	end
 
