@@ -1,0 +1,2 @@
+# Minimum required players for a race
+core_game.minimum_required_players (Minimum required players to start a race) int 4
