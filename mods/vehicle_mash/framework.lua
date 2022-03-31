@@ -105,7 +105,7 @@ function vehicle_mash.register_vehicle(name, def)
 			-- if there is no driver
 			else
 				-- attach driver
-				if clicker:get_player_name() then-- self.owner == clicker:get_player_name() then
+				if self.owner == clicker:get_player_name() then
 					lib_mount.attach(self, clicker, false, 0)
 				end
 			end
@@ -120,6 +120,7 @@ function vehicle_mash.register_vehicle(name, def)
 				self.object:set_hp(math.random(def.hp_min, def.hp_max), "Set HP to vehicle")
 			end
 
+			--[[
 			if self.driver then
 				self.driver:set_armor_groups({immortal = 0, fleshy = self.driver:get_armor_groups()})
 			-- Support for passengers
@@ -129,7 +130,7 @@ function vehicle_mash.register_vehicle(name, def)
 				self.passenger2:set_armor_groups({immortal = 0, fleshy = self.passenger2:get_armor_groups()})
 			elseif self.passenger3 then
 				self.passenger3:set_armor_groups({immortal = 0, fleshy = self.passenger3:get_armor_groups()})
-			end
+			end--]]
 
 			local tmp = minetest.deserialize(staticdata)
 			if tmp then

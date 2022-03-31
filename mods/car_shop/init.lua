@@ -7,6 +7,13 @@ car_shop.hovercraft = {}
 car_shop.hovercraft.max_speed_forward = vehicle_mash.hover_def.max_speed_forward
 car_shop.hovercraft.max_speed_reverse = vehicle_mash.hover_def.max_speed_reverse
 
+if minetest.settings:get_bool("enable_car_shop") == nil then
+	minetest.settings:set_bool("enable_car_shop", true)
+elseif minetest.settings:get_bool("enable_car_shop") == false then
+	minetest.log("action", "[RACING GAME] Car shop is disabled. Not initializing.")
+	return
+end
+
 -- Upgrading your car's speed (CAR01)
 local function update_speed(player, fields)
 	local already_upgraded_reverse = false
@@ -327,7 +334,7 @@ sfinv.register_page("car_shop:upgrade_car", {
 		-- No updates for CAR01, with no Hovercraft
 		if not data and not hover_bought then--data and not data.forward_speed == 16 and not data.reverse_speed == 13
 			--and not hover_bought.bought_already == true then
-			formspec[#formspec + 1] = ",Silver coins needed: 20 for speed and 10 gold for Hovercraft,"
+			formspec[#formspec + 1] = ",Silver coins needed: 20 for speed and 5 gold for Hovercraft,"
 			formspec[#formspec + 1] = "Ready to upgrade your CAR01's speed and buy Hovercraft]"
 			formspec[#formspec + 1] = "button[0.15,3.3;3.50,1;update_speed;    Upgrade speed (CAR01)]"
 			formspec[#formspec + 1] = "button[3.50,3.3;3.60,1;buy_hovercraft;    Buy Hovercraft vehicle]"

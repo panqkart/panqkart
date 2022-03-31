@@ -245,16 +245,10 @@ end--]]
 
 local aux_timer = 0
 local is_sneaking = {}
-local is_hovercraft = {
-	"vehicle_mash:hover_blue",
-	"vehicle_mash:hover_red",
-	"vehicle_mash:hover_yellow",
-	"vehicle_mash:hover_green",
-}
 
 function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_height, can_fly, can_go_down, can_go_up, enable_crash, moveresult)
-	if core_game.game_started == false then return end
 	if entity.driver and core_game.is_waiting[entity.driver] == true then return end
+	if core_game.game_started == false then return end
 	-- After driver getting killed, entity.driver is not nil when it should be.
 	-- When attaching the driver, entity.driver will be inside the lib_mount.passengers
 	-- table. With this check, we can verify driver is "not" there.
@@ -637,6 +631,23 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		if lib_mount.win_count == 1 then
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 1st place! Congratulations!")
 			lib_mount.win_count = lib_mount.win_count + 1
+			if core_game.player_count == 1 then
+				--core_game.game_started = false
+				hud_fs.close_hud(entity.driver, "core_game:pending_race")
+				for _,player in ipairs(minetest.get_connected_players()) do
+					core_game.is_waiting_end[player] = false
+					hud_fs.close_hud(player, "core_game:pending_race")
+				end
+
+				core_game.player_count = 0
+				for _,name in pairs(core_game.players_on_race) do
+					minetest.chat_send_player(name:get_player_name(), "Race ended! Heading back to the lobby...")
+					core_game.player_lost(name)
+
+					core_game.players_on_race = {}
+				end
+				return
+			end
 		elseif lib_mount.win_count == 2 then
 			if core_game.player_count == 2 then
 				minetest.chat_send_player(entity.driver:get_player_name(), "You are in the last place! You lost.")
@@ -650,7 +661,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 
 				core_game.player_count = 0
 				for _,name in pairs(core_game.players_on_race) do
+					minetest.chat_send_player(name:get_player_name(), "Race ended! Heading back to the lobby...")
 					core_game.player_lost(name)
+
 					core_game.players_on_race = {}
 				end
 				return
@@ -670,7 +683,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 
 				core_game.player_count = 0
 				for _,name in pairs(core_game.players_on_race) do
+					minetest.chat_send_player(name:get_player_name(), "Race ended! Heading back to the lobby...")
 					core_game.player_lost(name)
+
 					core_game.players_on_race = {}
 				end
 				return
@@ -690,7 +705,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 
 				core_game.player_count = 0
 				for _,name in pairs(core_game.players_on_race) do
+					minetest.chat_send_player(name:get_player_name(), "Race ended! Heading back to the lobby...")
 					core_game.player_lost(name)
+
 					core_game.players_on_race = {}
 				end
 				return
@@ -710,7 +727,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 
 				core_game.player_count = 0
 				for _,name in pairs(core_game.players_on_race) do
+					minetest.chat_send_player(name:get_player_name(), "Race ended! Heading back to the lobby...")
 					core_game.player_lost(name)
+
 					core_game.players_on_race = {}
 				end
 				return
@@ -730,7 +749,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 
 				core_game.player_count = 0
 				for _,name in pairs(core_game.players_on_race) do
+					minetest.chat_send_player(name:get_player_name(), "Race ended! Heading back to the lobby...")
 					core_game.player_lost(name)
+
 					core_game.players_on_race = {}
 				end
 				return
@@ -750,7 +771,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 
 				core_game.player_count = 0
 				for _,name in pairs(core_game.players_on_race) do
+					minetest.chat_send_player(name:get_player_name(), "Race ended! Heading back to the lobby...")
 					core_game.player_lost(name)
+
 					core_game.players_on_race = {}
 				end
 				return
@@ -770,7 +793,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 
 				core_game.player_count = 0
 				for _,name in pairs(core_game.players_on_race) do
+					minetest.chat_send_player(name:get_player_name(), "Race ended! Heading back to the lobby...")
 					core_game.player_lost(name)
+
 					core_game.players_on_race = {}
 				end
 				return
@@ -790,7 +815,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 
 				core_game.player_count = 0
 				for _,name in pairs(core_game.players_on_race) do
+					minetest.chat_send_player(name:get_player_name(), "Race ended! Heading back to the lobby...")
 					core_game.player_lost(name)
+
 					core_game.players_on_race = {}
 				end
 				return
@@ -810,7 +837,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 
 				core_game.player_count = 0
 				for _,name in pairs(core_game.players_on_race) do
+					minetest.chat_send_player(name:get_player_name(), "Race ended! Heading back to the lobby...")
 					core_game.player_lost(name)
+
 					core_game.players_on_race = {}
 				end
 				return
@@ -830,7 +859,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 
 				core_game.player_count = 0
 				for _,name in pairs(core_game.players_on_race) do
+					minetest.chat_send_player(name:get_player_name(), "Race ended! Heading back to the lobby...")
 					core_game.player_lost(name)
+
 					core_game.players_on_race = {}
 				end
 				return
@@ -849,7 +880,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 
 			core_game.player_count = 0
 			for _,name in pairs(core_game.players_on_race) do
+				minetest.chat_send_player(entity.driver:get_player_name(), "Race ended! Heading back to the lobby...")
 				core_game.player_lost(name)
+
 				core_game.players_on_race = {}
 			end
 		end

@@ -16,11 +16,13 @@ core_game.is_waiting_end = {}
 core_game.is_waiting = {}
 core_game.player_count = 0
 
+local run_once = {}
+
 if tonumber(minetest.settings:get("minimum_required_players")) == nil then
 	minetest.settings:set("minimum_required_players", 4) -- SET MINIMUM REQUIRED PLAYERS FOR A RACE
 end
 
-function core_game.get_formspec(name)
+function core_game.ask_vehicle(name)
     local text = "Which car/vehicle do you want to use?"
 
     local formspec = {
@@ -56,12 +58,9 @@ minetest.register_chatcommand("change_position", {
 })
 
 minetest.register_on_joinplayer(function(player)
-	player:set_pos(core_game.position)
+	--player:set_pos(core_game.position)
 	minetest.log("action", "[RACING GAME] Player " .. player:get_player_name() .. " joined and was teleported to the lobby successfully.")
-	if core_game.player_count > 3 then
-		core_game.waiting_to_end(player)
-		return
-	end
+
 	core_game.start_game(player)
 end)
 
@@ -74,10 +73,19 @@ minetest.register_on_newplayer(function(player)
 	minetest.chat_send_all(player:get_player_name() .. " just joined! Welcome to the Racing Game!")
 end)
 
+local function reset_values(player)
+	core_game.player_count = core_game.player_count - 1
+	core_game.is_end[player] = nil
+	core_game.players_on_race[player] = nil
+
+	core_game.count[player] = nil
+	core_game.is_waiting_end[player] = nil
+	core_game.is_waiting[player] = nil
+end
+
 minetest.register_on_leaveplayer(function(player)
-	if core_game.game_started == true then
-		core_game.player_count = core_game.player_count - 1
-	end
+	-- Reset all values to prevent crashes
+	reset_values(player)
 end)
 
 function core_game.waiting_to_end(player)
@@ -137,10 +145,11 @@ local function count(player)
 			})
 			if core_game.count[player] == 50 then
 				for _,name in pairs(core_game.players_on_race) do
-					if core_game.is_end[name] == false then
-						minetest.chat_send_player(player:get_player_name(), "You lost the race for ending out of time.")
+					if not core_game.is_end[name] == true then
+						minetest.chat_send_player(name:get_player_name(), "You lost the race for ending out of time.")
 					end
 					core_game.player_lost(name)
+					minetest.chat_send_player(name:get_player_name(), "Race ended! Heading back to the lobby...")
 				end
 				return
 			end
@@ -149,6 +158,13 @@ local function count(player)
 end
 
 local function hud_321(player)
+	if core_game.game_started == true then
+		minetest.chat_send_player(player:get_player_name(), "There's a current race running. Please wait until it finishes.")
+		core_game.waiting_to_end(player)
+
+		reset_values(player)
+		return
+	end
 	local hud = player:hud_add({
 		hud_elem_type = "image",
 		position      = {x = 0.5, y = 0.5},
@@ -164,23 +180,69 @@ local function hud_321(player)
    minetest.after(7, function() player:hud_remove(hud) end)
 end
 
+function core_game.random_car(player, use_message)
+	local pname = player:get_player_name()
+	local random_value = math.random(1, 2)
+
+	if random_value == 1 then
+		if use_message == true then
+			minetest.chat_send_player(pname, "You will use CAR01 in the next race.")
+		end
+
+		local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:car_dark_grey", nil)
+		lib_mount.attach(obj:get_luaentity(), player, false, 0)
+	elseif random_value == 2 then
+		if use_message == true then
+			minetest.chat_send_player(pname, "You will use Hovercraft in the next race.")
+		end
+
+		local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:hover_blue", nil)
+		lib_mount.attach(obj:get_luaentity(), player, false, 0)
+	end
+end
+
+minetest.register_globalstep(function(dtime)
+	for _,name in pairs(core_game.players_on_race) do
+		if core_game.game_started == true and not run_once[name] == true then
+			local meta = name:get_meta()
+			local data = minetest.deserialize(meta:get_string("hovercraft_bought"))
+
+			run_once[name] = true
+
+			if not data then
+				local obj = minetest.add_entity(name:get_pos(), "vehicle_mash:car_dark_grey", nil)
+				lib_mount.attach(obj:get_luaentity(), name, false, 0)
+				return
+			else
+				core_game.random_car(name, true)
+				minetest.close_formspec(name:get_player_name(), "core_game:choose_car")
+			end
+		end
+	end
+end)
+
 minetest.register_on_player_receive_fields(function(player, formname, fields)
+	local pname = player:get_player_name()
     if formname ~= "core_game:choose_car" then
         return
     end
 
     if fields.use_hovercraft then
-        local pname = player:get_player_name()
         minetest.chat_send_player(pname, "You will use Hovercraft in the next race.")
 
 		local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:hover_blue", nil)
 		lib_mount.attach(obj:get_luaentity(), player, false, 0)
 	elseif fields.use_car then
-		local pname = player:get_player_name()
         minetest.chat_send_player(pname, "You will use CAR01 in the next race.")
 
 		local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:car_dark_grey", nil)
 		lib_mount.attach(obj:get_luaentity(), player, false, 0)
+	else -- Show formspec again if they don't click on any field
+		if core_game.game_started == false then
+			minetest.after(0.2, minetest.show_formspec, player:get_player_name(), formname, core_game.ask_vehicle(player))
+		else
+			core_game.random_car(player, true)
+		end
     end
 end)
 
@@ -188,6 +250,9 @@ local function start(player)
 	if core_game.game_started == true then
 		minetest.chat_send_player(player:get_player_name(), "There's a current race running. Please wait until it finishes.")
 		core_game.waiting_to_end(player)
+
+		-- Clear values in case something was stored
+		reset_values(player)
 		return
 	end
 	-- Start: car selection formspec
@@ -196,7 +261,7 @@ local function start(player)
 	local data = minetest.deserialize(meta:get_string("hovercraft_bought"))
 
 	if data and data.bought_already == true then
-		minetest.show_formspec(player:get_player_name(), "core_game:choose_car", core_game.get_formspec(player))
+		minetest.show_formspec(player:get_player_name(), "core_game:choose_car", core_game.ask_vehicle(player))
 	end
 	-- End: car selection formspec
 
@@ -208,7 +273,9 @@ local function start(player)
 	-- End: cleanup race count and ending booleans
 
 	-- Start: HUD/count stuff
-	hud_321(player)
+	minetest.after(7, function() -- Run after 7 seconds to ensure everyone has chosen their car
+		hud_321(player)
+	end)
 	-- End: HUD/count stuff
 
 	core_game.players_on_race[player] = player

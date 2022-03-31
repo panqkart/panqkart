@@ -1,6 +1,12 @@
 # This file contains settings of minetest_game that can be changed in
 # minetest.conf
 
+#     Minimum required players for a race
+minimum_required_players (Minimum required players to start a race) int 4
+
+#     Enable car shop for all players
+enable_car_shop (Enable car shop to upgrade/buy) bool true
+
 #    In creative mode players are able to dig all kind of blocks nearly
 #    instantly, and have access to unlimited resources.
 #    Some of the functionality is only available if this setting is present

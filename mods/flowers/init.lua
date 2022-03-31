@@ -14,7 +14,7 @@ local S = minetest.get_translator("flowers")
 
 -- Map Generation
 
-dofile(minetest.get_modpath("flowers") .. "/mapgen.lua")
+--dofile(minetest.get_modpath("flowers") .. "/mapgen.lua")
 
 
 --
@@ -52,7 +52,7 @@ local function add_simple_flower(name, desc, box, f_groups)
 		walkable = false,
 		buildable_to = true,
 		groups = f_groups,
-		--sounds = default.node_sound_leaves_defaults(),
+		sounds = default.node_sound_leaves_defaults(),
 		selection_box = {
 			type = "fixed",
 			fixed = box
@@ -125,12 +125,12 @@ function flowers.flower_spread(pos, node)
 	pos.y = pos.y + 1
 	-- Replace flora with dry shrub in desert sand and silver sand,
 	-- as this is the only way to generate them.
-	-- However, preserve grasses in sand dune biomes.
+	--[[ However, preserve grasses in sand dune biomes.
 	if minetest.get_item_group(under.name, "sand") == 1 and
 			under.name ~= "default:sand" then
 		minetest.set_node(pos, {name = "default:dry_shrub"})
 		return
-	end
+	end]]
 
 	if minetest.get_item_group(under.name, "soil") == 0 then
 		return
@@ -160,9 +160,9 @@ function flowers.flower_spread(pos, node)
 			light = minetest.get_node_light(soil_above)
 			if light and light >= 13 and
 					-- Only spread to same surface node
-					soil_name == under.name and
+					soil_name == under.name then --and
 					-- Desert sand is in the soil group
-					soil_name ~= "default:desert_sand" then
+					--soil_name ~= "default:desert_sand" then
 				minetest.set_node(soil_above, {name = node.name})
 			end
 		end
@@ -195,7 +195,7 @@ minetest.register_node("flowers:mushroom_red", {
 	walkable = false,
 	buildable_to = true,
 	groups = {mushroom = 1, snappy = 3, attached_node = 1, flammable = 1},
-	--sounds = default.node_sound_leaves_defaults(),
+	sounds = default.node_sound_leaves_defaults(),
 	on_use = minetest.item_eat(-5),
 	selection_box = {
 		type = "fixed",
@@ -214,7 +214,7 @@ minetest.register_node("flowers:mushroom_brown", {
 	walkable = false,
 	buildable_to = true,
 	groups = {mushroom = 1, food_mushroom = 1, snappy = 3, attached_node = 1, flammable = 1},
-	--sounds = default.node_sound_leaves_defaults(),
+	sounds = default.node_sound_leaves_defaults(),
 	on_use = minetest.item_eat(1),
 	selection_box = {
 		type = "fixed",
@@ -285,7 +285,7 @@ local waterlily_def = {
 	buildable_to = true,
 	floodable = true,
 	groups = {snappy = 3, flower = 1, flammable = 1},
-	--sounds = default.node_sound_leaves_defaults(),
+	sounds = default.node_sound_leaves_defaults(),
 	node_placement_prediction = "",
 	node_box = {
 		type = "fixed",
