@@ -17,6 +17,8 @@ core_game.is_waiting = {}
 core_game.player_count = 0
 
 local run_once = {}
+local use_hovercraft = {}
+local use_car01 = {}
 
 if tonumber(minetest.settings:get("minimum_required_players")) == nil then
 	minetest.settings:set("minimum_required_players", 4) -- SET MINIMUM REQUIRED PLAYERS FOR A RACE
@@ -74,7 +76,9 @@ minetest.register_on_newplayer(function(player)
 end)
 
 local function reset_values(player)
-	core_game.player_count = core_game.player_count - 1
+	if core_game.players_on_race[player] == player then
+		core_game.player_count = core_game.player_count - 1
+	end
 	core_game.is_end[player] = nil
 	core_game.players_on_race[player] = nil
 
@@ -150,6 +154,13 @@ local function count(player)
 					end
 					core_game.player_lost(name)
 					minetest.chat_send_player(name:get_player_name(), "Race ended! Heading back to the lobby...")
+
+					hud_fs.close_hud(player, "core_game:pending_race")
+					for _,player_name in ipairs(minetest.get_connected_players()) do
+						core_game.is_waiting_end[player_name] = false
+						hud_fs.close_hud(player_name, "core_game:pending_race")
+					end
+					core_game.players_on_race = {}
 				end
 				return
 			end
@@ -203,6 +214,7 @@ end
 
 minetest.register_globalstep(function(dtime)
 	for _,name in pairs(core_game.players_on_race) do
+		if use_hovercraft[name] == true or use_car01[name] == true then return end
 		if core_game.game_started == true and not run_once[name] == true then
 			local meta = name:get_meta()
 			local data = minetest.deserialize(meta:get_string("hovercraft_bought"))
@@ -218,6 +230,7 @@ minetest.register_globalstep(function(dtime)
 				minetest.close_formspec(name:get_player_name(), "core_game:choose_car")
 			end
 		end
+		hud_fs.close_hud(name:get_player_name(), "core_game:pending_race")
 	end
 end)
 
@@ -232,11 +245,15 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 		local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:hover_blue", nil)
 		lib_mount.attach(obj:get_luaentity(), player, false, 0)
+
+		use_hovercraft[player] = true
 	elseif fields.use_car then
         minetest.chat_send_player(pname, "You will use CAR01 in the next race.")
 
 		local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:car_dark_grey", nil)
 		lib_mount.attach(obj:get_luaentity(), player, false, 0)
+
+		use_car01[player] = true
 	else -- Show formspec again if they don't click on any field
 		if core_game.game_started == false then
 			minetest.after(0.2, minetest.show_formspec, player:get_player_name(), formname, core_game.ask_vehicle(player))
@@ -282,6 +299,10 @@ local function start(player)
 end
 
 function core_game.start_game(player)
+	-- Start: reset values in case something was stored
+	reset_values(player)
+	-- End: reset values in case something was stored
+
 	-- Start: player count checks
 	if not core_game.game_started == true then
 		core_game.player_count = core_game.player_count + 1
