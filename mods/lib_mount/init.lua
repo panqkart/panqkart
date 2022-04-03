@@ -247,8 +247,10 @@ local aux_timer = 0
 local is_sneaking = {}
 
 function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_height, can_fly, can_go_down, can_go_up, enable_crash, moveresult)
-	if entity.driver and core_game.is_waiting[entity.driver] == true then return end
 	if core_game.game_started == false then return end
+
+	if core_game.game_started == true and not core_game.players_on_race[entity.driver] == entity.driver
+		or core_game.players_on_race[entity.driver] == nil then return end
 	-- After driver getting killed, entity.driver is not nil when it should be.
 	-- When attaching the driver, entity.driver will be inside the lib_mount.passengers
 	-- table. With this check, we can verify driver is "not" there.
@@ -616,6 +618,12 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	end
 	if node_is(p) == "maptools_black" or node_is(p) == "maptools_white" and entity.driver then
 		if core_game.is_end[entity.driver] == true then return end
+
+		if not core_game.players_on_race[entity.driver] == entity.driver
+		or core_game.players_on_race[entity.driver] == nil then
+			-- Do not allow people who are NOT on a race to end
+			return
+		end
 		if not entity.driver then return end
 		--[[for _,player in ipairs(minetest.get_connected_players()) do
 			local name = player:get_player_name()
