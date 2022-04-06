@@ -171,6 +171,14 @@ function vehicle_mash.register_vehicle(name, def)
 			if def.enable_crash == nil then
 				def.enable_crash = true
 			end
+			if moveresult.collides then
+				for index, _ in pairs(moveresult.collisions) do
+					if moveresult.collisions[index].type == "object" then
+						self.object:move_to(vector.add(self.object:get_pos(), vector.multiply(vector.direction(moveresult.collisions[index].old_velocity,
+							moveresult.collisions[index].new_velocity), 1.80))) -- Credits to appgurueu for helping!
+					end
+				end
+			end
 			drive(self, dtime, false, nil, nil, 0, def.can_fly, def.can_go_down, def.can_go_up, def.enable_crash, moveresult)
 		end,
 		on_death = function(self, killer)

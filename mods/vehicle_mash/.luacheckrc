@@ -11,5 +11,5 @@ read_globals = {
     table = {fields = {"copy", "getn"}},
 
     "minetest", "lib_mount",
-    "core",
+    "core", "vector",
 }

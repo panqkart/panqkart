@@ -21,7 +21,7 @@ local use_hovercraft = {}
 local use_car01 = {}
 
 local pregame_started = false
-local pregame_count = 10
+local pregame_count = 0
 
 if tonumber(minetest.settings:get("minimum_required_players")) == nil then
 	minetest.settings:set("minimum_required_players", 4) -- SET MINIMUM REQUIRED PLAYERS FOR A RACE
@@ -190,10 +190,26 @@ local function hud_321(player)
 		alignment     = {x = 0, y = 0},
 		scale         = {x = 1, y = 1},
    })
-   minetest.after(3, function() player:hud_change(hud, "text", "core_game_2.png")
-	   minetest.after(1, function() player:hud_change(hud, "text", "core_game_1.png") end) -- Change text to `1` AFTER the text is `2`
+	for _,name in pairs(core_game.players_on_race) do
+		minetest.sound_play("core_game.race_start", {to_player = name:get_player_name(), gain = 1.0})
+	end
+   minetest.after(1, function() -- 2
+		player:hud_change(hud, "text", "core_game_2.png")
+		for _,name in pairs(core_game.players_on_race) do
+			minetest.sound_play("core_game.race_start", {to_player = name:get_player_name(), gain = 1.0})
+		end
+	   minetest.after(1, function() player:hud_change(hud, "text", "core_game_1.png")
+		for _,name in pairs(core_game.players_on_race) do
+			minetest.sound_play("core_game.race_start", {
+				to_player = name:get_player_name(),
+				gain = 1.0
+			})
+		end end) -- Change text to `1` AFTER the text is `2`
    end)
-   minetest.after(5, function() player:hud_change(hud, "text", "core_game_go.png") count(player) core_game.game_started = true end)
+   -- 5
+   minetest.after(3, function() player:hud_change(hud, "text", "core_game_go.png") for _,name in pairs(core_game.players_on_race) do minetest.sound_play("core_game.race_go", {to_player = name:get_player_name(), gain = 1.0})
+   end count(player) core_game.game_started = true end)
+   -- 7
    minetest.after(7, function() player:hud_remove(hud) end)
 end
 
@@ -238,7 +254,6 @@ minetest.register_globalstep(function(dtime)
 		end
 		hud_fs.close_hud(name:get_player_name(), "core_game:pending_race")
 	end
-	minetest.chat_send_all(core_game.player_count)
 end)
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
@@ -296,13 +311,6 @@ local function start(player)
 	lib_mount.win_count = 1
 	-- End: cleanup race count and ending booleans
 
-	--[[for i=1,10,-1 do
-		minetest.after(i, function()
-			pregame_count = i
-			minetest.chat_send_all(pregame_count)
-		end)
-	end--]]
-
 	minetest.chat_send_player(player:get_player_name(), "The race will start in a few seconds. Please wait...")
 	core_game.players_on_race[player] = player
 
@@ -341,6 +349,13 @@ function core_game.start_game(player)
 		end
 	end
 	-- End: player count checks
+
+	for i=10,1,-1 do
+	minetest.after(i, function()
+		pregame_count = i
+		minetest.chat_send_all(pregame_count)
+		end)
+	end
 
 	-- Start: start race for non-waiting players, or recently joined ones
 	start(player)
