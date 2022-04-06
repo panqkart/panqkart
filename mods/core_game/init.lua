@@ -181,7 +181,6 @@ local function hud_321(player)
 		core_game.waiting_to_end(player)
 		return
 	end
-	pregame_started = true
 	local hud = player:hud_add({
 		hud_elem_type = "image",
 		position      = {x = 0.5, y = 0.5},
@@ -190,6 +189,7 @@ local function hud_321(player)
 		alignment     = {x = 0, y = 0},
 		scale         = {x = 1, y = 1},
    })
+   minetest.after(0.1, function() pregame_started = true end) -- Make sure all players will be able to make it to the race
 	for _,name in pairs(core_game.players_on_race) do
 		minetest.sound_play("core_game.race_start", {to_player = name:get_player_name(), gain = 1.0})
 	end
@@ -244,6 +244,7 @@ minetest.register_globalstep(function(dtime)
 			run_once[name] = true
 
 			if not data then
+				minetest.chat_send_player(name:get_player_name(), "You will use CAR01 in the next race.")
 				local obj = minetest.add_entity(name:get_pos(), "vehicle_mash:car_dark_grey", nil)
 				lib_mount.attach(obj:get_luaentity(), name, false, 0)
 				return
@@ -285,7 +286,47 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
     end
 end)
 
+local pregame_doge = 20
+local already_ran = false
+local pregame_count_ended = false
+
+local function countDown(player)
+    pregame_doge = pregame_doge - 1
+	for _,name in pairs(core_game.players_on_race) do
+		if pregame_doge == 0 then
+			hud_fs.close_hud(name, "core_game:pregame_count")
+			pregame_count_ended = true
+		elseif pregame_doge == 3 then
+			hud_321(name)
+			pregame_count_ended = true
+		end
+	end
+    if pregame_doge == 0 then
+        hud_fs.close_hud(player, "core_game:pregame_count")
+    else
+		--if pregame_doge == 3 then
+			--hud_321(player)
+		--end
+		hud_fs.show_hud(player, "core_game:pregame_count", {
+			{type = "size", w = 40, h = 0.5},
+			{type = "position", x = 0.9, y = 0.9},
+			{
+				type = "label", x = 0, y = 0,
+				label = "The race will start in: " .. pregame_doge
+			}
+		})
+       	minetest.after(1, function() countDown(player) end)
+    end
+end
+
+local function startCountdown(player)
+	already_ran = true
+    --pregame_doge = 30
+    minetest.after(1, function() countDown(player) end)
+end
+
 local function start(player)
+	core_game.players_on_race[player] = player
 	if core_game.game_started == true or pregame_started == true then
 		minetest.chat_send_player(player:get_player_name(), "There's a current race running. Please wait until it finishes.")
 
@@ -312,12 +353,29 @@ local function start(player)
 	-- End: cleanup race count and ending booleans
 
 	minetest.chat_send_player(player:get_player_name(), "The race will start in a few seconds. Please wait...")
-	core_game.players_on_race[player] = player
+
+	if not already_ran == true then
+		startCountdown(player)
+	else
+		for i=1,30,1 do
+		minetest.after(i, function()
+			if pregame_count_ended == true then hud_fs.close_hud(player, "core_game:pregame_count") return end
+		hud_fs.show_hud(player, "core_game:pregame_count", {
+			{type = "size", w = 40, h = 0.5},
+			{type = "position", x = 0.9, y = 0.9},
+			{
+				type = "label", x = 0, y = 0,
+				label = "The race will start in: " .. pregame_doge
+			}
+		})
+	end)
+	end
+	end
 
 	-- Start: HUD/count stuff
-	minetest.after(7, function() -- Run after 7 seconds to ensure everyone has chosen their car
-		hud_321(player)
-	end)
+	--minetest.after(7, function() -- Run after 7 seconds to ensure everyone has chosen their car
+		--hud_321(player)
+	--end)
 	-- End: HUD/count stuff
 end
 
@@ -350,12 +408,12 @@ function core_game.start_game(player)
 	end
 	-- End: player count checks
 
-	for i=10,1,-1 do
+	--[[for i=10,1,-1 do
 	minetest.after(i, function()
 		pregame_count = i
 		minetest.chat_send_all(pregame_count)
 		end)
-	end
+	end--]]
 
 	-- Start: start race for non-waiting players, or recently joined ones
 	start(player)
