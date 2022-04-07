@@ -251,6 +251,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 
 	if core_game.game_started == true and not core_game.players_on_race[entity.driver] == entity.driver
 		or core_game.players_on_race[entity.driver] == nil then return end
+
 	-- After driver getting killed, entity.driver is not nil when it should be.
 	-- When attaching the driver, entity.driver will be inside the lib_mount.passengers
 	-- table. With this check, we can verify driver is "not" there.
@@ -310,7 +311,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	local velo = entity.object:get_velocity()
 	entity.v = get_v(velo) * get_sign(entity.v)
 
-	-- Only play the engine sound on the road master car
+	--[[ Only play the engine sound on the road master car
 	if entity.name == "vehicle_mash:car_road_master" then
         if not entity.timer1 then entity.timer1 = 0 end
         entity.timer1 = entity.timer1 + dtime
@@ -341,7 +342,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
                 gain = gain,
             }, true)
         end
-    end
+    end--]]
 
 	-- process controls
 	if entity.driver then
@@ -367,7 +368,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 			end
 		end
 		local pname = entity.driver:get_player_name()
-		if ctrl.sneak then -- Code by rubenwardy, thanks!
+		if ctrl.sneak then -- Start: Code by rubenwardy, thanks!
 			if not is_sneaking[pname] then
 				minetest.sound_play("lib_mount.horn", {
 					max_hear_distance = 48,
@@ -379,7 +380,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 			is_sneaking[pname] = true
 		else
 			is_sneaking[pname] = false
-		end
+		end -- End: Code by rubenwardy
 		if minetest.settings:get_bool("lib_mount.use_mouselook") == true or minetest.settings:get_bool("lib_mount.use_mouselook") == nil then
 			if entity.mouselook then
 				if ctrl.left then
