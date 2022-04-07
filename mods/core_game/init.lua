@@ -285,6 +285,11 @@ end
 --------------------------
 -- Core game functions --
 --------------------------
+
+--- @brief Ask the user which vehicle they wanna use.
+--- This only applies when they have bought the Hovercraft.
+--- @param name the player variable to use (in this case not being used)
+--- @returns void
 function core_game.ask_vehicle(name)
     local text = "Which car/vehicle do you want to use?"
 
@@ -321,6 +326,10 @@ minetest.register_on_leaveplayer(function(player)
 	reset_values(player)
 end)
 
+--- @brief Show a HUD to the specified player
+--- that there's a current race running.
+--- @param player the player to show the HUD to
+--- @returns void
 function core_game.waiting_to_end(player)
 	hud_fs.show_hud(player, "core_game:pending_race", {
 		{type = "size", w = 40, h = 0.5},
@@ -333,6 +342,12 @@ function core_game.waiting_to_end(player)
 	core_game.is_waiting_end[player] = true
 end
 
+--- @brief Utility function to reset the necessary
+--- variables/values when a races end. It will also
+--- teleport the user to the lobby after 3.5 seconds.
+--- NOTE: this is and should be used only when the user's the last player to win.
+--- @param player the player that will be sent to the lobby
+--- @returns void
 function core_game.player_lost(player)
 	local attached_to = player:get_attach()
 	if attached_to then
@@ -351,6 +366,12 @@ function core_game.player_lost(player)
 	pregame_started = false
 end
 
+--- @brief Select a random car between CAR01 and Hovercraft
+--- for the specified user. This is useful when the user didn't select
+--- any car while the formspec was up and the game started.
+--- @param player the player that will be attached to the random vehicle
+--- @param use_message whether to notify the player or not
+--- @returns void
 function core_game.random_car(player, use_message)
 	local pname = player:get_player_name()
 	local random_value = math.random(1, 2)
@@ -424,6 +445,11 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
     end
 end)
 
+--- @brief Run start game function and ensure there are
+--- the minimum required players to join a race.
+--- Similar to the `start` local function above.
+--- @param player the player that will be used to start the race
+--- @returns void
 function core_game.start_game(player)
 	-- Start: reset values in case something was stored
 	reset_values(player)
