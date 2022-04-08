@@ -2,7 +2,7 @@ car_shop = { }
 car_shop.max_speed_forward = vehicle_mash.car01_def.max_speed_forward -- Library Mount will access this, so let's
 																	  -- use the normal speed. When updating, this will change.
 car_shop.max_speed_reverse = vehicle_mash.car01_def.max_speed_reverse -- Same here as above.
-car_shop.hovercraft = {}
+car_shop.hovercraft = { }
 
 car_shop.hovercraft.max_speed_forward = vehicle_mash.hover_def.max_speed_forward
 car_shop.hovercraft.max_speed_reverse = vehicle_mash.hover_def.max_speed_reverse
@@ -14,7 +14,14 @@ elseif minetest.settings:get_bool("enable_car_shop") == false then
 	return
 end
 
--- Upgrading your car's speed (CAR01)
+----------------------
+-- Local functions --
+----------------------
+
+--- @brief Update CAR01's speed for the specified player
+--- @param player the player that will receive the update
+--- @param fields the provided formspec fields
+--- @returns void
 local function update_speed(player, fields)
 	local already_upgraded_reverse = false
 	local already_upgraded_forward = false
@@ -70,9 +77,11 @@ local function update_speed(player, fields)
 	--minetest.chat_send_all(data.forward_speed)
 end
 
------------------------------
--- Buy Hovercraft vehicle --
------------------------------
+--- @brief Buy the Hovercraft vehicle for the specified player.
+--- The player requires 5 gold coins for that. To obtain coins, you need to win a race.
+--- @param player the player that will receive the Hovercraft
+--- @param fields the provided formspec fields
+--- @returns void
 local function buy_hovercraft(player, fields)
 	local already_bought = false
 	local inv = player:get_inventory()
@@ -105,6 +114,10 @@ local function buy_hovercraft(player, fields)
 	--minetest.chat_send_all(data.forward_speed)
 end
 
+--- @brief Update Hovercraft speed for the specified player
+--- @param player the player that will receive the update
+--- @param fields the provided formspec fields
+--- @returns void
 local function update_hover(player, fields)
 	local already_upgraded_reverse = false
 	local already_upgraded_forward = false
