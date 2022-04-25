@@ -84,7 +84,7 @@ vehicle_mash.car01_def = {
 	max_speed_forward = 10,
 	max_speed_reverse = 7,
 	accel = 2,
-	braking = 4,
+	braking = 3,
 	turn_speed = 4,
 	stepheight = 0.9,
 	-- model specific stuff
@@ -244,9 +244,9 @@ vehicle_mash.hover_def = {
 	terrain_type = 3,
 	max_speed_forward = 12.5,
 	max_speed_reverse = 5,
-	accel = 4,
-	braking = 1,
-	turn_speed = 4,
+	accel = 3,
+	braking = 2,
+	turn_speed = 3,
 	stepheight = 0.9,
 	-- model specific stuff
 	visual = "mesh",

@@ -639,13 +639,20 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		-- Maximum 12 players per race, so let's do this twelve times
 		if lib_mount.win_count == 1 then
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 1st place! Congratulations!")
+			core_game.players_that_won[0] = entity.driver
 			lib_mount.win_count = lib_mount.win_count + 1
 			if core_game.player_count == 1 then
+				core_game.players_that_won[0] = entity.driver
+
 				--core_game.game_started = false
 				hud_fs.close_hud(entity.driver, "core_game:pending_race")
 				for _,player in ipairs(minetest.get_connected_players()) do
 					core_game.is_waiting_end[player] = false
 					hud_fs.close_hud(player, "core_game:pending_race")
+				end
+
+				for _,name in pairs(core_game.players_on_race) do
+					minetest.show_formspec(name:get_player_name(), "core_game:scoreboard", core_game.show_scoreboard(name))
 				end
 
 				minetest.after(0.1, function() -- Let's prevent small bugs :')
@@ -661,6 +668,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 			end
 		elseif lib_mount.win_count == 2 then
 			if core_game.player_count == 2 then
+				core_game.players_that_won[1] = entity.driver
 				minetest.chat_send_player(entity.driver:get_player_name(), "You are in the last place! You lost.")
 
 				--core_game.game_started = false
@@ -668,6 +676,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				for _,player in ipairs(minetest.get_connected_players()) do
 					core_game.is_waiting_end[player] = false
 					hud_fs.close_hud(player, "core_game:pending_race")
+				end
+
+				for _,name in pairs(core_game.players_on_race) do
+					minetest.show_formspec(name:get_player_name(), "core_game:scoreboard", core_game.show_scoreboard(name))
 				end
 
 				minetest.after(0.1, function() -- Let's prevent small bugs :')
@@ -682,9 +694,11 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				return
 			end
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 2nd place!")
+			core_game.players_that_won[1] = entity.driver
 			lib_mount.win_count = lib_mount.win_count + 1
 		elseif lib_mount.win_count == 3 then
 			if core_game.player_count == 3 then
+				core_game.players_that_won[2] = entity.driver
 				minetest.chat_send_player(entity.driver:get_player_name(), "You are in the last place! You lost.")
 
 				--core_game.game_started = false
@@ -692,6 +706,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				for _,player in ipairs(minetest.get_connected_players()) do
 					core_game.is_waiting_end[player] = false
 					hud_fs.close_hud(player, "core_game:pending_race")
+				end
+
+				for _,name in pairs(core_game.players_on_race) do
+					minetest.show_formspec(name:get_player_name(), "core_game:scoreboard", core_game.show_scoreboard(name))
 				end
 
 				minetest.after(0.1, function() -- Let's prevent small bugs :')
@@ -706,9 +724,11 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				return
 			end
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 3rd place!")
+			core_game.players_that_won[2] = entity.driver
 			lib_mount.win_count = lib_mount.win_count + 1
 		elseif lib_mount.win_count == 4 then
 			if core_game.player_count == 4 then
+				core_game.players_that_won[3] = entity.driver
 				minetest.chat_send_player(entity.driver:get_player_name(), "You are in the last place! You lost.")
 
 				--core_game.game_started = false
@@ -716,6 +736,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				for _,player in ipairs(minetest.get_connected_players()) do
 					core_game.is_waiting_end[player] = false
 					hud_fs.close_hud(player, "core_game:pending_race")
+				end
+
+				for _,name in pairs(core_game.players_on_race) do
+					minetest.show_formspec(name:get_player_name(), "core_game:scoreboard", core_game.show_scoreboard(name))
 				end
 
 				minetest.after(0.1, function() -- Let's prevent small bugs :')
@@ -730,9 +754,11 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				return
 			end
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 4rd place!")
+			core_game.players_that_won[3] = entity.driver
 			lib_mount.win_count = lib_mount.win_count + 1
 		elseif lib_mount.win_count == 5 then
 			if core_game.player_count == 5 then
+				core_game.players_that_won[4] = entity.driver
 				minetest.chat_send_player(entity.driver:get_player_name(), "You are in the last place! You lost.")
 
 				--core_game.game_started = false
@@ -740,6 +766,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				for _,player in ipairs(minetest.get_connected_players()) do
 					core_game.is_waiting_end[player] = false
 					hud_fs.close_hud(player, "core_game:pending_race")
+				end
+
+				for _,name in pairs(core_game.players_on_race) do
+					minetest.show_formspec(name:get_player_name(), "core_game:scoreboard", core_game.show_scoreboard(name))
 				end
 
 				minetest.after(0.1, function() -- Let's prevent small bugs :')
@@ -754,9 +784,11 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				return
 			end
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 5th place!")
+			core_game.players_that_won[4] = entity.driver
 			lib_mount.win_count = lib_mount.win_count + 1
 		elseif lib_mount.win_count == 6 then
 			if core_game.player_count == 6 then
+				core_game.players_that_won[5] = entity.driver
 				minetest.chat_send_player(entity.driver:get_player_name(), "You are in the last place! You lost.")
 
 				--core_game.game_started = false
@@ -764,6 +796,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				for _,player in ipairs(minetest.get_connected_players()) do
 					core_game.is_waiting_end[player] = false
 					hud_fs.close_hud(player, "core_game:pending_race")
+				end
+
+				for _,name in pairs(core_game.players_on_race) do
+					minetest.show_formspec(name:get_player_name(), "core_game:scoreboard", core_game.show_scoreboard(name))
 				end
 
 				minetest.after(0.1, function() -- Let's prevent small bugs :')
@@ -778,9 +814,11 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				return
 			end
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 6th place!")
+			core_game.players_that_won[5] = entity.driver
 			lib_mount.win_count = lib_mount.win_count + 1
 		elseif lib_mount.win_count == 7 then
 			if core_game.player_count == 7 then
+				core_game.players_that_won[6] = entity.driver
 				minetest.chat_send_player(entity.driver:get_player_name(), "You are in the last place! You lost.")
 
 				--core_game.game_started = false
@@ -788,6 +826,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				for _,player in ipairs(minetest.get_connected_players()) do
 					core_game.is_waiting_end[player] = false
 					hud_fs.close_hud(player, "core_game:pending_race")
+				end
+
+				for _,name in pairs(core_game.players_on_race) do
+					minetest.show_formspec(name:get_player_name(), "core_game:scoreboard", core_game.show_scoreboard(name))
 				end
 
 				minetest.after(0.1, function() -- Let's prevent small bugs :')
@@ -802,9 +844,11 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				return
 			end
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 7th place!")
+			core_game.players_that_won[6] = entity.driver
 			lib_mount.win_count = lib_mount.win_count + 1
 		elseif lib_mount.win_count == 8 then
 			if core_game.player_count == 8 then
+				core_game.players_that_won[7] = entity.driver
 				minetest.chat_send_player(entity.driver:get_player_name(), "You are in the last place! You lost.")
 
 				--core_game.game_started = false
@@ -812,6 +856,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				for _,player in ipairs(minetest.get_connected_players()) do
 					core_game.is_waiting_end[player] = false
 					hud_fs.close_hud(player, "core_game:pending_race")
+				end
+
+				for _,name in pairs(core_game.players_on_race) do
+					minetest.show_formspec(name:get_player_name(), "core_game:scoreboard", core_game.show_scoreboard(name))
 				end
 
 				minetest.after(0.1, function() -- Let's prevent small bugs :')
@@ -826,9 +874,11 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				return
 			end
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 8th place!")
+			core_game.players_that_won[7] = entity.driver
 			lib_mount.win_count = lib_mount.win_count + 1
 		elseif lib_mount.win_count == 9 then
 			if core_game.player_count == 9 then
+				core_game.players_that_won[8] = entity.driver
 				minetest.chat_send_player(entity.driver:get_player_name(), "You are in the last place! You lost.")
 
 				--core_game.game_started = false
@@ -836,6 +886,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				for _,player in ipairs(minetest.get_connected_players()) do
 					core_game.is_waiting_end[player] = false
 					hud_fs.close_hud(player, "core_game:pending_race")
+				end
+
+				for _,name in pairs(core_game.players_on_race) do
+					minetest.show_formspec(name:get_player_name(), "core_game:scoreboard", core_game.show_scoreboard(name))
 				end
 
 				minetest.after(0.1, function() -- Let's prevent small bugs :')
@@ -850,9 +904,11 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				return
 			end
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 9th place!")
+			core_game.players_that_won[8] = entity.driver
 			lib_mount.win_count = lib_mount.win_count + 1
 		elseif lib_mount.win_count == 10 then
 			if core_game.player_count == 10 then
+				core_game.players_that_won[9] = entity.driver
 				minetest.chat_send_player(entity.driver:get_player_name(), "You are in the last place! You lost.")
 
 				--core_game.game_started = false
@@ -860,6 +916,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				for _,player in ipairs(minetest.get_connected_players()) do
 					core_game.is_waiting_end[player] = false
 					hud_fs.close_hud(player, "core_game:pending_race")
+				end
+
+				for _,name in pairs(core_game.players_on_race) do
+					minetest.show_formspec(name:get_player_name(), "core_game:scoreboard", core_game.show_scoreboard(name))
 				end
 
 				minetest.after(0.1, function() -- Let's prevent small bugs :')
@@ -874,9 +934,11 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				return
 			end
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 10th place!")
+			core_game.players_that_won[9] = entity.driver
 			lib_mount.win_count = lib_mount.win_count + 1
 		elseif lib_mount.win_count == 11 then
 			if core_game.player_count == 11 then
+				core_game.players_that_won[10] = entity.driver
 				minetest.chat_send_player(entity.driver:get_player_name(), "You are in the last place! You lost.")
 
 				--core_game.game_started = false
@@ -884,6 +946,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				for _,player in ipairs(minetest.get_connected_players()) do
 					core_game.is_waiting_end[player] = false
 					hud_fs.close_hud(player, "core_game:pending_race")
+				end
+
+				for _,name in pairs(core_game.players_on_race) do
+					minetest.show_formspec(name:get_player_name(), "core_game:scoreboard", core_game.show_scoreboard(name))
 				end
 
 				minetest.after(0.1, function() -- Let's prevent small bugs :')
@@ -898,15 +964,21 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				return
 			end
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 11th place!")
+			core_game.players_that_won[10] = entity.driver
 			lib_mount.win_count = lib_mount.win_count + 1
 		elseif lib_mount.win_count == 12 then -- Here races end. Run end race code
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in the last place! You lost.")
+			core_game.players_that_won[11] = entity.driver
 
 			--core_game.game_started = false
 			hud_fs.close_hud(entity.driver, "core_game:pending_race")
 			for _,player in ipairs(minetest.get_connected_players()) do
 				core_game.is_waiting_end[player] = false
 				hud_fs.close_hud(player, "core_game:pending_race")
+			end
+
+			for _,name in pairs(core_game.players_on_race) do
+				minetest.show_formspec(name:get_player_name(), "core_game:scoreboard", core_game.show_scoreboard(name))
 			end
 
 			minetest.after(0.1, function() -- Let's prevent small bugs :')

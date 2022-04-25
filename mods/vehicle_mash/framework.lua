@@ -59,6 +59,7 @@ function vehicle_mash.register_vehicle(name, def)
 			if not clicker or not clicker:is_player() then
 				return
 			end
+			if core_game.game_started == true or core_game.pregame_started == true then return end
 			-- if there is already a driver
 			if self.driver then
 				-- if clicker is driver detach passengers and driver
@@ -153,6 +154,7 @@ function vehicle_mash.register_vehicle(name, def)
 			return core.serialize(tmp)
 		end,
 		on_punch = function(self, puncher, time_from_last_punch, tool_capabilities, dir, damage)
+			if core_game.game_started == true then return end -- Do not let the driver remove the car once the game started
 			if not puncher or not puncher:is_player() or self.removed or self.driver then
 				return
 			end
