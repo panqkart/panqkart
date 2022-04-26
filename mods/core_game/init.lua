@@ -148,6 +148,7 @@ end
 local function count(player)
 	for i = 1,50, 1
 	do
+		if core_game.game_started == false then do break end end
 		minetest.after(i, function()
 			if core_game.game_started == false then
 				hud_fs.close_hud(player, "core_game:race_count")
@@ -165,9 +166,12 @@ local function count(player)
 				})
 				if core_game.game_started == false then
 					hud_fs.close_hud(player, "core_game:race_count")
+					return
 				end
 				return
 			end
+
+			minetest.chat_send_all(core_game.player_count)
 
 			core_game.count[player] = i
 			hud_fs.show_hud(player, "core_game:race_count", {
@@ -304,6 +308,7 @@ end
 --- @param player the player to be added into the race
 --- @returns void
 local function start(player)
+	core_game.players_on_race = {}
 	core_game.players_on_race[player] = player
 	if core_game.game_started == true or core_game.pregame_started == true then
 		minetest.chat_send_player(player:get_player_name(), "There's a current race running. Please wait until it finishes.")
@@ -327,6 +332,7 @@ local function start(player)
 	core_game.is_end = {}
 	core_game.count = {}
 	core_game.is_waiting = {}
+	core_game.players_that_won = {}
 	lib_mount.win_count = 1
 	-- End: cleanup race count and ending booleans
 
@@ -336,7 +342,7 @@ local function start(player)
 	if not already_ran == true then
 		startCountdown(player)
 	else
-		for i=1,30,1 do
+		for i=1,pregame_count,1 do
 		minetest.after(i, function()
 			if pregame_count_ended == true then hud_fs.close_hud(player, "core_game:pregame_count") return end
 		hud_fs.show_hud(player, "core_game:pregame_count", {
@@ -602,6 +608,7 @@ function core_game.player_lost(player)
 	end)
 	core_game.is_end[player] = true
 	core_game.game_started = false
+	core_game.player_count = 0
 
 	core_game.pregame_started = false
 	ran_once[player] = nil
