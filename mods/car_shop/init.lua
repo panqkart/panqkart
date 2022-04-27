@@ -233,7 +233,7 @@ sfinv.register_page("car_shop:upgrade_car", {
 			reverse_speed = vehicle_mash.car01_def.max_speed_reverse
 		end
 
-		-- Hover speed
+		-- Hovercraft
 		local hover_forward, hover_reverse
 		if hover_speed then
 			hover_forward = hover_speed.forward_speed
@@ -267,40 +267,40 @@ sfinv.register_page("car_shop:upgrade_car", {
 			--and not hover_bought.bought_already == true then
 			formspec[#formspec + 1] = ",Silver coins needed: 10 for speed and 5 gold for Hovercraft,"
 			formspec[#formspec + 1] = "Ready to upgrade your CAR01's speed and buy Hovercraft]"
-			formspec[#formspec + 1] = "button[0.15,3.3;3.50,1;update_speed;    Upgrade speed (CAR01)]"
-			formspec[#formspec + 1] = "button[3.50,3.3;3.60,1;buy_hovercraft;    Buy Hovercraft vehicle]"
-			formspec[#formspec + 1] = "image[0.15,3.43;0.65,0.65;inv_car_red.png]" -- CAR01 red
-			formspec[#formspec + 1] = "image[0.40,3.33;0.5,0.5;car_shop_arrow_update.png]" -- Arrow update
-			formspec[#formspec + 1] = "image[3.50,3.43;0.63,0.63;hovercraft_blue_inv.png]" -- Blue Hovercraft
+			formspec[#formspec + 1] = "button[0.15,3.3;3.50,1;update_speed;Upgrade speed (CAR01)]"
+			formspec[#formspec + 1] = "button[3.50,3.3;3.60,1;buy_hovercraft;Buy Hovercraft vehicle]"
+			--formspec[#formspec + 1] = "image[0.15,3.43;0.65,0.65;inv_car_red.png]" -- CAR01 red
+			--formspec[#formspec + 1] = "image[0.40,3.33;0.5,0.5;car_shop_arrow_update.png]" -- Arrow update
+			--formspec[#formspec + 1] = "image[3.50,3.43;0.63,0.63;hovercraft_blue_inv.png]" -- Blue Hovercraft
 		-- No updates for CAR01, with Hovercraft
 		elseif not data and hover_bought and hover_bought.bought_already == true then --data and not data.forward_speed == 16 and not data.reverse_speed == 13
 			--and hover_bought.bought_already == true then
 				formspec[#formspec + 1] = ",Silver coins needed: 10 for CAR01 and 10 for Hovercraft,"
 				formspec[#formspec + 1] = "Ready to upgrade your vehicles' speed]"
-				formspec[#formspec + 1] = "button[0.15,3.3;3.50,1;update_speed;    Upgrade speed (CAR01)]"
-				formspec[#formspec + 1] = "image[0.15,3.43;0.65,0.65;inv_car_red.png]" -- CAR01 red
-				formspec[#formspec + 1] = "image[0.40,3.33;0.5,0.5;car_shop_arrow_update.png]" -- Arrow update
+				formspec[#formspec + 1] = "button[0.15,3.3;3.50,1;update_speed;Upgrade speed (CAR01)]"
+				--formspec[#formspec + 1] = "image[0.15,3.43;0.65,0.65;inv_car_red.png]" -- CAR01 red
+				--formspec[#formspec + 1] = "image[0.40,3.33;0.5,0.5;car_shop_arrow_update.png]" -- Arrow update
 				if not hover_speed then--hover_speed.forward_speed == 20 and not hover_speed.reverse_speed == 7 then
-					formspec[#formspec + 1] = "button[3.50,3.3;3.50,1;hover_speed;    Upgrade speed (Hover)]"
-					formspec[#formspec + 1] = "image[3.50,3.43;0.63,0.63;hovercraft_blue_inv.png]" -- Blue Hovercraft
-					formspec[#formspec + 1] = "image[3.75,3.33;0.5,0.5;car_shop_arrow_update.png]" -- Arrow update
+					formspec[#formspec + 1] = "button[3.50,3.3;3.50,1;hover_speed;Upgrade speed (Hover)]"
+					--formspec[#formspec + 1] = "image[3.50,3.43;0.63,0.63;hovercraft_blue_inv.png]" -- Blue Hovercraft
+					--formspec[#formspec + 1] = "image[3.75,3.33;0.5,0.5;car_shop_arrow_update.png]" -- Arrow update
 				end
 		-- Updates for CAR01, with no Hovercraft
 		elseif data and data.forward_speed == 13 and data.reverse_speed == 10
 			and not hover_bought then--and not hover_bought.bought_already == true then
 			formspec[#formspec + 1] = ",Silver coins needed: 20,"
 			formspec[#formspec + 1] = "Ready to buy Hovercraft. All CAR01 updates done]"
-			formspec[#formspec + 1] = "button[0.15,3.3;3.60,1;buy_hovercraft;    Buy Hovercraft vehicle]"
-			formspec[#formspec + 1] = "image[0.15,3.43;0.63,0.63;hovercraft_blue_inv.png]" -- Blue Hovercraft
+			formspec[#formspec + 1] = "button[0.15,3.3;3.60,1;buy_hovercraft;Buy Hovercraft vehicle]"
+			--formspec[#formspec + 1] = "image[0.15,3.43;0.63,0.63;hovercraft_blue_inv.png]" -- Blue Hovercraft
 		-- Updates for CAR01, with Hovercraft
 		elseif data and data.forward_speed == 13 and data.reverse_speed == 10
 			and hover_bought and hover_bought.bought_already == true then
 				if not hover_speed then--not hover_speed.forward_speed == 20 and not hover_speed.reverse_speed == 7 then
 					formspec[#formspec + 1] = ",Silver coins needed: 10,"
 					formspec[#formspec + 1] = "Ready to upgrade your Hovercraft. All CAR01 updates done]"
-					formspec[#formspec + 1] = "button[0.15,3.3;3.50,1;hover_speed;    Upgrade speed (Hover)]"
-					formspec[#formspec + 1] = "image[0.15,3.43;0.63,0.63;hovercraft_blue_inv.png]" -- Blue Hovercraft
-					formspec[#formspec + 1] = "image[0.40,3.33;0.5,0.5;car_shop_arrow_update.png]" -- Arrow update
+					formspec[#formspec + 1] = "button[0.15,3.3;3.50,1;hover_speed;Upgrade speed (Hover)]"
+					--formspec[#formspec + 1] = "image[0.15,3.43;0.63,0.63;hovercraft_blue_inv.png]" -- Blue Hovercraft
+					--formspec[#formspec + 1] = "image[0.40,3.33;0.5,0.5;car_shop_arrow_update.png]" -- Arrow update
 				else
 					formspec[#formspec + 1] = ",,Nothing to see here. All updates done!]"
 				end
@@ -308,18 +308,16 @@ sfinv.register_page("car_shop:upgrade_car", {
 		elseif not data or not hover_bought or not hover_speed then
 			formspec[#formspec + 1] = ",Silver coins needed: 10 for speed and 5 gold for Hovercraft,"
 			formspec[#formspec + 1] = "Ready to upgrade your CAR01's speed and buy Hovercraft]"
-        	formspec[#formspec + 1] = "button[0.15,3.3;3.50,1;update_speed;    Upgrade speed (CAR01)]"
-			formspec[#formspec + 1] = "button[3.50,3.3;3.60,1;buy_hovercraft;    Buy Hovercraft vehicle]"
-			formspec[#formspec + 1] = "image[0.15,3.43;0.65,0.65;inv_car_red.png]" -- CAR01 red
-			formspec[#formspec + 1] = "image[0.40,3.33;0.5,0.5;car_shop_arrow_update.png]" -- Arrow update
-			formspec[#formspec + 1] = "image[3.50,3.43;0.63,0.63;hovercraft_blue_inv.png]" -- Blue Hovercraft
+        	formspec[#formspec + 1] = "button[0.15,3.3;3.50,1;update_speed;Upgrade speed (CAR01)]"
+			formspec[#formspec + 1] = "button[3.50,3.3;3.60,1;buy_hovercraft; Buy Hovercraft vehicle]"
+			--formspec[#formspec + 1] = "image[0.15,3.43;0.65,0.65;inv_car_red.png]" -- CAR01 red
+			--formspec[#formspec + 1] = "image[0.40,3.33;0.5,0.5;car_shop_arrow_update.png]" -- Arrow update
+			--formspec[#formspec + 1] = "image[3.50,3.43;0.63,0.63;hovercraft_blue_inv.png]" -- Blue Hovercraft
 		-- All updates done.
 		else
 			formspec[#formspec + 1] = ",,Nothing to see here. All updates done!]"
 		end
 
-        -- Wrap the formspec in sfinv's layout
-        -- (ie: adds the tabs and background)
         return sfinv.make_formspec(player, context,
                 table.concat(formspec, ""), false)
     end,
@@ -333,7 +331,6 @@ sfinv.register_page("car_shop:upgrade_car", {
 			else
 				update_speed(player, fields)
 			end
-			--update_speed(player, fields)
 		elseif fields.buy_hovercraft then
 			local inv = player:get_inventory()
 			if inv:contains_item("main", "maptools:gold_coin 5") then
@@ -351,8 +348,6 @@ sfinv.register_page("car_shop:upgrade_car", {
 			else
 				update_hover(player, fields)
 			end
-
-			--update_hover(player, fields)
 
 			minetest.log("action", "[CAR SHOP] Successfully updated maximum speed forward (Hovercraft) for player " .. player:get_player_name() .. "!")
 			minetest.log("action", "[CAR SHOP] Successfully updated maximum speed reverse (Hovercraft) for player " .. player:get_player_name() .. "!")

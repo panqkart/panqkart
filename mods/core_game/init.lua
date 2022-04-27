@@ -33,6 +33,7 @@ local already_ran = false -- A variable to make sure if the pregame countdown ha
 local pregame_count_ended = false -- A variable to remove the pregame countdown HUD for those who weren't the first to run the countdown.
 
 local racecount_check = {} -- An array used to store the value if a player's countdown already started.
+local max_racecount = 180 -- Maximum value for the race count (default 180)
 
 if tonumber(minetest.settings:get("minimum_required_players")) == nil then
 	minetest.settings:set("minimum_required_players", 4) -- SET MINIMUM REQUIRED PLAYERS FOR A RACE
@@ -49,7 +50,7 @@ minetest.register_node("core_game:start_race", {
 	groups = {not_in_creative_inventory = 1, unbreakable = 1},
 })
 
-minetest.register_node("core_game:junglenoob", {
+minetest.register_node("core_game:junglenoob", { -- WIP, name might/will change
 	description = "noob",
 	paramtype2 = "facedir",
 	place_param2 = 0,
@@ -80,6 +81,17 @@ minetest.register_chatcommand("change_position", {
 		core_game.position = {x = p.x, y = p.y, z = p.z}
 		return true, "Changed lobby's position to: <" .. param .. ">"
     end,
+})
+
+minetest.register_chatcommand("start_race", {
+	params = "",
+	description = "Start a race with the current game configurations.",
+    privs = {
+        core_admin = true,
+    },
+    func = function(name, param)
+		-- TODO: make a start race command with the specified players
+	end,
 })
 
 ----------------------
@@ -228,7 +240,7 @@ end
 local function hud_321(player)
 	if core_game.game_started == true or core_game.pregame_started == true then
 		minetest.chat_send_player(player:get_player_name(), "There's a current race running. Please wait until it finishes.")
-		--core_game.players_on_race[player] = nil
+		core_game.players_on_race[player] = player
 
 		reset_values(player)
 		core_game.waiting_to_end(player)
@@ -693,8 +705,6 @@ minetest.register_globalstep(function(dtime)
 				return
 			end--]]
 
-			minetest.chat_send_all(core_game.player_count)
-
 			minetest.after(0, function()
 				if not core_game.is_end[name] == true then
 					core_game.count[name] = core_game.count[name] + dtime
@@ -720,7 +730,7 @@ minetest.register_globalstep(function(dtime)
 				})
 			end
 
-			if core_game.count[name] >= 50 then
+			if core_game.count[name] >= max_racecount then
 				if not core_game.is_end[name] == true then
 					minetest.chat_send_player(name:get_player_name(), "You lost the race for ending out of time.")
 				end
@@ -804,8 +814,7 @@ function core_game.start_game(player)
 	-- End: reset values in case something was stored
 
 	-- Start: player count checks
-	minetest.after(1, function()
-	if not core_game.game_started == true or not core_game.pregame_started == true then
+	if not core_game.game_started == true and not core_game.pregame_started == true then
 		core_game.player_count = core_game.player_count + 1
 	end
 
@@ -826,7 +835,6 @@ function core_game.start_game(player)
 			hud_fs.close_hud(name:get_player_name(), "core_game:waiting_for_players")
 		end
 	end
-end)
 	-- End: player count checks
 
 	-- Start: start race for non-waiting players, or recently joined ones

@@ -247,10 +247,14 @@ local aux_timer = 0
 local is_sneaking = {}
 
 function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_height, can_fly, can_go_down, can_go_up, enable_crash, moveresult)
-	if core_game.game_started == false then return end
+	if not minetest.check_player_privs(entity.driver, {core_admin = true}) then
+		if core_game.game_started == false then return end
 
-	if core_game.game_started == true and not core_game.players_on_race[entity.driver] == entity.driver
-		or core_game.players_on_race[entity.driver] == nil then return end
+		if core_game.game_started == true and not core_game.players_on_race[entity.driver] == entity.driver
+			or core_game.players_on_race[entity.driver] == nil then
+				return
+		end
+	end
 
 	-- After driver getting killed, entity.driver is not nil when it should be.
 	-- When attaching the driver, entity.driver will be inside the lib_mount.passengers
