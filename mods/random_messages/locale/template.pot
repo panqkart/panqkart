@@ -1,0 +1,44 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-08-04 15:04+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: init.lua
+msgid ""
+"Blame the server admin! He/She has probably not edited the random messages "
+"yet.\n"
+msgstr ""
+
+#: init.lua
+msgid "Tell your dumb admin that this line is in (worldpath)/random_messages\n"
+msgstr ""
+
+#: init.lua
+msgid "View and/or alter the server's random messages"
+msgstr ""
+
+#: init.lua
+msgid "ERROR: No such message."
+msgstr ""
+
+#: init.lua
+msgid "ERROR: No message."
+msgstr ""
+
+#: init.lua
+msgid "ERROR: Invalid command."
+msgstr ""

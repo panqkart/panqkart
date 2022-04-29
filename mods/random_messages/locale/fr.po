@@ -1,0 +1,50 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-08-04 15:04+0200\n"
+"PO-Revision-Date: 2017-08-04 15:05+0200\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.12\n"
+"Last-Translator: fat115 <fat115@framasoft.org>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: fr\n"
+
+#: init.lua
+msgid ""
+"Blame the server admin! He/She has probably not edited the random messages "
+"yet.\n"
+msgstr ""
+"Tirez les oreilles à l'administrateur du serveur. Il/elle n'a pas encore "
+"modifié les messages aléatoires.\n"
+
+#: init.lua
+msgid ""
+"Tell your dumb admin that this line is in (worldpath)/random_messages\n"
+msgstr ""
+"Dites à votre administrateur à la noix que cette ligne se trouve dans "
+"(worldpath)/random_messages\n"
+
+#: init.lua
+msgid "View and/or alter the server's random messages"
+msgstr "Afficher et/ou modifier les messages aléatoires du serveur"
+
+#: init.lua
+msgid "ERROR: No such message."
+msgstr "ERREUR : ce message est inexistant."
+
+#: init.lua
+msgid "ERROR: No message."
+msgstr "ERREUR : pas de message."
+
+#: init.lua
+msgid "ERROR: Invalid command."
+msgstr "ERREUR : Commande invalide."

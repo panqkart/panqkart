@@ -247,7 +247,7 @@ local aux_timer = 0
 local is_sneaking = {}
 
 function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_height, can_fly, can_go_down, can_go_up, enable_crash, moveresult)
-	if not minetest.check_player_privs(entity.driver, {core_admin = true}) then
+	if entity.driver and not minetest.check_player_privs(entity.driver:get_player_name(), {core_admin = true}) then
 		if core_game.game_started == false then return end
 
 		if core_game.game_started == true and not core_game.players_on_race[entity.driver] == entity.driver
@@ -483,6 +483,8 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 
 						--car_shop.hovercraft.max_speed_reverse = hover_speed.reverse_speed
 						entity.max_speed_reverse = hover_speed.reverse_speed
+						entity.turn_spd = hover_speed.turn_speed
+						entity.accel = hover_speed.accel
 
 						local max_spd = hover_speed.reverse_speed--car_shop.max_speed_reverse--entity.max_speed_reverse
 						if get_sign(entity.v) >= 0 then
@@ -520,6 +522,8 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 
 				--car_shop.max_speed_reverse = data.reverse_speed
 				entity.max_speed_reverse = data.reverse_speed
+				entity.turn_spd = data.turn_speed
+				entity.accel = data.accel
 
 				local max_spd = data.reverse_speed--car_shop.max_speed_reverse--entity.max_speed_reverse
 				if get_sign(entity.v) >= 0 then

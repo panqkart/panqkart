@@ -112,27 +112,7 @@ function vehicle_mash.register_vehicle(name, def)
 			end
 		end,
 		on_activate = function(self, staticdata, dtime_s)
-			if def.armor then
-				self.object:set_armor_groups({fleshy = def.armor}) -- Set armor groups to vehicle
-			else
-				self.object:set_armor_groups({fleshy = 0}) -- Else, make vehicle immortal
-			end
-			if def.hp_min and def.hp_max then
-				self.object:set_hp(math.random(def.hp_min, def.hp_max), "Set HP to vehicle")
-			end
-
-			--[[
-			if self.driver then
-				self.driver:set_armor_groups({immortal = 0, fleshy = self.driver:get_armor_groups()})
-			-- Support for passengers
-			elseif self.passenger then
-				self.passenger:set_armor_groups({immortal = 0, fleshy = self.passenger:get_armor_groups()})
-			elseif self.passenger2 then
-				self.passenger2:set_armor_groups({immortal = 0, fleshy = self.passenger2:get_armor_groups()})
-			elseif self.passenger3 then
-				self.passenger3:set_armor_groups({immortal = 0, fleshy = self.passenger3:get_armor_groups()})
-			end--]]
-
+			self.object:set_armor_groups({immortal = 1})
 			local tmp = minetest.deserialize(staticdata)
 			if tmp then
 				for _,stat in pairs(tmp) do

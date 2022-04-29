@@ -94,6 +94,49 @@ minetest.register_chatcommand("start_race", {
 	end,
 })
 
+local function donate_formspec(name)
+    local formspec = {
+        "formspec_version[4]",
+        "size[10,8]",
+        "label[0.375,0.5;", minetest.formspec_escape("Thanks for your interest! When donating, you will get\nin-game perks, a shoutout, a special role, and more!"), "]",
+		"label[0.375,1.75;", minetest.formspec_escape("Starting from as little as $0.75 USD, you will get:"), "]",
+		"label[1.80,1.40;", minetest.formspec_escape("\n\nDouble coins\nBetter car upgrades\nVIP house to hang out with other VIP members\n\nPrioritized feature requests,\nbug reports, map suggestions\n\nSocial media shoutout (optional)\nSpecial Discord role to stand out"), "]",
+		"label[0.375,7.25;", minetest.formspec_escape("You can choose your favorite platform to donate us:\nliberapay.com/Panquesito7 or github.com/sponsors/Panquesito7"), "]",
+    }
+
+    -- table.concat is faster than string concatenation - `..`
+    return table.concat(formspec, "")
+end
+
+minetest.register_chatcommand("donate", {
+	params = "<player>",
+	description = "Shows additional information when donating and links for the same.",
+    privs = {
+        shout = true,
+    },
+    func = function(name, param)
+		if param == "" then
+			minetest.show_formspec(name, "core_game:donate", donate_formspec(name))
+			return
+		end
+
+		if param ~= "" and
+				minetest.check_player_privs(name, { ban = true }) or param == name then
+			name = param
+		else
+			return false, "You don't have sufficient permissions to run this command. Missing privileges: ban"
+		end
+
+		local player = minetest.get_player_by_name(name)
+		if player then
+			minetest.show_formspec(param, "core_game:donate", donate_formspec(param))
+			return true, "Donation formspec shown to " .. param .. "."
+		else
+			return false, "Player " .. name .. " does not exist or is not online."
+		end
+	end,
+})
+
 ----------------------
 -- Local functions --
 ----------------------
@@ -275,7 +318,7 @@ local function hud_321(player)
    minetest.after(3, function() player:hud_change(hud, "text", "core_game_go.png") for _,name in pairs(core_game.players_on_race) do minetest.sound_play("core_game.race_go", {to_player = name:get_player_name(), gain = 1.0})
    end core_game.game_started = true end)--count(player) end)
    -- 7
-   minetest.after(7, function() player:hud_remove(hud) end)
+   minetest.after(5, function() player:hud_remove(hud) end)
 end
 
 --- @brief Start pregame countdown to the given player(s)
@@ -580,6 +623,8 @@ end
 minetest.register_on_joinplayer(function(player)
 	player:set_pos(core_game.position)
 	minetest.log("action", "[RACING GAME] Player " .. player:get_player_name() .. " joined and was teleported to the lobby successfully.")
+
+	minetest.sound_play("core_game.learn", {to_player = player:get_player_name(), gain = 1.0})
 end)
 
 minetest.register_on_dieplayer(function(player)
@@ -594,6 +639,10 @@ end)
 minetest.register_on_leaveplayer(function(player)
 	-- Reset all values to prevent crashes
 	reset_values(player)
+end)
+
+minetest.register_on_punchplayer(function(player, hitter, time_from_last_punch, tool_capabilities, dir, damage)
+	minetest.after(0, function() player:set_hp(player:get_hp() + damage) end)
 end)
 
 --- @brief Show a HUD to the specified player
