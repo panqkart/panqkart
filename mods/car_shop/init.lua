@@ -12,6 +12,11 @@ car_shop.hovercraft.max_speed_reverse = vehicle_mash.hover_def.max_speed_reverse
 
 car_shop.hovercraft.turn_speed = vehicle_mash.hover_def.turn_speed
 car_shop.hovercraft.accel = vehicle_mash.hover_def.accel
+
+car_shop.player_gold_coins = {}
+car_shop.player_silver_coins = {}
+car_shop.player_bronze_coins = {}
+
 local use_hover = {}
 
 if minetest.settings:get_bool("enable_car_shop") == nil then
@@ -20,6 +25,20 @@ elseif minetest.settings:get_bool("enable_car_shop") == false then
 	minetest.log("action", "[RACING GAME] Car shop is disabled. Not initializing.")
 	return
 end
+
+---------------
+-- Commands --
+---------------
+minetest.register_chatcommand("shop", {
+	params = "",
+	description = "Shows the shop formspec/SFINV tab.",
+    privs = {
+        shout = true,
+    },
+    func = function(name, param)
+		sfinv.set_page(name, "car_shop:upgrade_car")
+	end,
+})
 
 ----------------------
 -- Local functions --
@@ -64,8 +83,8 @@ local function confirm_upgrade(name, is_hover)
 end
 
 --- @brief Update CAR01's speed for the specified player
---- @param player the player that will receive the update
---- @param fields the provided formspec fields
+--- @param player string the player that will receive the update
+--- @param fields table the provided formspec fields
 --- @returns void
 local function update_speed(player, fields)
 	local already_upgraded = false
@@ -77,12 +96,12 @@ local function update_speed(player, fields)
 	end
 
 	if fields.yes or fields.update_speed then --forward_speed then
-		if not inv:contains_item("main", "maptools:silver_coin 10") and not already_upgraded == true then
+		if not car_shop.player_silver_coins[player] >= 10 then--inv:contains_item("main", "maptools:silver_coin 10") and not already_upgraded == true then
 			minetest.chat_send_player(player:get_player_name(), "You don't have the enough silver coins to upgrade")
 			return
-		elseif inv:contains_item("main", "maptools:silver_coin 10") and not already_upgraded == true then
-			local taken = inv:remove_item("main", ItemStack("maptools:silver_coin 10"))
-			print("Took " .. taken:get_count())
+		elseif car_shop.player_silver_coins[player] >= 10 and not already_upgraded == true then--inv:contains_item("main", "maptools:silver_coin 10") and not already_upgraded == true then
+			--local taken = inv:remove_item("main", ItemStack("maptools:silver_coin 10"))
+			--print("Took " .. taken:get_count())
 			minetest.chat_send_player(player:get_player_name(), "Successfully updated car's forward speed to 13!")
 			minetest.chat_send_player(player:get_player_name(), "Successfully updated car's reverse speed to 10!")
 
@@ -127,8 +146,8 @@ end
 
 --- @brief Buy the Hovercraft vehicle for the specified player.
 --- The player requires 5 gold coins for that. To obtain coins, you need to win a race.
---- @param player the player that will receive the Hovercraft
---- @param fields the provided formspec fields
+--- @param player string the player that will receive the Hovercraft
+--- @param fields table the provided formspec fields
 --- @returns void
 local function buy_hovercraft(player, fields)
 	local already_bought = false
@@ -140,10 +159,10 @@ local function buy_hovercraft(player, fields)
 	end
 
 	if fields.buy_hovercraft or fields.yes_buy then
-		if not inv:contains_item("main", "maptools:gold_coin 5") and not already_bought == true then
+		if not car_shop.player_gold_coins[player] >= 5 then--not inv:contains_item("main", "maptools:gold_coin 5") and not already_bought == true then
 			minetest.chat_send_player(player:get_player_name(), "You don't have the enough gold coins to buy the Hovercraft")
 			return
-		elseif inv:contains_item("main", "maptools:gold_coin 5") and not already_bought == true then
+		elseif car_shop.player_gold_coins[player] >= 5 and not already_bought == true then--inv:contains_item("main", "maptools:gold_coin 5") and not already_bought == true then
 			local taken = inv:remove_item("main", ItemStack("maptools:gold_coin 5"))
 			print("Took " .. taken:get_count())
 			minetest.chat_send_player(player:get_player_name(), "Successfully bought the Hovercraft vehicle!")
@@ -163,8 +182,8 @@ local function buy_hovercraft(player, fields)
 end
 
 --- @brief Update Hovercraft speed for the specified player
---- @param player the player that will receive the update
---- @param fields the provided formspec fields
+--- @param player string the player that will receive the update
+--- @param fields table the provided formspec fields
 --- @returns void
 local function update_hover(player, fields)
 	local already_upgraded = false
@@ -176,10 +195,10 @@ local function update_hover(player, fields)
 	end
 
 	if fields.hover_speed or fields.yes_hover then
-		if not inv:contains_item("main", "maptools:silver_coin 10") and not already_upgraded == true then
+		if not car_shop.player_silver_coins[player] >= 10 then--inv:contains_item("main", "maptools:silver_coin 10") and not already_upgraded == true then
 			minetest.chat_send_player(player:get_player_name(), "You don't have the enough silver coins to upgrade")
 			return
-		elseif inv:contains_item("main", "maptools:silver_coin 10") and not already_upgraded == true then
+		elseif car_shop.player_silver_coins[player] >= 10 and not already_upgraded == true then--inv:contains_item("main", "maptools:silver_coin 10") and not already_upgraded == true then
 			local taken = inv:remove_item("main", ItemStack("maptools:silver_coin 10"))
 			print("Took " .. taken:get_count())
 			minetest.chat_send_player(player:get_player_name(), "Successfully updated car's forward speed to 15!")
@@ -269,8 +288,22 @@ sfinv.register_page("car_shop:upgrade_car", {
 		if hover_bought and hover_bought.bought_already == true then
        		formspec[#formspec + 1] = ",Your Hovercraft specs:,"
 			formspec[#formspec + 1] = "Maximum speed forward: " .. minetest.formspec_escape(hover_forward) .. ","
-			formspec[#formspec + 1] = "Maximum speed reverse: " .. minetest.formspec_escape(hover_reverse) .. ","
+			formspec[#formspec + 1] = "Maximum speed reverse: " .. minetest.formspec_escape(hover_reverse) .. ",,"
 		end
+
+		if car_shop.player_bronze_coins[player] then
+			formspec[#formspec + 1] = "Bronze coins: " .. minetest.formspec_escape(car_shop.player_bronze_coins[player]) .. ","
+
+		if car_shop.player_silver_coins[player] then
+			formspec[#formspec + 1] = "Silver coins: " .. minetest.formspec_escape(car_shop.player_silver_coins[player]) .. ","
+		end
+		if car_shop.player_gold_coins[player] then
+			formspec[#formspec + 1] = "Gold coins: " .. minetest.formspec_escape(car_shop.player_gold_coins[player]) .. ","
+		end
+		else
+			formspec[#formspec + 1] = "You currently have no coins.\nWin a race in the top 3 places to get coins!,"
+		end
+
 		--formspec[#formspec + 1] = "Bronze coins needed: 20,"
 		--formspec[#formspec + 1] = "Gold coins needed: 5]"
 

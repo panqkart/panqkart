@@ -647,7 +647,18 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		-- Maximum 12 players per race, so let's do this twelve times
 		if lib_mount.win_count == 1 then
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 1st place! Congratulations!")
+			minetest.chat_send_player(entity.driver:get_player_name(), "You won 3 gold coins, 6 silver coins, and 10 bronze coins.")
 			core_game.players_that_won[0] = entity.driver
+
+			if car_shop.player_gold_coins[entity.driver] ~= nil or car_shop.player_silver_coins[entity.driver] ~= nil or car_shop.player_bronze_coins[entity.driver] ~= nil then
+				car_shop.player_gold_coins[entity.driver] = car_shop.player_gold_coins[entity.driver] + 3
+				car_shop.player_silver_coins[entity.driver] = car_shop.player_silver_coins[entity.driver] + 6
+				car_shop.player_bronze_coins[entity.driver] = car_shop.player_bronze_coins[entity.driver] + 10
+			else
+				car_shop.player_gold_coins[entity.driver] = 3
+				car_shop.player_silver_coins[entity.driver] = 6
+				car_shop.player_bronze_coins[entity.driver] = 10
+			end
 			lib_mount.win_count = lib_mount.win_count + 1
 			if core_game.player_count == 1 then
 				core_game.players_that_won[0] = entity.driver
@@ -701,8 +712,16 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				end)
 				return
 			end
-			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 2nd place!")
+			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 2nd place! You won 5 silver coins and 8 bronze coins.")
 			core_game.players_that_won[1] = entity.driver
+
+			if car_shop.player_silver_coins[entity.driver] ~= nil or car_shop.player_bronze_coins[entity.driver] ~= nil then
+				car_shop.player_silver_coins[entity.driver] = car_shop.player_silver_coins[entity.driver] + 5
+				car_shop.player_bronze_coins[entity.driver] = car_shop.player_bronze_coins[entity.driver] + 8
+			else
+				car_shop.player_silver_coins[entity.driver] = 5
+				car_shop.player_bronze_coins[entity.driver] = 8
+			end
 			lib_mount.win_count = lib_mount.win_count + 1
 		elseif lib_mount.win_count == 3 then
 			if core_game.player_count == 3 then
@@ -731,9 +750,15 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				end)
 				return
 			end
-			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 3rd place!")
+			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 3rd place! You won 5 bronze coins.")
 			core_game.players_that_won[2] = entity.driver
 			lib_mount.win_count = lib_mount.win_count + 1
+
+			if car_shop.player_bronze_coins[entity.driver] ~= nil then
+				car_shop.player_bronze_coins[entity.driver] = car_shop.player_bronze_coins[entity.driver] + 5
+			else
+				car_shop.player_bronze_coins[entity.driver] = 5
+			end
 		elseif lib_mount.win_count == 4 then
 			if core_game.player_count == 4 then
 				core_game.players_that_won[3] = entity.driver
@@ -761,7 +786,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				end)
 				return
 			end
-			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 4rd place!")
+			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 4th place!")
 			core_game.players_that_won[3] = entity.driver
 			lib_mount.win_count = lib_mount.win_count + 1
 		elseif lib_mount.win_count == 5 then

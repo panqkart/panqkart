@@ -94,6 +94,10 @@ minetest.register_chatcommand("start_race", {
 	end,
 })
 
+--- @brief A function to show a donation formspec
+--- to the specified player(s), with donation links and perks.
+--- @param name string the player that will be used to show the formspec to
+--- @returns the formspec table
 local function donate_formspec(name)
     local formspec = {
         "formspec_version[4]",
@@ -143,7 +147,7 @@ minetest.register_chatcommand("donate", {
 
 --- @brief Reset counters, variables, and savings
 --- from the current/previous race. This can prevent crashes/bugs.
---- @param player the player to reset the values to
+--- @param player string the player to reset the values to
 --- @returns void
 local function reset_values(player)
 	if core_game.players_on_race[player] == player then
@@ -163,7 +167,7 @@ end
 
 --- @brief Save the player in the players that won the race.
 --- This is used when the player ends out of the default time.
---- @param the player that will be saved in the array
+--- @param player string the player that will be saved in the array
 --- @returns void
 local function player_count(player)
 	if lib_mount.win_count == 1 then
@@ -212,7 +216,7 @@ end
 --- @details After 50 seconds pass (which is the limit of the race count,
 --- to prevent people from standing AFK without doing anything), it will end the race and
 --- will run the `player_lost` function, which can be found below
---- @param player the player to start the count for
+--- @param player string the player to start the count for
 --- @returns void
 local function count(player)
 	for i = 1,50, 1
@@ -278,7 +282,7 @@ end
 --- @brief Show `3 2 1 GO!` HUD to the given player
 --- Start up race count and toggle `core_game.game_started` value to `true`.
 --- This function will also reproduce a sound on each number.
---- @param player the player that will receive the HUD
+--- @param player string the player that will receive the HUD
 --- @returns void
 local function hud_321(player)
 	if core_game.game_started == true or core_game.pregame_started == true then
@@ -329,7 +333,7 @@ end
 ---
 --- For all those who weren't the first player, it will just show the HUD when will the race start.
 --- After that, the HUD will be removed and the race will start for the waiting players.
---- @param player the player that will be used to start the countdown
+--- @param player string the player that will be used to start the countdown
 --- @returns void
 local function countDown(player)
     pregame_count = pregame_count - 1
@@ -361,7 +365,7 @@ local function countDown(player)
 end
 
 --- @brief Run the countdown function above each second.
---- @param player the player that will be used to start the countdown
+--- @param player string the player that will be used to start the countdown
 --- @returns void
 local function startCountdown(player)
 	already_ran = true
@@ -375,7 +379,7 @@ end
 --- @details We'll start up the pregame countdown as well before starting the race.
 --- If the pregame countdown has been ran before, it will just show the HUD for the 2nd, 3rd, etc. players, to make sure
 -- the variable isn't decreased more than one time per second. We'll remove the HUD if the current countdown has stopped, as we're using a loop.
---- @param player the player to be added into the race
+--- @param player string the player to be added into the race
 --- @returns void
 local function start(player)
 	core_game.players_on_race[player] = player
@@ -437,7 +441,7 @@ end
 
 --- @brief Utility function to show the scoreboard
 --- for the specified player(s).
---- @param name the player that will be used to show the formspec to
+--- @param name string the player that will be used to show the formspec to
 --- @returns the formspec table
 function core_game.show_scoreboard(name)
 	local formspec
@@ -603,7 +607,7 @@ end
 
 --- @brief Ask the user which vehicle they wanna use.
 --- This only applies when they have bought the Hovercraft.
---- @param name the player variable to use (in this case not being used)
+--- @param name string the player variable to use (in this case not being used)
 --- @returns void
 function core_game.ask_vehicle(name)
     local text = "Which car/vehicle do you want to use?"
@@ -647,7 +651,7 @@ end)
 
 --- @brief Show a HUD to the specified player
 --- that there's a current race running.
---- @param player the player to show the HUD to
+--- @param player string the player to show the HUD to
 --- @returns void
 function core_game.waiting_to_end(player)
 	hud_fs.show_hud(player, "core_game:pending_race", {
@@ -665,7 +669,7 @@ end
 --- variables/values when a races end. It will also
 --- teleport the user to the lobby after 3.5 seconds.
 --- NOTE: this is and should be used only when the user's the last player to win.
---- @param player the player that will be sent to the lobby
+--- @param player string the player that will be sent to the lobby
 --- @returns void
 function core_game.player_lost(player)
 	already_ran = false
@@ -696,8 +700,8 @@ end
 --- @brief Select a random car between CAR01 and Hovercraft
 --- for the specified user. This is useful when the user didn't select
 --- any car while the formspec was up and the game started.
---- @param player the player that will be attached to the random vehicle
---- @param use_message whether to notify the player or not
+--- @param player string the player that will be attached to the random vehicle
+--- @param use_message boolean whether to notify the player or not
 --- @returns void
 function core_game.random_car(player, use_message)
 	local pname = player:get_player_name()
@@ -855,7 +859,7 @@ end)
 --- @brief Run start game function and ensure there are
 --- the minimum required players to join a race.
 --- Similar to the `start` local function above.
---- @param player the player that will be used to start the race
+--- @param player string the player that will be used to start the race
 --- @returns void
 function core_game.start_game(player)
 	-- Start: reset values in case something was stored
