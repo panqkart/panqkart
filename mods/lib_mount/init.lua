@@ -643,6 +643,8 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				minetest.chat_send_player(entity.driver:get_player_name(), "You are in 2nd place!")
 			end
 		end--]]
+		local meta = entity.driver:get_meta()
+		local data = minetest.deserialize(meta:get_string("player_coins"))
 		core_game.is_end[entity.driver] = true
 		-- Maximum 12 players per race, so let's do this twelve times
 		if lib_mount.win_count == 1 then
@@ -650,14 +652,33 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 			minetest.chat_send_player(entity.driver:get_player_name(), "You won 3 gold coins, 6 silver coins, and 10 bronze coins.")
 			core_game.players_that_won[0] = entity.driver
 
-			if car_shop.player_gold_coins[entity.driver] ~= nil or car_shop.player_silver_coins[entity.driver] ~= nil or car_shop.player_bronze_coins[entity.driver] ~= nil then
-				car_shop.player_gold_coins[entity.driver] = car_shop.player_gold_coins[entity.driver] + 3
-				car_shop.player_silver_coins[entity.driver] = car_shop.player_silver_coins[entity.driver] + 6
-				car_shop.player_bronze_coins[entity.driver] = car_shop.player_bronze_coins[entity.driver] + 10
+			if data then--car_shop.player_gold_coins[entity.driver] ~= nil or car_shop.player_silver_coins[entity.driver] ~= nil or car_shop.player_bronze_coins[entity.driver] ~= nil then
+				--car_shop.player_gold_coins[entity.driver] = car_shop.player_gold_coins[entity.driver] + 3
+				--car_shop.player_silver_coins[entity.driver] = car_shop.player_silver_coins[entity.driver] + 6
+				--car_shop.player_bronze_coins[entity.driver] = car_shop.player_bronze_coins[entity.driver] + 10
+				if minetest.get_modpath("premium") and minetest.check_player_privs(entity.driver, { has_premium = true }) then
+					data.gold_coins = data.gold_coins + 6
+					data.silver_coins = data.silver_coins + 12
+					data.bronze_coins = data.bronze_coins + 20
+					minetest.chat_send_player(entity.driver:get_player_name(), "You won double coins for having premium!")
+				else
+					data.gold_coins = data.gold_coins + 3
+					data.silver_coins = data.silver_coins + 6
+					data.bronze_coins = data.bronze_coins + 10
+				end
+				meta:set_string("player_coins", minetest.serialize(data))
 			else
-				car_shop.player_gold_coins[entity.driver] = 3
-				car_shop.player_silver_coins[entity.driver] = 6
-				car_shop.player_bronze_coins[entity.driver] = 10
+				if minetest.get_modpath("premium") and minetest.check_player_privs(entity.driver, { has_premium = true }) then
+					data = { gold_coins = 6, silver_coins = 12, bronze_coins = 20 }
+					minetest.chat_send_player(entity.driver:get_player_name(), "You won double coins for having premium!")
+				else
+					data = { gold_coins = 3, silver_coins = 6, bronze_coins = 10 }
+				end
+				meta:set_string("player_coins", minetest.serialize(data))
+
+				--car_shop.player_gold_coins[entity.driver] = 3
+				--car_shop.player_silver_coins[entity.driver] = 6
+				--car_shop.player_bronze_coins[entity.driver] = 10
 			end
 			lib_mount.win_count = lib_mount.win_count + 1
 			if core_game.player_count == 1 then
@@ -715,12 +736,31 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 			minetest.chat_send_player(entity.driver:get_player_name(), "You are in 2nd place! You won 5 silver coins and 8 bronze coins.")
 			core_game.players_that_won[1] = entity.driver
 
-			if car_shop.player_silver_coins[entity.driver] ~= nil or car_shop.player_bronze_coins[entity.driver] ~= nil then
-				car_shop.player_silver_coins[entity.driver] = car_shop.player_silver_coins[entity.driver] + 5
-				car_shop.player_bronze_coins[entity.driver] = car_shop.player_bronze_coins[entity.driver] + 8
+			if data then--car_shop.player_gold_coins[entity.driver] ~= nil or car_shop.player_silver_coins[entity.driver] ~= nil or car_shop.player_bronze_coins[entity.driver] ~= nil then
+				--car_shop.player_gold_coins[entity.driver] = car_shop.player_gold_coins[entity.driver] + 3
+				--car_shop.player_silver_coins[entity.driver] = car_shop.player_silver_coins[entity.driver] + 6
+				--car_shop.player_bronze_coins[entity.driver] = car_shop.player_bronze_coins[entity.driver] + 10
+				if minetest.get_modpath("premium") and minetest.check_player_privs(entity.driver, { has_premium = true }) then
+					data.silver_coins = data.silver_coins + 10
+					data.bronze_coins = data.bronze_coins + 16
+					minetest.chat_send_player(entity.driver:get_player_name(), "You won double coins for having premium!")
+				else
+					data.silver_coins = data.silver_coins + 5
+					data.bronze_coins = data.bronze_coins + 8
+				end
+				meta:set_string("player_coins", minetest.serialize(data))
 			else
-				car_shop.player_silver_coins[entity.driver] = 5
-				car_shop.player_bronze_coins[entity.driver] = 8
+				if minetest.get_modpath("premium") and minetest.check_player_privs(entity.driver, { has_premium = true }) then
+					data = { gold_coins = 0, silver_coins = 10, bronze_coins = 16 }
+					minetest.chat_send_player(entity.driver:get_player_name(), "You won double coins for having premium!")
+				else
+					data = { gold_coins = 0, silver_coins = 5, bronze_coins = 8 }
+				end
+				meta:set_string("player_coins", minetest.serialize(data))
+
+				--car_shop.player_gold_coins[entity.driver] = 3
+				--car_shop.player_silver_coins[entity.driver] = 6
+				--car_shop.player_bronze_coins[entity.driver] = 10
 			end
 			lib_mount.win_count = lib_mount.win_count + 1
 		elseif lib_mount.win_count == 3 then
@@ -754,10 +794,29 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 			core_game.players_that_won[2] = entity.driver
 			lib_mount.win_count = lib_mount.win_count + 1
 
-			if car_shop.player_bronze_coins[entity.driver] ~= nil then
-				car_shop.player_bronze_coins[entity.driver] = car_shop.player_bronze_coins[entity.driver] + 5
+			if data then--car_shop.player_gold_coins[entity.driver] ~= nil or car_shop.player_silver_coins[entity.driver] ~= nil or car_shop.player_bronze_coins[entity.driver] ~= nil then
+				--car_shop.player_gold_coins[entity.driver] = car_shop.player_gold_coins[entity.driver] + 3
+				--car_shop.player_silver_coins[entity.driver] = car_shop.player_silver_coins[entity.driver] + 6
+				--car_shop.player_bronze_coins[entity.driver] = car_shop.player_bronze_coins[entity.driver] + 10
+				if minetest.get_modpath("premium") and minetest.check_player_privs(entity.driver, { has_premium = true }) then
+					data.bronze_coins = data.bronze_coins + 10
+					minetest.chat_send_player(entity.driver:get_player_name(), "You won double coins for having premium!")
+				else
+					data.bronze_coins = data.bronze_coins + 5
+				end
+				meta:set_string("player_coins", minetest.serialize(data))
 			else
-				car_shop.player_bronze_coins[entity.driver] = 5
+				if minetest.get_modpath("premium") and minetest.check_player_privs(entity.driver, { has_premium = true }) then
+					data = { gold_coins = 0, silver_coins = 0, bronze_coins = 10 }
+					minetest.chat_send_player(entity.driver:get_player_name(), "You won double coins for having premium!")
+				else
+					data = { gold_coins = 0, silver_coins = 0, bronze_coins = 5 }
+				end
+				meta:set_string("player_coins", minetest.serialize(data))
+
+				--car_shop.player_gold_coins[entity.driver] = 3
+				--car_shop.player_silver_coins[entity.driver] = 6
+				--car_shop.player_bronze_coins[entity.driver] = 10
 			end
 		elseif lib_mount.win_count == 4 then
 			if core_game.player_count == 4 then

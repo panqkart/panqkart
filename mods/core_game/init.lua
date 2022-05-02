@@ -101,11 +101,12 @@ minetest.register_chatcommand("start_race", {
 local function donate_formspec(name)
     local formspec = {
         "formspec_version[4]",
-        "size[10,8]",
+        "size[10,11]",
         "label[0.375,0.5;", minetest.formspec_escape("Thanks for your interest! When donating, you will get\nin-game perks, a shoutout, a special role, and more!"), "]",
-		"label[0.375,1.75;", minetest.formspec_escape("Starting from as little as $0.75 USD, you will get:"), "]",
-		"label[1.80,1.40;", minetest.formspec_escape("\n\nDouble coins\nBetter car upgrades\nVIP house to hang out with other VIP members\n\nPrioritized feature requests,\nbug reports, map suggestions\n\nSocial media shoutout (optional)\nSpecial Discord role to stand out"), "]",
-		"label[0.375,7.25;", minetest.formspec_escape("You can choose your favorite platform to donate us:\nliberapay.com/Panquesito7 or github.com/sponsors/Panquesito7"), "]",
+		"label[0.375,1.75;", minetest.formspec_escape("Starting from as little as $0.75 USD monthly\n(or $10 USD one-time forever!), you will get:"), "]",
+		"label[1.80,1.75;", minetest.formspec_escape("\n\nDouble coins\nNo decreases on car upgrades\nEarly access to new features\nVIP house to hang out with other VIP members\n\nPrioritized feature requests,\nbug reports, map suggestions\n\nSocial media shoutout (optional)\nSpecial Discord role to stand out"), "]",
+		"label[0.375,8;", minetest.formspec_escape("You can choose your favorite platform to donate us:\nliberapay.com/Panquesito7 or github.com/sponsors/Panquesito7"), "]",
+		"label[0.375,9.25;", minetest.formspec_escape("Contact Panquesito7 to claim your rewards, via DM, e-mail\n(halfpacho@gmail.com), or via Discord: Panquesito7#3723"), "]",
     }
 
     -- table.concat is faster than string concatenation - `..`
