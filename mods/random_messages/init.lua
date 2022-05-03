@@ -38,9 +38,10 @@ function random_messages.read_messages()
 		"Looking for the source code? Want to contribute? Come check it out at github.com/Panquesito7/minetest-racing_game",
 		"You can upgrade your vehicles to make them faster! Check your inventory to upgrade your car. Note that this will result in acceleration and turn speed decrease.",
 		"Get in-game bronze, silver, and gold coins by getting in the top 3 places\non a race. This is used to upgrade your car, buy new cars, and more!",
-		"Like our game? Don't hesitate to support our work by donating! Donating includes perks such as double coins, faster cars, VIP house, and prioritized\nfeatures/maps, starting from $0.75 USD! You will get a shoutout on socials as well as an special role on our Discord to stand out. Use /donate for more information.",
+		"Like our game? Don't hesitate to support our work by donating! Donating includes perks such as double coins, early access to new features, VIP house, and prioritized\nfeatures/maps, no matter the amount! You will get a shoutout on socials as well as an special role on our Discord to stand out. Use /donate for more information.",
 		"We're still working on adding new features and maps to the game. Stay tuned on new additions to the game.",
-		"Our hosting is powered by the awesome service of Universal Network. Thanks to them, we were able to make this game possible."
+		"Our hosting is powered by the awesome service of Universal Network. Thanks to them, we were able to make this game possible.",
+		"There are a few secrets on the map which can give you coins and amazing perks! Try to find them."
 	}
 end
 

@@ -77,7 +77,7 @@ local function update_speed(player, fields)
 	local max_speed_forward, max_speed_reverse
 
 	local turn_speed = vehicle_mash.car01_def.turn_speed
-	local accel = vehicle_mash.car01_def.accel -- Let's initialize the variables in case the user has premium :)
+	local accel = vehicle_mash.car01_def.accel
 	--local inv = player:get_inventory()
 
 	local meta = player:get_meta()
@@ -101,10 +101,8 @@ local function update_speed(player, fields)
 			max_speed_forward = 13
 			max_speed_reverse = 10
 
-			if not minetest.check_player_privs(player, { has_premium = true }) then
-				turn_speed = 2.5
-				accel = 1.75
-			end
+			turn_speed = 2.5
+			accel = 1.75
 			already_upgraded = true
 
 			coins.silver_coins = coins.silver_coins - 10
@@ -193,7 +191,7 @@ local function update_hover(player, fields)
 	local max_speed_forward, max_speed_reverse
 
 	local turn_speed = vehicle_mash.hover_def.turn_speed
-	local accel = vehicle_mash.hover_def.accel -- Let's initialize the variables in case the user has premium :)
+	local accel = vehicle_mash.hover_def.accel
 
 	--local inv = player:get_inventory()
 
@@ -218,10 +216,8 @@ local function update_hover(player, fields)
 			max_speed_reverse = 8
 			max_speed_forward = 15
 
-			if not minetest.check_player_privs(player, { has_premium = true }) then
-				turn_speed = 1.5
-				accel = 2
-			end
+			turn_speed = 1.5
+			accel = 2
 			already_upgraded = true
 
 			coins.silver_coins = coins.silver_coins - 10

@@ -48,6 +48,11 @@ minetest.register_node("core_game:start_race", {
 	drop = "",
 	light_source = 7,
 	groups = {not_in_creative_inventory = 1, unbreakable = 1},
+	on_place = function(itemstack, placer, pointed_thing)
+		if minetest.check_player_privs(placer, { core_admin = true }) then
+			return false, "You don't have sufficient permissions to place this node. Missing privileges: core_admin"
+		end
+	end,
 })
 
 minetest.register_node("core_game:junglenoob", { -- WIP, name might/will change
@@ -103,8 +108,8 @@ local function donate_formspec(name)
         "formspec_version[4]",
         "size[10,11]",
         "label[0.375,0.5;", minetest.formspec_escape("Thanks for your interest! When donating, you will get\nin-game perks, a shoutout, a special role, and more!"), "]",
-		"label[0.375,1.75;", minetest.formspec_escape("Starting from as little as $0.75 USD monthly\n(or $10 USD one-time forever!), you will get:"), "]",
-		"label[1.80,1.75;", minetest.formspec_escape("\n\nDouble coins\nNo decreases on car upgrades\nEarly access to new features\nVIP house to hang out with other VIP members\n\nPrioritized feature requests,\nbug reports, map suggestions\n\nSocial media shoutout (optional)\nSpecial Discord role to stand out"), "]",
+		"label[0.375,1.75;", minetest.formspec_escape("No matter how many amount you donate to us, you will get:"), "]",
+		"label[1.80,1.75;", minetest.formspec_escape("\n\nDouble coins\nA yellow nametag with a premium tag\nEarly access to new features\nVIP house to hang out with other VIP members\n\nPrioritized feature requests,\nbug reports, map suggestions\n\nSocial media shoutout (optional)\nSpecial Discord role to stand out"), "]",
 		"label[0.375,8;", minetest.formspec_escape("You can choose your favorite platform to donate us:\nliberapay.com/Panquesito7 or github.com/sponsors/Panquesito7"), "]",
 		"label[0.375,9.25;", minetest.formspec_escape("Contact Panquesito7 to claim your rewards, via DM, e-mail\n(halfpacho@gmail.com), or via Discord: Panquesito7#3723"), "]",
     }
@@ -630,6 +635,14 @@ minetest.register_on_joinplayer(function(player)
 	minetest.log("action", "[RACING GAME] Player " .. player:get_player_name() .. " joined and was teleported to the lobby successfully.")
 
 	minetest.sound_play("core_game.learn", {to_player = player:get_player_name(), gain = 1.0})
+	if minetest.get_modpath("premium") and minetest.check_player_privs(player, { has_premium = true } ) then
+		--local name = minetest.get_player_by_name(player)
+		player:set_nametag_attributes({
+			text = "[VIP] " .. player:get_player_name(),
+			color = {r = 255, g = 255, b = 0},
+			bgcolor = false
+		})
+	end
 end)
 
 minetest.register_on_dieplayer(function(player)
