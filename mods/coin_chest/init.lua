@@ -1,3 +1,6 @@
+local modname = minetest.get_current_modname()
+local S = minetest.get_translator(modname)
+
 local global_fields = {}
 local players = {}
 
@@ -105,12 +108,28 @@ minetest.register_node("coin_chest:chest", {
 			meta:set_string("formspec", show_formspec(meta))
         end
 	end,
-	--[[on_punch = function(pos, node, puncher, pointed_thing)
+	on_punch = function(pos, node, puncher, pointed_thing)
 		local meta = minetest.get_meta(pos)
+		local player_meta = puncher:get_meta()
+
+		local coins = minetest.deserialize(player_meta:get_string("player_coins"))
+		local playerlist = minetest.deserialize(meta:get_string("playerlist"))
 		if meta and minetest.check_player_privs(puncher, { core_admin = true }) and meta:get_int("staff_coins") == 1 then
-			meta_checks(puncher, pos)
+			meta:set_string("formspec", "")
+				if coins then
+					coins.bronze_coins = coins.bronze_coins + tonumber(global_fields.bronze)
+					coins.silver_coins = coins.silver_coins + tonumber(global_fields.silver)
+					coins.gold_coins = coins.gold_coins + tonumber(global_fields.gold)
+
+					player_meta:set_string("player_coins", minetest.serialize(coins))
+				else
+					coins = { bronze_coins = global_fields.bronze, silver_coins = global_fields.silver, gold_coins = global_fields.gold }
+					player_meta:set_string("player_coins", minetest.serialize(coins))
+				end
+				minetest.chat_send_player(puncher:get_player_name(), "You got " .. global_fields.bronze .. " bronze coins, " ..
+					global_fields.silver .. " silver coins, and " .. global_fields.gold .. " coins!")
 		end
-	end,--]]
+	end,
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("infotext", "Chest");

@@ -1,0 +1,25 @@
+# textdomain: core_game
+Can manage the lobby position and core game configurations.=
+Start a race!=
+Change lobby's position=
+Wrong usage of command. Use <x y z>=
+Changed lobby's position to: <@1>=
+Shows additional information when donating and links for the same.=
+You don't have sufficient permissions to run this command. Missing privileges: ban=
+You don't have sufficient permissions to place this node. Missing privileges: core_admin=
+Donation formspec shown to @1.=
+Player @1 does not exist or is not online.=
+There's a current race running. Please wait until it finishes.=
+The race will start in a few seconds. Please wait...=
+The race will start in: @1=
+Final scoreboard, places, and race count.=Marcador final, lugares, y conteo de carrera.
+Place					Player name					Race count=
+Which car/vehicle do you want to use?=
+@1 just joined! Welcome to the Racing Game!=
+Waiting for the current race to finish...=
+You will use CAR01 in the next race.=
+You will use the Hovercraft in the next race.=
+You finished at: @1 seconds!=
+You lost the race for ending out of time.=
+Race ended! Heading back to the lobby...=
+Waiting for players (@1 required)...=

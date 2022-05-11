@@ -1,0 +1,25 @@
+# textdomain: core_game
+Can manage the lobby position and core game configurations.=Puede manejar la posición del lobby y configuraciones del juego.
+Start a race!=¡Empezar una carrera!
+Change lobby's position=Cambiar posición del lobby.
+Wrong usage of command. Use <x y z>=Uso mal del comando. Use <x y z>
+Changed lobby's position to: <@1>=Posición del lobby cambiado a: <@1>
+Shows additional information when donating and links for the same.=Muestra información adicional al donar y links para donar.
+You don't have sufficient permissions to run this command. Missing privileges: ban=No tienes los suficientes permisos para correr este comando. Privilegios necesarios: ban
+You don't have sufficient permissions to place this node. Missing privileges: core_admin=No tienes los suficientes permisos para poner este nodo. Privilegios necesarios: core_admin
+Donation formspec shown to @1.=Formspec de donación mostrado a @1.
+Player @1 does not exist or is not online.=El jugador @1 no existe o no esta en linea.
+There's a current race running. Please wait until it finishes.=Hay una carrera en juego. Por favor espere hasta que acabe.
+The race will start in a few seconds. Please wait...=La carrera empezara en unos segundos. Por favor espere...
+The race will start in: @1=La carrera va a empezar en: @1
+Final scoreboard, places, and race count.=Marcador final, lugares, y conteo de carrera.
+Place					Player name					Race count=Lugar					Nombre					Conteo de carrera
+Which car/vehicle do you want to use?=¿Cúal vehiculo va a usar?
+@1 just joined! Welcome to the Racing Game!=@1 justo ha entrado. ¡Denle una calida bienvenida!
+Waiting for the current race to finish...=Esperando a que la carrera actual termine...
+You will use CAR01 in the next race.=Usaras CAR01 en la siguiente carrera.
+You will use the Hovercraft in the next race.=Usaras el Hovercraft en la siguiente carrera.
+You finished at: @1 seconds!=¡Has acabado en: @1 segundo(s)!
+You lost the race for ending out of time.=Has perdido por pasarte del tiempo limite.
+Race ended! Heading back to the lobby...=¡Carrera acabada! Mandando al lobby...
+Waiting for players (@1 required)...=Esperando a los jugadores (@1 necesarios)
