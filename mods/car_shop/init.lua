@@ -352,7 +352,7 @@ sfinv.register_page("car_shop:upgrade_car", {
 		-- Updates for CAR01, with no Hovercraft
 		elseif data and data.forward_speed == 13 and data.reverse_speed == 10
 			and not hover_bought then--and not hover_bought.bought_already == true then
-			formspec[#formspec + 1] = "," .. S("Silver coins needed: 20") .. ","
+			formspec[#formspec + 1] = "," .. S("Gold coins needed: 5") .. ","
 			formspec[#formspec + 1] = S("Ready to buy Hovercraft. All CAR01 updates done") .. "]"
 			formspec[#formspec + 1] = "button[0.15,3.3;3.60,1;buy_hovercraft;" .. S("Buy Hovercraft vehicle") .. "]"
 			--formspec[#formspec + 1] = "image[0.15,3.43;0.63,0.63;hovercraft_blue_inv.png]" -- Blue Hovercraft

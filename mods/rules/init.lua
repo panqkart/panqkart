@@ -48,7 +48,7 @@ rules.txt = table.concat(items, ",")
 
 if minetest.global_exists("sfinv") then
 	sfinv.register_page("rules:rules", {
-		title = "Rules",
+		title = S("Rules"),
 		get = function(self, player, context)
 			return sfinv.make_formspec(player, context,
 				"textlist[0,0;7.85,8.5;help;" .. rules.txt .. "]", false)

@@ -1,0 +1,14 @@
+# textdomain: coin_chest
+Choose the options here.=
+Bronze coins=
+Silver coins=
+Gold coins=
+Apply changes=
+Give coins to staff=
+Coin chest=
+You don't have the sufficient permissions to place this node. Missing privileges: core_admin=
+You have already got the coins from this chest.=Ya has obtenido las monedas de este cofré.
+You don't have sufficient the permissions to open this chest. Missing privileges: core_admin=
+You got @1 bronze coins, @2 silver coins, and @3 gold coins!=
+Please specify a valid value different than zero.=
+Successfully updated/set coin chest!=

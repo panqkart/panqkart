@@ -1,1 +1,14 @@
 # textdomain: coin_chest
+Choose the options here.=Configure el cofré aquí.
+Bronze coins=Monedas de broncé
+Silver coins=Monedas de plata
+Gold coins=Monedas de oro
+Apply changes=Aplicar cambios
+Give coins to staff=Dar monedas a los moderadores
+Coin chest=Cofré de monedas
+You don't have the sufficient permissions to place this node. Missing privileges: core_admin=No tienes los suficientes permisos para poner este nodo. Privilegios necesarios: core_admin
+You have already got the coins from this chest.=Ya has obtenido las monedas de este cofré.
+You don't have the sufficient permissions to open this chest. Missing privileges: core_admin=No tienes los suficientes permisos para abrir este cofré. Privilegios necesarios: core_admin
+You got @1 bronze coins, @2 silver coins, and @3 gold coins!=¡Has obtenido @1 monedas de broncé, @2 monedas de plata, y @3 monedas de oro!
+Please specify a valid value different than zero.=Por favor especifique otro valor diferente de cero.
+Successfully updated/set coin chest!=¡Cofré de monedas exitosamente actualizado!

@@ -37,7 +37,7 @@ end
 
 function random_messages.read_messages()
 	random_messages.messages = {
-		S("This racing game was developed in around 3 months, by Panquesito7, Crystal741, and Pixel852,\namong other contributors and people. Anyone else is free to contribute and make improvements to the game."),
+		S("This racing game was developed in around 3 months, by Panquesito7, Crystal741, and Pixel852, \namong other contributors and people. Anyone else is free to contribute and make improvements to the game."),
 		S("Looking for the source code? Want to contribute? Come check it out at github.com/Panquesito7/minetest-racing_game"),
 		S("You can upgrade your vehicles to make them faster! Check your inventory to upgrade your car. Note that this will result in acceleration and turn speed decrease."),
 		S("Get in-game bronze, silver, and gold coins by getting in the top 3 places\non a race. This is used to upgrade your car, buy new cars, and more!"),
@@ -45,7 +45,9 @@ function random_messages.read_messages()
 		S("We're still working on adding new features and maps to the game. Stay tuned on new additions to the game."),
 		S("Our hosting is powered by the awesome service of Universal Network. Thanks to them, we were able to make this game possible."),
 		S("There are a few secrets on the map which can give you coins and amazing perks! Try to find them."),
-		S("Wanna give feedback, report bugs, or chat with us? Feel free to mail us at halfpacho@gmail.com or by joining our Discord server.")
+		S("Wanna give feedback, report bugs, or chat with us? Feel free to mail us at halfpacho@gmail.com or by joining our Discord server."),
+		S("Read our rules frequently, show them to other users, or report users who are breaking the rules to us.\nWe might update our rules soon, so stay tuned for any new changes."),
+		S("Share the game with your friends and give feedback! You may also download the game for yourself to test it, make another version, or whatever changes you wanna make!")
 	}
 end
 
