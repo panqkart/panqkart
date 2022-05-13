@@ -1,0 +1,199 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-31 11:28+0200\n"
+"PO-Revision-Date: 2021-06-20 18:51-0300\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.6\n"
+"Last-Translator: Lunovox Heavenfinder <lunovox@disroot.org>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: pt_BR\n"
+
+#: bee.lua
+msgid "Bee"
+msgstr "Abelha"
+
+#: bee.lua
+msgid "Honey"
+msgstr "Mel"
+
+#: bee.lua
+msgid "Beehive"
+msgstr "Colméia"
+
+#: bee.lua
+msgid "Honey Block"
+msgstr "Bloco de Mel"
+
+#: bunny.lua
+msgid "Bunny"
+msgstr "Coelho"
+
+#: bunny.lua
+msgid "Raw Rabbit"
+msgstr "Carne de Coelho (Cru)"
+
+#: bunny.lua
+msgid "Cooked Rabbit"
+msgstr "Coelho (Assado)"
+
+#: bunny.lua
+msgid "Rabbit Hide"
+msgstr "Pele de Coelho"
+
+#: chicken.lua
+msgid "Chicken"
+msgstr "Galinha"
+
+#: chicken.lua
+msgid "Chicken Egg"
+msgstr "Ovo de Galinha"
+
+#: chicken.lua
+msgid "Fried Egg"
+msgstr "Ovo Frito"
+
+#: chicken.lua
+msgid "Raw Chicken"
+msgstr "Carne de Galinha (Crua)"
+
+#: chicken.lua
+msgid "Cooked Chicken"
+msgstr "Galinha Assada"
+
+#: chicken.lua
+msgid "Feather"
+msgstr "Pluma"
+
+#: cow.lua
+msgid "Cow already milked!"
+msgstr "Vaca já ordenhada!"
+
+#: cow.lua
+msgid "Cow"
+msgstr "Vaca"
+
+#: cow.lua
+msgid "Bucket of Milk"
+msgstr "Balde de leite"
+
+#: cow.lua
+msgid "Cheese"
+msgstr "Queijo"
+
+#: cow.lua
+msgid "Cheese Block"
+msgstr "Bloco de Queijo"
+
+#: init.lua
+msgid "[MOD] Mobs Redo 'Animals' loaded"
+msgstr "[MOBS_ANIMAL] Mod carregado completamente"
+
+#: kitten.lua
+msgid "Kitten"
+msgstr "Gato"
+
+#: penguin.lua
+msgid "Penguin"
+msgstr "Pinguim"
+
+#: rat.lua
+msgid "Rat"
+msgstr "Rato"
+
+#: rat.lua
+msgid "Cooked Rat"
+msgstr "Rato (Assado)"
+
+#: sheep.lua
+msgid "Black"
+msgstr "Preto"
+
+#: sheep.lua
+msgid "Blue"
+msgstr "Azul"
+
+#: sheep.lua
+msgid "Brown"
+msgstr "Marrom"
+
+#: sheep.lua
+msgid "Cyan"
+msgstr "Ciano"
+
+#: sheep.lua
+msgid "Dark Green"
+msgstr "Verde Escuro"
+
+#: sheep.lua
+msgid "Dark Grey"
+msgstr "Cinza Escuro"
+
+#: sheep.lua
+msgid "Green"
+msgstr "Verde"
+
+#: sheep.lua
+msgid "Grey"
+msgstr "Cinza"
+
+#: sheep.lua
+msgid "Magenta"
+msgstr "Rosa Magenta"
+
+#: sheep.lua
+msgid "Orange"
+msgstr "Laranja"
+
+#: sheep.lua
+msgid "Pink"
+msgstr "Rosa"
+
+#: sheep.lua
+msgid "Red"
+msgstr "Vermelho"
+
+#: sheep.lua
+msgid "Violet"
+msgstr "Violeta"
+
+#: sheep.lua
+msgid "White"
+msgstr "Branco"
+
+#: sheep.lua
+msgid "Yellow"
+msgstr "Amarelo"
+
+#: sheep.lua
+msgid "@1 Sheep"
+msgstr "Ovelha @1 "
+
+#: sheep.lua
+msgid "Raw Mutton"
+msgstr "Carneiro (Cru)"
+
+#: sheep.lua
+msgid "Cooked Mutton"
+msgstr "Carneiro (Assado)"
+
+#: warthog.lua
+msgid "Warthog"
+msgstr "Javali"
+
+#: warthog.lua
+msgid "Raw Porkchop"
+msgstr "Costeleta de Javali (Crua)"
+
+#: warthog.lua
+msgid "Cooked Porkchop"
+msgstr "Costeleta de Javali Assada"

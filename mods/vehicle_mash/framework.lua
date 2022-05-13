@@ -59,7 +59,7 @@ function vehicle_mash.register_vehicle(name, def)
 			if not clicker or not clicker:is_player() then
 				return
 			end
-			if core_game.game_started == true or core_game.pregame_started == true then return end
+			if core_game.game_started == true or core_game.pregame_started == true and not minetest.check_player_privs(clicker, { core_admin = true }) then return end
 			-- if there is already a driver
 			if self.driver then
 				-- if clicker is driver detach passengers and driver
@@ -134,7 +134,7 @@ function vehicle_mash.register_vehicle(name, def)
 			return core.serialize(tmp)
 		end,
 		on_punch = function(self, puncher, time_from_last_punch, tool_capabilities, dir, damage)
-			if core_game.game_started == true then return end -- Do not let the driver remove the car once the game started
+			if core_game.game_started == true or core_game.pregame_started == true then return end -- Do not let the driver remove the car once the game started
 			if not puncher or not puncher:is_player() or self.removed or self.driver then
 				return
 			end
@@ -193,6 +193,7 @@ function vehicle_mash.register_vehicle(name, def)
 		wield_image = def.wield_image,
 		wield_scale = def.wield_scale,
 		liquids_pointable = can_float,
+		groups = { not_in_creative_inventory = 1 },
 		on_place = function(itemstack, placer, pointed_thing)
 			if pointed_thing.type ~= "node" then
 				return

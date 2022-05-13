@@ -1,0 +1,206 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# IFRFSX <1079092922@qq.com>, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-31 11:28+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: bee.lua
+msgid "Bee"
+msgstr "蜜蜂"
+
+#: bee.lua
+msgid "Honey"
+msgstr "蜂蜜"
+
+#: bee.lua
+msgid "Beehive"
+msgstr "蜂巢"
+
+#: bee.lua
+msgid "Honey Block"
+msgstr "蜂蜜方块"
+
+#: bunny.lua
+msgid "Bunny"
+msgstr "兔子"
+
+#: bunny.lua
+msgid "Raw Rabbit"
+msgstr "生兔肉"
+
+#: bunny.lua
+msgid "Cooked Rabbit"
+msgstr "熟兔肉"
+
+#: bunny.lua
+msgid "Rabbit Hide"
+msgstr "兔子皮"
+
+#: chicken.lua
+msgid "Chicken"
+msgstr "鸡"
+
+#: chicken.lua
+msgid "Chicken Egg"
+msgstr "鸡蛋"
+
+#: chicken.lua
+msgid "Fried Egg"
+msgstr "煎蛋"
+
+#: chicken.lua
+msgid "Raw Chicken"
+msgstr "生鸡肉"
+
+#: chicken.lua
+msgid "Cooked Chicken"
+msgstr "熟鸡肉"
+
+#: chicken.lua
+msgid "Feather"
+msgstr "羽毛"
+
+#: cow.lua
+msgid "Cow already milked!"
+msgstr "奶牛已经被挤奶了！"
+
+#: cow.lua
+msgid "Cow"
+msgstr "奶牛"
+
+#: cow.lua
+msgid "Bucket of Milk"
+msgstr "一桶牛奶"
+
+#: cow.lua
+msgid "Glass of Milk"
+msgstr "一杯牛奶"
+
+#: cow.lua
+msgid "Cheese"
+msgstr "奶酪"
+
+#: cow.lua
+msgid "Cheese Block"
+msgstr "奶酪方块"
+
+#: init.lua
+msgid "[MOD] Mobs Redo 'Animals' loaded"
+msgstr "[模组] Mobs Redo 'Animals' 已加载！"
+
+#: kitten.lua
+msgid "Kitten"
+msgstr "小猫"
+
+#: kitten.lua
+msgid "Hairball"
+msgstr "毛球"
+
+#: penguin.lua
+msgid "Penguin"
+msgstr "企鹅"
+
+#: rat.lua
+msgid "Rat"
+msgstr "老鼠"
+
+#: rat.lua
+msgid "Cooked Rat"
+msgstr "熟老鼠"
+
+#: sheep.lua
+msgid "Black"
+msgstr "黑"
+
+#: sheep.lua
+msgid "Blue"
+msgstr "蓝"
+
+#: sheep.lua
+msgid "Brown"
+msgstr "棕"
+
+#: sheep.lua
+msgid "Cyan"
+msgstr "青"
+
+#: sheep.lua
+msgid "Dark Green"
+msgstr "蓝绿"
+
+#: sheep.lua
+msgid "Dark Grey"
+msgstr "蓝灰"
+
+#: sheep.lua
+msgid "Green"
+msgstr "绿"
+
+#: sheep.lua
+msgid "Grey"
+msgstr "灰"
+
+#: sheep.lua
+msgid "Magenta"
+msgstr "品红"
+
+#: sheep.lua
+msgid "Orange"
+msgstr "橙"
+
+#: sheep.lua
+msgid "Pink"
+msgstr "粉红"
+
+#: sheep.lua
+msgid "Red"
+msgstr "红"
+
+#: sheep.lua
+msgid "Violet"
+msgstr "紫"
+
+#: sheep.lua
+msgid "White"
+msgstr "白"
+
+#: sheep.lua
+msgid "Yellow"
+msgstr "黄"
+
+#: sheep.lua
+msgid "@1 Sheep"
+msgstr "@1羊"
+
+#: sheep.lua
+msgid "Raw Mutton"
+msgstr "生羊肉"
+
+#: sheep.lua
+msgid "Cooked Mutton"
+msgstr "熟羊肉"
+
+#: warthog.lua
+msgid "Warthog"
+msgstr "野猪"
+
+#: warthog.lua
+msgid "Raw Porkchop"
+msgstr "生猪排"
+
+#: warthog.lua
+msgid "Cooked Porkchop"
+msgstr "熟猪排"

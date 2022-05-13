@@ -5,10 +5,59 @@ core_game.players_on_race = {} -- Save players on the current race in a vector
 local modname = minetest.get_current_modname()
 local S = minetest.get_translator(modname)
 
+------------------
+-- Privileges --
+------------------
+
+--- @brief Give customized nametags for those
+--- who have the premium or core administrator role on grant/revoke.
+--- @param name string the player to update the nametag to
+--- @returns void
+function core_game.grant_revoke(name)
+	local player = minetest.get_player_by_name(name)
+	if not player then return end
+
+	-- Administrators
+	minetest.after(0, function()
+		if minetest.check_player_privs(player, { core_admin = true } ) then
+			player:set_nametag_attributes({
+				text = "[STAFF] " .. player:get_player_name(),
+				color = {r = 255, g = 0, b = 0},
+				bgcolor = false
+			})
+			return
+		else
+			player:set_nametag_attributes({
+				text = player:get_player_name(),
+				color = {r = 255, g = 255, b = 255},
+				bgcolor = false
+			})
+		end
+
+		-- VIP/Premium users
+		if minetest.get_modpath("premium") and minetest.check_player_privs(player, { has_premium = true } ) then
+			player:set_nametag_attributes({
+				text = "[VIP] " .. player:get_player_name(),
+				color = {r = 255, g = 255, b = 0},
+				bgcolor = false
+			})
+			return
+		else
+			player:set_nametag_attributes({
+				text = player:get_player_name(),
+				color = {r = 255, g = 255, b = 255},
+				bgcolor = false
+			})
+		end
+	end)
+end
+
 minetest.register_privilege("core_admin", {
     description = S("Can manage the lobby position and core game configurations."),
     give_to_singleplayer = true,
 	give_to_admin = true,
+	on_grant = core_game.grant_revoke,
+	on_revoke = core_game.grant_revoke,
 })
 
 core_game.game_started = false -- Variable to verify if a race has started or not
@@ -42,6 +91,27 @@ if tonumber(minetest.settings:get("minimum_required_players")) == nil then
 	minetest.settings:set("minimum_required_players", 4) -- SET MINIMUM REQUIRED PLAYERS FOR A RACE
 end
 
+-- Override the hand item
+-- Do not let users break any nodes but let them rightclick on items
+minetest.override_item("", {
+	range = 4,
+	tool_capabilities = {
+		full_punch_interval = 0.5,
+		max_drop_level = 3,
+		groupcaps = {
+			crumbly = nil,
+			cracky  = nil,
+			snappy  = nil,
+			choppy  = nil,
+			oddly_breakable_by_hand = nil,
+			-- dig_immediate group doesn't use value 1. Value 3 is instant dig
+			dig_immediate =
+				{times = {[2] = nil, [3] = nil}, uses = 0, maxlevel = 0},
+		},
+		damage_groups = {fleshy = 1},
+	}
+})
+
 -------------
 -- Nodes --
 -------------
@@ -56,16 +126,6 @@ minetest.register_node("core_game:start_race", {
 			return false, S("You don't have sufficient permissions to place this node. Missing privileges: core_admin")
 		end
 	end,
-})
-
-minetest.register_node("core_game:junglenoob", { -- WIP, name might/will change
-	description = "noob",
-	paramtype2 = "facedir",
-	place_param2 = 0,
-	tiles = {"default_junglewood.png"},
-	is_ground_content = false,
-	walkable = false,
-	groups = {choppy = 2, oddly_breakable_by_hand = 2, flammable = 2, wood = 1, not_in_creative_inventory = 1},
 })
 
 ----------------
@@ -637,8 +697,7 @@ minetest.register_on_joinplayer(function(player)
 	player:set_pos(core_game.position)
 	minetest.log("action", "[RACING GAME] Player " .. player:get_player_name() .. " joined and was teleported to the lobby successfully.")
 
-	--minetest.sound_play("core_game.learn", {to_player = player:get_player_name(), gain = 1.0})
-
+	minetest.sound_play("core_game.learn", {to_player = player:get_player_name(), gain = 1.0})
 	-- VIP/Premium users
 	if minetest.get_modpath("premium") and minetest.check_player_privs(player, { has_premium = true } ) then
 		player:set_nametag_attributes({
@@ -658,7 +717,7 @@ minetest.register_on_joinplayer(function(player)
 	end
 end)
 
-minetest.register_on_dieplayer(function(player)
+minetest.register_on_respawnplayer(function(player)
 	player:set_pos(core_game.position)
 	minetest.log("action", "[RACING GAME] Player " .. player:get_player_name() .. " died. Teleported to the lobby successfully.")
 end)

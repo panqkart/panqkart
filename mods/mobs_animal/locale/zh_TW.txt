@@ -1,0 +1,53 @@
+# Template for translations of mobs_animal mod
+# last update: 2020/02/13
+
+Bee = 蜜蜂
+Honey = 蜂蜜
+Beehive = 蜂巢
+Honey Block = 蜂蜜方塊
+Butter = 黃油
+Bunny = 兔子
+Raw Rabbit = 生兔肉
+Cooked Rabbit = 熟兔肉
+Rabbit Hide = 兔子皮
+Chicken = 雞
+Chicken Egg = 雞蛋
+Fried Egg = 煎蛋
+Raw Chicken = 生雞肉
+Cooked Chicken = 熟雞肉
+Feather = 羽毛
+Cow already milked! = 奶牛已被擠奶！
+Cow = 奶牛
+Bucket of Milk = 一桶牛奶
+Cheese = 奶酪
+Cheese Block = 奶酪方塊
+[MOD] Mobs Redo 'Animals' loaded = [模組] Mobs Redo 'Animals' 已加載！
+Kitten = 小貓
+Penguin = 企鵝
+Rat = 老鼠
+Cooked Rat = 熟老鼠
+Black = 黑
+Blue = 藍
+Brown = 棕
+Cyan = 青
+Dark Green = 暗綠
+Dark Grey = 暗灰
+Green = 綠
+Grey = 灰
+Magenta = 品紅
+Orange = 橙
+Pink = 粉紅
+Red = 紅
+Violet = 紫
+White = 白
+Yellow = 黃
+@1 Sheep = @1羊
+Raw Mutton = 生羊肉
+Cooked Mutton = 熟羊肉
+Warthog = 野豬
+Raw Porkchop = 生豬排
+Cooked Porkchop = 熟豬排
+Panda = 熊貓
+
+Glass of Milk = 一杯牛奶
+Hairball = 毛球

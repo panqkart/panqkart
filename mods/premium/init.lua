@@ -17,6 +17,8 @@ minetest.register_privilege("has_premium", {
     description = S("The user has premium features. See /donate for more information."),
     give_to_singleplayer = false,
     give_to_admin = false,
+	on_grant = core_game.grant_revoke,
+	on_revoke = core_game.grant_revoke,
 })
 
 ----------------

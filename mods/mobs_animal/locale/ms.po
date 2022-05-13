@@ -1,0 +1,199 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-02-06 00:17+0800\n"
+"PO-Revision-Date: 2018-02-06 00:25+0800\n"
+"Last-Translator: MuhdNurHidayat (MNH48) <mnh48mail@gmail.com>\n"
+"Language-Team: \n"
+"Language: ms\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.6\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: bee.lua
+msgid "Bee"
+msgstr "Lebah"
+
+#: bee.lua
+msgid "Honey"
+msgstr "Madu"
+
+#: bee.lua
+msgid "Beehive"
+msgstr "Sarang Lebah"
+
+#: bee.lua
+msgid "Honey Block"
+msgstr "Blok Madu"
+
+#: bunny.lua
+msgid "Bunny"
+msgstr "Arnab"
+
+#: bunny.lua
+msgid "Raw Rabbit"
+msgstr "Daging Arnab Mentah"
+
+#: bunny.lua
+msgid "Cooked Rabbit"
+msgstr "Daging Arnab Bakar"
+
+#: bunny.lua
+msgid "Rabbit Hide"
+msgstr "Belulang Arnab"
+
+#: chicken.lua
+msgid "Chicken"
+msgstr "Ayam"
+
+#: chicken.lua
+msgid "Chicken Egg"
+msgstr "Telur Ayam"
+
+#: chicken.lua
+msgid "Fried Egg"
+msgstr "Telur Goreng"
+
+#: chicken.lua
+msgid "Raw Chicken"
+msgstr "Ayam Mentah"
+
+#: chicken.lua
+msgid "Cooked Chicken"
+msgstr "Ayam Bakar"
+
+#: chicken.lua
+msgid "Feather"
+msgstr "Bulu"
+
+#: cow.lua
+msgid "Cow already milked!"
+msgstr "Lembu telah diperah susunya!"
+
+#: cow.lua
+msgid "Cow"
+msgstr "Lembu"
+
+#: cow.lua
+msgid "Bucket of Milk"
+msgstr "Baldi Susu"
+
+#: cow.lua
+msgid "Cheese"
+msgstr "Keju"
+
+#: cow.lua
+msgid "Cheese Block"
+msgstr "Blok Keju"
+
+#: init.lua
+msgid "[MOD] Mobs Redo 'Animals' loaded"
+msgstr "[MODS] Mobs Redo 'Animals' telah dimuatkan"
+
+#: kitten.lua
+msgid "Kitten"
+msgstr "Anak Kucing"
+
+#: penguin.lua
+msgid "Penguin"
+msgstr "Penguin"
+
+#: rat.lua
+msgid "Rat"
+msgstr "Tikus"
+
+#: rat.lua
+msgid "Cooked Rat"
+msgstr "Tikus Bakar"
+
+#: sheep.lua
+msgid "Black"
+msgstr "Hitam"
+
+#: sheep.lua
+msgid "Blue"
+msgstr "Biru"
+
+#: sheep.lua
+msgid "Brown"
+msgstr "Perang"
+
+#: sheep.lua
+msgid "Cyan"
+msgstr "Sian"
+
+#: sheep.lua
+msgid "Dark Green"
+msgstr "Hijau Gelap"
+
+#: sheep.lua
+msgid "Dark Grey"
+msgstr "Kelabu Gelap"
+
+#: sheep.lua
+msgid "Green"
+msgstr "Hijau"
+
+#: sheep.lua
+msgid "Grey"
+msgstr "Kelabu"
+
+#: sheep.lua
+msgid "Magenta"
+msgstr "Merah Lembayung"
+
+#: sheep.lua
+msgid "Orange"
+msgstr "Jingga"
+
+#: sheep.lua
+msgid "Pink"
+msgstr "Merah Jambu"
+
+#: sheep.lua
+msgid "Red"
+msgstr "Merah"
+
+#: sheep.lua
+msgid "Violet"
+msgstr "Ungu"
+
+#: sheep.lua
+msgid "White"
+msgstr "Putih"
+
+#: sheep.lua
+msgid "Yellow"
+msgstr "Kuning"
+
+#: sheep.lua
+msgid "@1 Sheep"
+msgstr "Biri-biri @1"
+
+#: sheep.lua
+msgid "Raw Mutton"
+msgstr "Daging Biri-biri Mentah"
+
+#: sheep.lua
+msgid "Cooked Mutton"
+msgstr "Daging Biri-biri Bakar"
+
+#: warthog.lua
+msgid "Warthog"
+msgstr "Babi Hutan"
+
+#: warthog.lua
+msgid "Raw Porkchop"
+msgstr "Daging Babi Mentah"
+
+#: warthog.lua
+msgid "Cooked Porkchop"
+msgstr "Daging Babi Bakar"
