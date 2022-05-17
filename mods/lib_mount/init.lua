@@ -629,7 +629,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 --		new_acce.y = 1
 	end
 	if node_is(p) == "maptools_black" or node_is(p) == "maptools_white" and entity.driver then
-		if core_game.is_end[entity.driver] == true then return end
+		if core_game.is_end[entity.driver] == true or not core_game.game_started == true then return end
 
 		if not core_game.players_on_race[entity.driver] == entity.driver
 		or core_game.players_on_race[entity.driver] == nil then

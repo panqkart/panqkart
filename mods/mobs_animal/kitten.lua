@@ -12,6 +12,7 @@ stepheight = 0.6,
 --attack_type = "dogfight",
 --attack_animals = true, -- so it can attack rat
 attack_players = false,
+owner_loyal = true,
 reach = 1,
 stepheight = 1.1,
 	passive = true,

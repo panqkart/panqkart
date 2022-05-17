@@ -5,6 +5,30 @@ core_game.players_on_race = {} -- Save players on the current race in a vector
 local modname = minetest.get_current_modname()
 local S = minetest.get_translator(modname)
 
+-- instant grow sapling if there is room (FROM SKYBLOCK, TEMPORARY)
+minetest.override_item('default:sapling', {
+	after_place_node = function(pos)
+		-- check if node under belongs to the soil group
+		pos.y = pos.y - 1
+		local node_under = minetest.get_node(pos)
+		pos.y = pos.y + 1
+		--if minetest.get_item_group(node_under.name, "soil") == 0 then
+			--return
+		--end
+
+		-- check if we have space to make a tree
+		for dy=1,4 do
+			pos.y = pos.y+dy
+			if minetest.get_node(pos).name ~= 'air' and minetest.get_node(pos).name ~= 'default:leaves' then
+				return
+			end
+			pos.y = pos.y-dy
+		end
+		-- add the tree
+		default.grow_tree(pos, math.random(1, 4) == 1)
+	end,
+})
+
 ------------------
 -- Privileges --
 ------------------
@@ -25,6 +49,7 @@ function core_game.grant_revoke(name)
 				color = {r = 255, g = 0, b = 0},
 				bgcolor = false
 			})
+			player:set_properties({zoom_fov = 15}) -- Let administrators use zoom
 			return
 		else
 			player:set_nametag_attributes({
@@ -32,6 +57,7 @@ function core_game.grant_revoke(name)
 				color = {r = 255, g = 255, b = 255},
 				bgcolor = false
 			})
+			player:set_properties({zoom_fov = 0}) -- Remove zoom to normal players
 		end
 
 		-- VIP/Premium users
@@ -85,7 +111,7 @@ local already_ran = false -- A variable to make sure if the pregame countdown ha
 local pregame_count_ended = false -- A variable to remove the pregame countdown HUD for those who weren't the first to run the countdown.
 
 local racecount_check = {} -- An array used to store the value if a player's countdown already started.
-local max_racecount = 180 -- Maximum value for the race count (default 180)
+local max_racecount = 15 -- Maximum value for the race count (default 180)
 
 if tonumber(minetest.settings:get("minimum_required_players")) == nil then
 	minetest.settings:set("minimum_required_players", 4) -- SET MINIMUM REQUIRED PLAYERS FOR A RACE
@@ -110,22 +136,6 @@ minetest.override_item("", {
 		},
 		damage_groups = {fleshy = 1},
 	}
-})
-
--------------
--- Nodes --
--------------
-minetest.register_node("core_game:start_race", {
-	description = S("Start a race!"),
-	tiles = {"default_grass.png"},
-	drop = "",
-	light_source = 7,
-	groups = {not_in_creative_inventory = 1, unbreakable = 1},
-	on_place = function(itemstack, placer, pointed_thing)
-		if minetest.check_player_privs(placer, { core_admin = true }) then
-			return false, S("You don't have sufficient permissions to place this node. Missing privileges: core_admin")
-		end
-	end,
 })
 
 ----------------
@@ -426,7 +436,7 @@ local function countDown(player)
 			{type = "position", x = 0.9, y = 0.9},
 			{
 				type = "label", x = 0, y = 0,
-				label = "The race will start in: " .. pregame_count
+				label = S("The race will start in: @1",pregame_count)
 			}
 		})
        	minetest.after(1, function() countDown(player) end)
@@ -520,14 +530,14 @@ function core_game.show_scoreboard(name)
         "formspec_version[4]",
         "size[12,6]",
         "label[0.5,0.5;", minetest.formspec_escape(S("Final scoreboard, places, and race count.")), "]",
-        "table[0.3,1.25;10,3;use_hovercraft;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds;1]",
+        "table[0.3,1.25;10,3;scoreboard;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds;1]",
     }
 elseif core_game.player_count == 2 then
 	formspec = {
         "formspec_version[4]",
         "size[12,6]",
         "label[0.5,0.5;", minetest.formspec_escape(S("Final scoreboard, places, and race count.")), "]",
-        "table[0.3,1.25;10,3;use_hovercraft;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds" ..
+        "table[0.3,1.25;10,3;scoreboard;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds" ..
 		"," .. "2nd 					" .. core_game.players_that_won[1]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[1]] .. " seconds " ..";1]",
     }
 elseif core_game.player_count == 3 then
@@ -535,7 +545,7 @@ elseif core_game.player_count == 3 then
         "formspec_version[4]",
         "size[12,6]",
         "label[0.5,0.5;", minetest.formspec_escape(S("Final scoreboard, places, and race count.")), "]",
-        "table[0.3,1.25;10,3;use_hovercraft;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds" ..
+        "table[0.3,1.25;10,3;scoreboard;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds" ..
 		"," .. "2nd 					" .. core_game.players_that_won[1]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[1]] .. " seconds" ..
 		"," .. "3rd 					" .. core_game.players_that_won[2]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[2]] .. " seconds;1]",
     }
@@ -544,7 +554,7 @@ elseif core_game.player_count == 4 then
         "formspec_version[4]",
         "size[12,6]",
         "label[0.5,0.5;", minetest.formspec_escape(S("Final scoreboard, places, and race count.")), "]",
-        "table[0.3,1.25;10,3;use_hovercraft;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds" ..
+        "table[0.3,1.25;10,3;scoreboard;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds" ..
 		"," .. "2nd 					" .. core_game.players_that_won[1]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[1]] .. " seconds" ..
 		"," .. "3rd 					" .. core_game.players_that_won[2]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[2]] .. " seconds" ..
 		"," .. "4rd 					" .. core_game.players_that_won[3]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[3]] .. " seconds;1]",
@@ -554,7 +564,7 @@ elseif core_game.player_count == 5 then
         "formspec_version[4]",
         "size[12,6]",
         "label[0.5,0.5;", minetest.formspec_escape(S("Final scoreboard, places, and race count.")), "]",
-        "table[0.3,1.25;10,3;use_hovercraft;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds" ..
+        "table[0.3,1.25;10,3;scoreboard;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds" ..
 		"," .. "2nd 					" .. core_game.players_that_won[1]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[1]] .. " seconds" ..
 		"," .. "3rd 					" .. core_game.players_that_won[2]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[2]] .. " seconds" ..
 		"," .. "4rd 					" .. core_game.players_that_won[3]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[3]] .. " seconds" ..
@@ -565,7 +575,7 @@ elseif core_game.player_count == 6 then
         "formspec_version[4]",
         "size[12,6]",
         "label[0.5,0.5;", minetest.formspec_escape(S("Final scoreboard, places, and race count.")), "]",
-        "table[0.3,1.25;10,3;use_hovercraft;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds" ..
+        "table[0.3,1.25;10,3;scoreboard;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds" ..
 		"," .. "2nd 					" .. core_game.players_that_won[1]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[1]] .. " seconds" ..
 		"," .. "3rd 					" .. core_game.players_that_won[2]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[2]] .. " seconds" ..
 		"," .. "4rd 					" .. core_game.players_that_won[3]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[3]] .. " seconds" ..
@@ -577,7 +587,7 @@ elseif core_game.player_count == 7 then
         "formspec_version[4]",
         "size[12,6]",
         "label[0.5,0.5;", minetest.formspec_escape(S("Final scoreboard, places, and race count.")), "]",
-        "table[0.3,1.25;10,3;use_hovercraft;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds" ..
+        "table[0.3,1.25;10,3;scoreboard;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds" ..
 		"," .. "2nd 					" .. core_game.players_that_won[1]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[1]] .. " seconds" ..
 		"," .. "3rd 					" .. core_game.players_that_won[2]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[2]] .. " seconds" ..
 		"," .. "4rd 					" .. core_game.players_that_won[3]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[3]] .. " seconds" ..
@@ -590,7 +600,7 @@ elseif core_game.player_count == 8 then
         "formspec_version[4]",
         "size[12,6]",
         "label[0.5,0.5;", minetest.formspec_escape(S("Final scoreboard, places, and race count.")), "]",
-        "table[0.3,1.25;10,3;use_hovercraft;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds" ..
+        "table[0.3,1.25;10,3;scoreboard;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds" ..
 		"," .. "2nd 					" .. core_game.players_that_won[1]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[1]] .. " seconds" ..
 		"," .. "3rd 					" .. core_game.players_that_won[2]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[2]] .. " seconds" ..
 		"," .. "4rd 					" .. core_game.players_that_won[3]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[3]] .. " seconds" ..
@@ -604,7 +614,7 @@ elseif core_game.player_count == 9 then
         "formspec_version[4]",
         "size[12,6]",
         "label[0.5,0.5;", minetest.formspec_escape(S("Final scoreboard, places, and race count.")), "]",
-        "table[0.3,1.25;10,3;use_hovercraft;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds" ..
+        "table[0.3,1.25;10,3;scoreboard;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds" ..
 		"," .. "2nd 					" .. core_game.players_that_won[1]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[1]] .. " seconds" ..
 		"," .. "3rd 					" .. core_game.players_that_won[2]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[2]] .. " seconds" ..
 		"," .. "4rd 					" .. core_game.players_that_won[3]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[3]] .. " seconds" ..
@@ -619,7 +629,7 @@ elseif core_game.player_count == 10 then
         "formspec_version[4]",
         "size[12,6]",
         "label[0.5,0.5;", minetest.formspec_escape(S("Final scoreboard, places, and race count.")), "]",
-        "table[0.3,1.25;10,3;use_hovercraft;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds" ..
+        "table[0.3,1.25;10,3;scoreboard;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds" ..
 		"," .. "2nd 					" .. core_game.players_that_won[1]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[1]] .. " seconds" ..
 		"," .. "3rd 					" .. core_game.players_that_won[2]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[2]] .. " seconds" ..
 		"," .. "4rd 					" .. core_game.players_that_won[3]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[3]] .. " seconds" ..
@@ -635,7 +645,7 @@ elseif core_game.player_count == 11 then
         "formspec_version[4]",
         "size[12,6]",
         "label[0.5,0.5;", minetest.formspec_escape(S("Final scoreboard, places, and race count.")), "]",
-        "table[0.3,1.25;10,3;use_hovercraft;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds" ..
+        "table[0.3,1.25;10,3;scoreboard;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds" ..
 		"," .. "2nd 					" .. core_game.players_that_won[1]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[1]] .. " seconds" ..
 		"," .. "3rd 					" .. core_game.players_that_won[2]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[2]] .. " seconds" ..
 		"," .. "4rd 					" .. core_game.players_that_won[3]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[3]] .. " seconds" ..
@@ -652,7 +662,7 @@ elseif core_game.player_count == 12 then
         "formspec_version[4]",
         "size[12,6]",
         "label[0.5,0.5;", minetest.formspec_escape(S("Final scoreboard, places, and race count.")), "]",
-        "table[0.3,1.25;10,3;use_hovercraft;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds" ..
+        "table[0.3,1.25;10,3;scoreboard;" .. S("Place					Player name					Race count") .. ",," .. "1st 					" .. core_game.players_that_won[0]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[0]] .. " seconds" ..
 		"," .. "2nd 					" .. core_game.players_that_won[1]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[1]] .. " seconds" ..
 		"," .. "3rd 					" .. core_game.players_that_won[2]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[2]] .. " seconds" ..
 		"," .. "4rd 					" .. core_game.players_that_won[3]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[3]] .. " seconds" ..
@@ -714,6 +724,7 @@ minetest.register_on_joinplayer(function(player)
 			color = {r = 255, g = 0, b = 0},
 			bgcolor = false
 		})
+		player:set_properties({zoom_fov = 15}) -- Let administrators zoom
 	end
 end)
 
@@ -815,7 +826,7 @@ minetest.register_globalstep(function(dtime)
 		local pos = player:get_pos()
 		local node = minetest.get_node(vector.subtract(pos, {x=0,y=1,z=0}))
 
-		if node.name == "core_game:start_race" and not ran_once[player] == true then
+		if node.name == "special_nodes:start_race" and not ran_once[player] == true then
 			reset_values(player) -- Reset values in case something was stored
 			core_game.start_game(player)
 			ran_once[player] = true
@@ -830,6 +841,24 @@ minetest.register_globalstep(function(dtime)
 			if racecount_check[name] == false then
 				core_game.count[name] = 0 -- Let's initialize from 0 to prevent crashes
 				racecount_check[name] = true
+			end
+
+			if core_game.count[name] >= max_racecount then
+				if not core_game.is_end[name] == true then
+					minetest.chat_send_player(name:get_player_name(), S("You lost the race for ending out of time."))
+				end
+				player_count(name)
+				minetest.show_formspec(name:get_player_name(), "core_game:scoreboard", core_game.show_scoreboard(name))
+				core_game.player_lost(name)
+				minetest.chat_send_player(name:get_player_name(), S("Race ended! Heading back to the lobby..."))
+
+				hud_fs.close_hud(name, "core_game:pending_race")
+				for _,player_name in ipairs(minetest.get_connected_players()) do
+					core_game.is_waiting_end[player_name] = false
+					hud_fs.close_hud(player_name, "core_game:pending_race")
+				end
+				--core_game.player_count = 0
+				--core_game.players_on_race = {}
 			end
 
 			--[[if core_game.is_end[name] == true then
@@ -867,25 +896,6 @@ minetest.register_globalstep(function(dtime)
 						label = S("You finished at: @1 seconds!", core_game.count[name])
 					}
 				})
-			end
-
-			if core_game.count[name] >= max_racecount then
-				if not core_game.is_end[name] == true then
-					minetest.chat_send_player(name:get_player_name(), S("You lost the race for ending out of time."))
-				end
-				player_count(name)
-				minetest.show_formspec(name:get_player_name(), "core_game:scoreboard", core_game.show_scoreboard(name))
-				core_game.player_lost(name)
-				minetest.chat_send_player(name:get_player_name(), S("Race ended! Heading back to the lobby..."))
-
-				hud_fs.close_hud(name, "core_game:pending_race")
-				for _,player_name in ipairs(minetest.get_connected_players()) do
-					core_game.is_waiting_end[player_name] = false
-					hud_fs.close_hud(player_name, "core_game:pending_race")
-				end
-				core_game.player_count = 0
-				core_game.players_on_race = {}
-				return
 			end
 		end
 	end

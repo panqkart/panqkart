@@ -6,40 +6,7 @@ rules = {}
 local S = minetest.get_translator(minetest.get_current_modname())
 
 local items = {
-	S("By playing on this server you agree to these rules:"),
-	"",
-	S("1. No swearing, dating, or other inappropriate behaviour."),
-	S("2. No spamming, using all-caps, or any other method of chat abuse."),
-	S("3. Don't be a cheater. No hacked clients."),
-	S("4. Spawnkilling is considered excessive and thus forbidden if it doesn't"),
-	"        " .. S("contribute to the goal of the game in a proper way. Consequently,"),
-	"        " .. S("spawnkilling can already be punished if only two kills are made,"),
-	"        " .. S("depending on the situation."),
-	S("5. Don't be a traitor. Don't:"),
-	S("    a. Dig blocks in your base to make it less secure or"),
-	S("       to trap team mates on purpose."),
-	S("    b. Help the other team win."),
-	S("    c. Change teams."),
-	S("6. Don't leave the game whilst in a fight"),
-	S("7. Don't impersonate other community members"),
-	S("8. Do not share your password with ANYONE."),
-	S("9. Avoid controversial topics like politics/religion"),
-	S("10. Moderator decisions are final."),
-	"",
-	S("Failure to follow these rules may result in a kick or ban"),
-	S("     (temp or permanent) depending on severity."),
-	"",
-	S("Developed and hosted by rubenwardy"),
-	S("Moderators")..": Thomas-S, IceAgeComing, Waterbug, DragonsVolcanoDance,",
-	"            Shara, Calinou, Aurika, Lone_Wolf, Xenon, Jhalman, Kat",
-	"",
-	S("Though the server owner will not actively read private messages or disclose"),
-	S("their content outside the mod team, random checks will be done to make sure"),
-	S("they are not being abused and they will be reviewed if abuse or inappropriate"),
-	S("behaviour is suspected."),
-	"",
-	S("Use /report to send a message to a moderator."),
-	S("For example, /report bobgreen is destroying our base")}
+	S("Welcome to PanqKart!"),}
 
 for i = 1, #items do
 	items[i] = minetest.formspec_escape(items[i])
