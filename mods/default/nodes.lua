@@ -2592,10 +2592,38 @@ local function register_sign(material, desc, def)
 		on_construct = function(pos)
 			local meta = minetest.get_meta(pos)
 			meta:set_string("formspec", "field[text;;${text}]")
+			meta:set_string("owner", "") -- Added by team PanqKart
+		end,
+		after_place_node = function(pos, placer)
+			-- Added by team PanqKart
+
+			local meta = minetest.get_meta(pos)
+			meta:set_string("owner", placer:get_player_name() or "")
+		end,
+		can_dig = function(pos, player)
+			-- Added by team PanqKart
+
+			local meta = minetest.get_meta(pos)
+			if meta:get_string("infotext") or not meta:get_string("infotext") == '' then return end
+
+			return default.can_interact_with_node(player, pos)
+		end,
+		on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+			-- Added by team PanqKart
+			local player_name = clicker:get_player_name()
+			local meta = minetest.get_meta(pos)
+			if minetest.is_protected(pos, player_name) or default.can_interact_with_node(clicker, pos) == false then
+				minetest.record_protection_violation(pos, player_name)
+				meta:set_string("formspec", "")
+				return
+			else
+				meta:set_string("formspec", "field[text;;${text}]")
+			end
 		end,
 		on_receive_fields = function(pos, formname, fields, sender)
 			local player_name = sender:get_player_name()
-			if minetest.is_protected(pos, player_name) then
+														-- Added by team PanqKart
+			if minetest.is_protected(pos, player_name) or default.can_interact_with_node(sender, pos) == false then
 				minetest.record_protection_violation(pos, player_name)
 				return
 			end

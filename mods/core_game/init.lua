@@ -1,12 +1,13 @@
 core_game = { }
-core_game.position = { x = -50.5, y = 71.5, z = 157.6 } -- Default lobby position
+core_game.position = { x = -50.5, y = 71.5, z = 157.6 } -- Default lobby position. PLEASE EDIT TO YOUR NEEDS
 core_game.players_on_race = {} -- Save players on the current race in a vector
+core_game.level_position = {  } -- EDIT TO YOUR NEEDS
 
 local modname = minetest.get_current_modname()
 local S = minetest.get_translator(modname)
 
 -- instant grow sapling if there is room (FROM SKYBLOCK, TEMPORARY)
-minetest.override_item('default:sapling', {
+minetest.override_item('default:bush_sapling', {
 	after_place_node = function(pos)
 		-- check if node under belongs to the soil group
 		pos.y = pos.y - 1
@@ -19,13 +20,13 @@ minetest.override_item('default:sapling', {
 		-- check if we have space to make a tree
 		for dy=1,4 do
 			pos.y = pos.y+dy
-			if minetest.get_node(pos).name ~= 'air' and minetest.get_node(pos).name ~= 'default:leaves' then
+			if minetest.get_node(pos).name ~= 'air' and minetest.get_node(pos).name ~= 'default:bush_leaves' then
 				return
 			end
 			pos.y = pos.y-dy
 		end
 		-- add the tree
-		default.grow_tree(pos, math.random(1, 4) == 1)
+		default.grow_bush(pos)
 	end,
 })
 
@@ -111,11 +112,15 @@ local already_ran = false -- A variable to make sure if the pregame countdown ha
 local pregame_count_ended = false -- A variable to remove the pregame countdown HUD for those who weren't the first to run the countdown.
 
 local racecount_check = {} -- An array used to store the value if a player's countdown already started.
-local max_racecount = 15 -- Maximum value for the race count (default 180)
+local max_racecount = 180 -- Maximum value for the race count (default 180)
 
 if tonumber(minetest.settings:get("minimum_required_players")) == nil then
 	minetest.settings:set("minimum_required_players", 4) -- SET MINIMUM REQUIRED PLAYERS FOR A RACE
 end
+
+----------------
+-- Overrides --
+----------------
 
 -- Override the hand item
 -- Do not let users break any nodes but let them rightclick on items
@@ -137,6 +142,14 @@ minetest.override_item("", {
 		damage_groups = {fleshy = 1},
 	}
 })
+
+local old_default_can_interact_with_node = default.can_interact_with_node
+function default.can_interact_with_node(player, pos)
+	if minetest.check_player_privs(player, { core_admin = true }) then
+		return true
+	end
+	return old_default_can_interact_with_node(player, pos)
+end
 
 ----------------
 -- Commands --
@@ -160,6 +173,19 @@ minetest.register_chatcommand("change_position", {
 		return true, S("Changed lobby's position to: <@1>", param)
     end,
 })
+
+if minetest.get_modpath("car_shop") then
+	minetest.register_chatcommand("reset_coins", {
+		params = "<player>",
+		description = "Reset all coins to 0 to the given player",
+		privs = {
+			core_admin = true,
+		},
+		func = function(name, param)
+
+		end,
+	})
+end
 
 minetest.register_chatcommand("start_race", {
 	params = "",
@@ -514,6 +540,30 @@ local function start(player)
 	-- End: HUD/count stuff
 end
 
+--- @brief Function that contains the
+-- code to successfully end a race at the given time.
+-- No player parameter included; this is ran for all players who are on race.
+--- @returns void
+local function race_end()
+	for _,name in pairs(core_game.players_on_race) do
+		if not core_game.is_end[name] == true then
+			minetest.chat_send_player(name:get_player_name(), S("You lost the race for ending out of time."))
+		end
+		player_count(name)
+		minetest.after(0, function() minetest.show_formspec(name:get_player_name(), "core_game:scoreboard", core_game.show_scoreboard(name)) end)
+		core_game.player_lost(name)
+		minetest.chat_send_player(name:get_player_name(), S("Race ended! Heading back to the lobby..."))
+
+		hud_fs.close_hud(name, "core_game:pending_race")
+		for _,player_name in ipairs(minetest.get_connected_players()) do
+			core_game.is_waiting_end[player_name] = false
+			hud_fs.close_hud(player_name, "core_game:pending_race")
+		end
+	end
+	core_game.player_count = 0
+	core_game.players_on_race = {}
+end
+
 --------------------------
 -- Core game functions --
 --------------------------
@@ -836,6 +886,7 @@ minetest.register_globalstep(function(dtime)
 	-- Counting stuff yay
 	-- Special thanks to Warr1024 for helping!
 	for _,name in pairs(core_game.players_on_race) do
+		if not minetest.get_player_by_name(name) then return end
 		if core_game.game_started == true then
 
 			if racecount_check[name] == false then
@@ -844,21 +895,7 @@ minetest.register_globalstep(function(dtime)
 			end
 
 			if core_game.count[name] >= max_racecount then
-				if not core_game.is_end[name] == true then
-					minetest.chat_send_player(name:get_player_name(), S("You lost the race for ending out of time."))
-				end
-				player_count(name)
-				minetest.show_formspec(name:get_player_name(), "core_game:scoreboard", core_game.show_scoreboard(name))
-				core_game.player_lost(name)
-				minetest.chat_send_player(name:get_player_name(), S("Race ended! Heading back to the lobby..."))
-
-				hud_fs.close_hud(name, "core_game:pending_race")
-				for _,player_name in ipairs(minetest.get_connected_players()) do
-					core_game.is_waiting_end[player_name] = false
-					hud_fs.close_hud(player_name, "core_game:pending_race")
-				end
-				--core_game.player_count = 0
-				--core_game.players_on_race = {}
+				race_end() -- Run function to end a race
 			end
 
 			--[[if core_game.is_end[name] == true then
