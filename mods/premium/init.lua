@@ -1,3 +1,25 @@
+--[[
+Includes the core premium features for the PanqKart game.
+
+Copyright (C) 2022 David Leal (halfpacho@gmail.com)
+Copyright (C) Various other Minetest developers/contributors
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+USA
+--]]
+
 local modname = minetest.get_current_modname()
 local S = minetest.get_translator(modname)
 
@@ -58,6 +80,7 @@ minetest.register_chatcommand("premium_house", {
 	end,
 })
 
+--[[
 minetest.register_chatcommand("vip_nametag", {
 	params = "<player>",
 	description = S("Give VIP nametag to the given player."),
@@ -90,3 +113,5 @@ minetest.register_chatcommand("vip_nametag", {
 		end
 	end,
 })
+
+--]]

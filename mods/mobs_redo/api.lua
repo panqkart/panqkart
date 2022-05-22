@@ -784,9 +784,9 @@ function mob_class:update_tag()
 
 	end
 
-	--self.infotext = "Health: " .. self.health .. " / " .. self.hp_max
-		--.. (self.owner == "" and "" or "\n" .. "Owner: " .. self.owner)
-		--.. text
+	self.infotext = "Health: " .. self.health .. " / " .. self.hp_max
+		.. (self.owner == "" and "" or "\n" .. "Owner: " .. self.owner)
+		.. text
 
 	-- set changes
 	self.object:set_properties({
@@ -864,7 +864,6 @@ end
 
 -- remove mob and descrease counter
 local remove_mob = function(self, decrease)
-
 	self.object:remove()
 
 	if decrease and active_limit > 0 then
@@ -1224,7 +1223,9 @@ function mob_class:do_env_damage()
 			damage = (self.suffocation or 2)
 		end
 
-		self.health = self.health - damage
+		if not self.tamed then -- Added by team PanqKart to prevent animals from dying
+			self.health = self.health - damage
+		end
 
 		if self:check_for_death({type = "suffocation",
 				pos = pos, node = self.standing_in}) then

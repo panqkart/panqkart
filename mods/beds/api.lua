@@ -107,7 +107,7 @@ function beds.register_bed(name, def)
 		end,
 
 		on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-			if minetest.get_modpath("core_game") then return end -- Addition by Panquesito7
+			if minetest.get_modpath("core_game") then return end -- Added by team PanqKart
 
 			beds.on_rightclick(pos, clicker)
 			return itemstack

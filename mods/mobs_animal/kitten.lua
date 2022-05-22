@@ -42,7 +42,8 @@ stepheight = 1.1,
 		{name = "farming:string", chance = 1, min = 0, max = 1},
 	},
 	water_damage = 0,
-	lava_damage = 5,
+	lava_damage = 0,
+	fall_damage = 0,
 	--fear_height = 3,
 	animation = {
 		speed_normal = 42,
@@ -99,7 +100,7 @@ stepheight = 1.1,
 
 		local pos = self.object:get_pos()
 
-		minetest.add_item(pos, "mobs:hairball")
+		--minetest.add_item(pos, "mobs:hairball")
 
 		minetest.sound_play("default_dig_snappy", {
 			pos = pos,

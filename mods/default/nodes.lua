@@ -2599,12 +2599,13 @@ local function register_sign(material, desc, def)
 
 			local meta = minetest.get_meta(pos)
 			meta:set_string("owner", placer:get_player_name() or "")
+			meta:set_string("infotext", '')
 		end,
 		can_dig = function(pos, player)
 			-- Added by team PanqKart
 
 			local meta = minetest.get_meta(pos)
-			if meta:get_string("infotext") or not meta:get_string("infotext") == '' then return end
+			if meta:get_string("infotext") ~= '' then return end
 
 			return default.can_interact_with_node(player, pos)
 		end,

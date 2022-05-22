@@ -1,3 +1,25 @@
+--[[
+Includes everything to make racing work right, such as player counting, scoreboard, lobby position, and more.
+
+Copyright (C) 2022 David Leal (halfpacho@gmail.com)
+Copyright (C) Various other Minetest developers/contributors
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+USA
+--]]
+
 core_game = { }
 core_game.position = { x = -50.5, y = 71.5, z = 157.6 } -- Default lobby position. PLEASE EDIT TO YOUR NEEDS
 core_game.players_on_race = {} -- Save players on the current race in a vector
@@ -876,7 +898,7 @@ minetest.register_globalstep(function(dtime)
 		local pos = player:get_pos()
 		local node = minetest.get_node(vector.subtract(pos, {x=0,y=1,z=0}))
 
-		if node.name == "special_nodes:start_race" and not ran_once[player] == true then
+		if minetest.get_modpath("special_nodes") and node.name == "special_nodes:start_race" and not ran_once[player] == true then
 			reset_values(player) -- Reset values in case something was stored
 			core_game.start_game(player)
 			ran_once[player] = true
@@ -886,7 +908,7 @@ minetest.register_globalstep(function(dtime)
 	-- Counting stuff yay
 	-- Special thanks to Warr1024 for helping!
 	for _,name in pairs(core_game.players_on_race) do
-		if not minetest.get_player_by_name(name) then return end
+		if not name then return end
 		if core_game.game_started == true then
 
 			if racecount_check[name] == false then

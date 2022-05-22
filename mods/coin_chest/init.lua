@@ -1,3 +1,25 @@
+--[[
+Adds a chest that contains in-game coins for the cars. Requires the `car_shop` mod.
+
+Copyright (C) 2022 David Leal (halfpacho@gmail.com)
+Copyright (C) Various other Minetest developers/contributors
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+USA
+--]]
+
 local modname = minetest.get_current_modname()
 local S = minetest.get_translator(modname)
 
@@ -73,7 +95,7 @@ minetest.register_node("coin_chest:chest", {
 					end
 				end
 
-				-- if no name found, store new value
+				-- If no name found, store new value
 				playerlist[#playerlist + 1] = clicker:get_player_name()
 				meta:set_string("playerlist", minetest.serialize(playerlist))
 				-- End: special thanks to neinwhal for building the code!
@@ -118,7 +140,6 @@ minetest.register_node("coin_chest:chest", {
 		local player_meta = puncher:get_meta()
 
 		local coins = minetest.deserialize(player_meta:get_string("player_coins"))
-		local playerlist = minetest.deserialize(meta:get_string("playerlist"))
 		if meta and minetest.check_player_privs(puncher, { core_admin = true }) and meta:get_int("staff_coins") == 1 then
 			meta:set_string("formspec", "")
 				if coins then
