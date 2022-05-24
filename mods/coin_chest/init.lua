@@ -23,8 +23,6 @@ USA
 local modname = minetest.get_current_modname()
 local S = minetest.get_translator(modname)
 
-local global_fields = {}
-
 ----------------------
 -- Local functions --
 ----------------------
@@ -72,6 +70,12 @@ minetest.register_node("coin_chest:chest", {
         end
 		return minetest.item_place(itemstack, placer, pointed_thing)
 	end,
+	can_dig = function(pos, player)
+		local meta = minetest.get_meta(pos)
+		if meta:get_string("bronze") ~= "" and meta:get_string("silver") ~= "" and meta:get_string("gold") ~= "" then return end
+
+		return default.can_interact_with_node(player, pos)
+	end,
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		local meta = minetest.get_meta(pos)
 
@@ -82,7 +86,7 @@ minetest.register_node("coin_chest:chest", {
 		minetest.sound_play("default_chest_open", {gain = 0.3,
 			pos = pos, max_hear_distance = 10}, true)
 		if not minetest.check_player_privs(clicker, { core_admin = true }) then
-			if not global_fields.bronze then
+			if not meta:get_string("bronze") or meta:get_string("bronze") ~= "" then
 				meta:set_string("formspec", "")
 
 				-- Start: special thanks to neinwhal for building the code!
@@ -120,16 +124,16 @@ minetest.register_node("coin_chest:chest", {
 
 				meta:set_string("formspec", "")
 				if coins then
-					coins.bronze_coins = coins.bronze_coins + tonumber(global_fields.bronze)
-					coins.silver_coins = coins.silver_coins + tonumber(global_fields.silver)
-					coins.gold_coins = coins.gold_coins + tonumber(global_fields.gold)
+					coins.bronze_coins = coins.bronze_coins + tonumber(meta:get_string("bronze"))
+					coins.silver_coins = coins.silver_coins + tonumber(meta:get_string("silver"))
+					coins.gold_coins = coins.gold_coins + tonumber(meta:get_string("gold"))
 
 					player_meta:set_string("player_coins", minetest.serialize(coins))
 				else
-					coins = { bronze_coins = global_fields.bronze, silver_coins = global_fields.silver, gold_coins = global_fields.gold }
+					coins = { bronze_coins = tonumber(meta:get_string("bronze")), silver_coins = tonumber(meta:get_string("silver")), gold_coins = tonumber(meta:get_string("gold")) }
 					player_meta:set_string("player_coins", minetest.serialize(coins))
 				end
-				minetest.chat_send_player(clicker:get_player_name(), S("You got @1 bronze coins, @2 silver coins, and @3 gold coins!", global_fields.bronze, global_fields.silver, global_fields.gold))
+				minetest.chat_send_player(clicker:get_player_name(), S("You got @1 bronze coins, @2 silver coins, and @3 gold coins!", tonumber(meta:get_string("bronze")), tonumber(meta:get_string("silver")), tonumber(meta:get_string("gold"))))
 			end
 		else
 			meta:set_string("formspec", show_formspec(meta))
@@ -143,31 +147,35 @@ minetest.register_node("coin_chest:chest", {
 		if meta and minetest.check_player_privs(puncher, { core_admin = true }) and meta:get_int("staff_coins") == 1 then
 			meta:set_string("formspec", "")
 				if coins then
-					coins.bronze_coins = coins.bronze_coins + tonumber(global_fields.bronze)
-					coins.silver_coins = coins.silver_coins + tonumber(global_fields.silver)
-					coins.gold_coins = coins.gold_coins + tonumber(global_fields.gold)
+					coins.bronze_coins = coins.bronze_coins + tonumber(meta:get_string("bronze"))
+					coins.silver_coins = coins.silver_coins + tonumber(meta:get_string("silver"))
+					coins.gold_coins = coins.gold_coins + tonumber(meta:get_string("gold"))
 
 					player_meta:set_string("player_coins", minetest.serialize(coins))
 				else
-					coins = { bronze_coins = global_fields.bronze, silver_coins = global_fields.silver, gold_coins = global_fields.gold }
+					coins = { bronze_coins = tonumber(meta:get_string("bronze")), silver_coins = tonumber(meta:get_string("silver")), gold_coins = tonumber(meta:get_string("gold")) }
 					player_meta:set_string("player_coins", minetest.serialize(coins))
 				end
-				minetest.chat_send_player(puncher:get_player_name(), S("You got @1 bronze coins, @2 silver coins, and @3 gold coins!", global_fields.bronze, global_fields.silver, global_fields.gold))
+				minetest.chat_send_player(puncher:get_player_name(), S("You got @1 bronze coins, @2 silver coins, and @3 gold coins!", tonumber(meta:get_string("bronze")), tonumber(meta:get_string("silver")), tonumber(meta:get_string("gold"))))
 		end
 	end,
 	on_construct = function(pos)
-		S = minetest.get_translator("default")
 		local meta = minetest.get_meta(pos)
-		meta:set_string("infotext", S("Chest"));
 		meta:set_string("formspec", show_formspec(meta))
 		meta:set_string("playerlist", minetest.serialize({}))
+		meta:set_string("fields", minetest.serialize({}))
+		meta:set_string("owner", "")
+		S = minetest.get_translator("default")
+		meta:set_string("infotext", S("Chest"));
+	end,
+	after_place_node = function(pos, placer, itemstack, pointed_thing)
+		meta:set_string("owner", placer:get_player_name() or "")
 	end,
 	on_receive_fields = function(pos, formname, fields, sender)
 		local meta = minetest.get_meta(pos)
-		--global_fields = fields -- Set values as fast as possible for the formspec checkbox (see code above)
 		if fields.apply then
-			if fields.bronze == "" or fields.bronze == "0" or fields.silver == "" or
-				fields.silver == "0" or fields.gold == "" or fields.gold == "0" then
+			if fields.bronze == "0" or
+				fields.silver == "0" or fields.gold == "0" then
 				minetest.chat_send_player(sender:get_player_name(), S("Please specify a valid value different than zero."))
 				return
 			end
@@ -178,7 +186,6 @@ minetest.register_node("coin_chest:chest", {
 
 			minetest.chat_send_player(sender:get_player_name(), S("Successfully updated/set coin chest!"))
 			meta:set_string("formspec", show_formspec(meta))
-			--minetest.log("info", fields.staff_coins)
 		end
 		if fields.staff_coins then
 			--[[if my_boolean[sender] == true then
@@ -206,12 +213,11 @@ minetest.register_node("coin_chest:chest", {
 			minetest.sound_play("default_chest_close", {gain = 0.3,
 					pos = pos, max_hear_distance = 10}, true)
 		end
-		global_fields = fields
 	end,
 	on_blast = function(pos)
 		local meta = minetest.get_meta(pos)
 
-		if not meta:get_string("bronze") and not meta:get_string("silver") and not meta:get_string("gold") then
+		if meta:get_string("bronze") ~= "" and meta:get_string("silver") ~= "" and meta:get_string("gold") ~= "" then
 			local drops = {}
 			default.get_inventory_drops(pos, "main", drops)
 			drops[#drops+1] = "coin_chest:chest"

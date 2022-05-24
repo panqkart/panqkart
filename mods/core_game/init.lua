@@ -204,6 +204,31 @@ if minetest.get_modpath("car_shop") then
 			core_admin = true,
 		},
 		func = function(name, param)
+			if param == "" then
+				return false, "Invalid arguments. See /help reset_coins"
+			end
+			if not minetest.get_player_by_name(param) then return end
+
+			local player = minetest.get_player_by_name(param)
+
+			local meta = player:get_meta()
+			local coins = minetest.deserialize(meta:get_string("player_coins"))
+
+			if coins and coins.bronze_coins and coins.bronze_coins ~= 0 then
+				minetest.chat_send_player(name, "Successfully resetted bronze coins to " .. param .. ".")
+			else
+				return false, param .. " has no bronze coins yet."
+			end
+			if coins and coins.silver_coins and coins.silver_coins ~= 0 then
+				minetest.chat_send_player(name, "Successfully resetted silver coins to " .. param .. ".")
+			else
+				return false, param .. " has no silver coins yet."
+			end
+			if coins and coins.gold_coins and coins.gold_coins ~= 0 then
+				minetest.chat_send_player(name, "Successfully resetted gold coins to " .. param .. ".")
+			else
+				return false, param .. " has no gold coins yet."
+			end
 
 		end,
 	})
