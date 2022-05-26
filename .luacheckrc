@@ -1,9 +1,14 @@
 unused_args = false
 allow_defined_top = true
+max_line_length = 999
+
+globals = {
+    "default", "minetest", "core", "core_game",
+	"lib_mount", "vehicle_mash", "mobs", "formspec_ast",
+}
 
 read_globals = {
 	"DIR_DELIM",
-	"minetest",
 	"dump",
 	"vector",
 	"VoxelManip", "VoxelArea",
@@ -11,17 +16,13 @@ read_globals = {
 	"ItemStack",
 	"Settings",
 	"unpack",
-	-- Silence errors about custom table methods.
-	table = { fields = { "copy", "indexof" } },
-	-- Silence warnings about accessing undefined fields of global 'math'
-	math = { fields = { "sign" } }
+	"random_messages",
+	"car_shop",
+	"rules",
+
+	string = {fields = {"split", "trim"}},
+	table = {fields = {"copy", "getn"}},
 }
-
--- Overwrites minetest.handle_node_drops
-files["mods/creative/init.lua"].globals = { "minetest" }
-
--- Overwrites minetest.calculate_knockback
-files["mods/player_api/api.lua"].globals = { "minetest" }
 
 -- Don't report on legacy definitions of globals.
 files["mods/default/legacy.lua"].global = false

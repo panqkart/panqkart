@@ -1,35 +1,23 @@
-# Minetest Game
+# 🚗 PanqKart 🚗
 
-The default game bundled in the Minetest engine.  
+A racing game with upgradable cars, fun races with up to 10 players, and so much more.\
+Built by [Panquesito7 (David Leal)](https://github.com/Panquesito7), Pixel852, Crystal741, and other Minetest contributors.
 
-For further information, check 
-[this forum topic](https://forum.minetest.net/viewtopic.php?f=15&t=9724).   
-Also see the [Minetest Wiki](https://wiki.minetest.net/Subgames/Minetest_Game) 
-for more information.
+**Please note that this is a work in progress game and is still in ALPHA stage.**\
+**More awesome features are coming in the future. Stay tuned!**
 
-## Installation
+## 🛠 Installation 🛠
 
-- Unzip the archive, rename the folder to minetest_game and
-place it in .. minetest/games/
+- Unzip the archive, rename the folder to `panqkart` and
+place it in `../minetest/games/`
 
 - GNU/Linux: If you use a system-wide installation place
-    it in ~/.minetest/games/.
+    it in `~/.minetest/games/`
 
-The Minetest engine can be found at [GitHub](https://github.com/minetest/minetest).
+## 📷 Gallery 📷
 
-For further information or help, see:  
-https://wiki.minetest.net/Installing_Mods
+Coming soon!
 
-## Compatibility
+## 📜 Licensing 📜
 
-The Minetest Game GitHub master HEAD is generally compatible with the GitHub
-master HEAD of the Minetest engine.  
-Additionally, when the Minetest engine is tagged to be a certain version (e.g.
-0.4.10), Minetest Game is tagged with the version too.
-
-When stable releases are made, Minetest Game and the Minetest engine is packaged 
-and made available at [www.minetest.net](https://www.minetest.net/downloads/).
-
-## Licensing
-
-See `LICENSE.txt`
+Refer to `LICENSE.md` for more information.

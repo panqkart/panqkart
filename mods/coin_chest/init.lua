@@ -169,6 +169,7 @@ minetest.register_node("coin_chest:chest", {
 		meta:set_string("infotext", S("Chest"));
 	end,
 	after_place_node = function(pos, placer, itemstack, pointed_thing)
+		local meta = minetest.get_meta(pos)
 		meta:set_string("owner", placer:get_player_name() or "")
 	end,
 	on_receive_fields = function(pos, formname, fields, sender)

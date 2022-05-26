@@ -3,6 +3,7 @@
         "minetest",
         "ItemStack",
         "vector",
-        "hud_fs"
+        "hud_fs",
+        "core"
     ]
 }

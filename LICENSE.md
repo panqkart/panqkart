@@ -1,19 +1,43 @@
-License of media (textures and sounds)
---------------------------------------
-Copyright (C) 2010-2012 celeron55, Perttu Ahola <celeron55@gmail.com>
-See README.txt in each mod directory for information about other authors.
+# License of media (textures and sounds)
 
-Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
-http://creativecommons.org/licenses/by-sa/3.0/
+Copyright (C) 2022 David Leal <halfpacho@gmail.com>\
+The following media/textures are licensed under [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/):
 
-License of menu/header.png
-Copyright (C) 2015 paramat CC BY-SA 3.0
+_Textures_
 
+- `core_game_1.png`
+- `core_game_2.png`
+- `core_game_3.png`
+- `core_game_go.png`
 
-License of source code
-----------------------
-Copyright (C) 2010-2012 celeron55, Perttu Ahola <celeron55@gmail.com>
-See README.txt in each mod directory for information about other authors.
+_Sounds_
+
+- `core_game.race_go.ogg`
+- `core_game.race_start.ogg`
+
+All the other media and textures fall under their respective licenses.\
+See their license or readme file for information about it.
+
+If not yet specified, all media/textures fall under [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/).
+
+License of `menu/header.png`:
+
+- The green car was taken from <https://forum.minetest.net/viewtopic.php?f=9&t=6512> ([CC BY-NC-SA 3.0](http://creativecommons.org/licenses/by-nc-sa/3.0/))
+- The smiley face was taken from <https://pixabay.com/illustrations/smiley-face-emoji-emote-1039937/> (free, no license)
+
+Copyright (C) 2022 David Leal <halfpacho@gmail.com>\
+The `PanqKart` text is licensed under [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/)
+
+`menu/icon.png` was taken from <https://github.com/minetest-mods/vehicle_mash/blob/master/textures/inv_car_red.png>
+
+## License of source code
+
+Copyright (C) 2022 David Leal <halfpacho@gmail.com>
+
+All the mods fall under their respective licenses.\
+See their license/readme file for more information about that.
+
+If not yet specified, code falls under the license below.
 
                   GNU LESSER GENERAL PUBLIC LICENSE
                        Version 2.1, February 1999

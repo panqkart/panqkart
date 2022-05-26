@@ -197,17 +197,21 @@ minetest.register_chatcommand("change_position", {
 })
 
 if minetest.get_modpath("car_shop") then
+	-- Reset coins command
 	minetest.register_chatcommand("reset_coins", {
 		params = "<player>",
-		description = "Reset all coins to 0 to the given player",
+		description = S("Reset all coins to 0 to the given player"),
 		privs = {
 			core_admin = true,
 		},
 		func = function(name, param)
 			if param == "" then
-				return false, "Invalid arguments. See /help reset_coins"
+				return false, S("Invalid arguments. See /help reset_coins")
 			end
-			if not minetest.get_player_by_name(param) then return end
+
+			if not minetest.get_auth_handler().get_auth(param) then
+				return false, S("Player @1 does not exist.", param)
+			end
 
 			local player = minetest.get_player_by_name(param)
 
@@ -215,35 +219,63 @@ if minetest.get_modpath("car_shop") then
 			local coins = minetest.deserialize(meta:get_string("player_coins"))
 
 			if coins and coins.bronze_coins and coins.bronze_coins ~= 0 then
-				minetest.chat_send_player(name, "Successfully resetted bronze coins to " .. param .. ".")
+				minetest.chat_send_player(name, S("Successfully resetted bronze coins to @1", param))
 			else
-				return false, param .. " has no bronze coins yet."
+				minetest.chat_send_player(name, S("@1 has no bronze coins yet.", param))
 			end
 			if coins and coins.silver_coins and coins.silver_coins ~= 0 then
-				minetest.chat_send_player(name, "Successfully resetted silver coins to " .. param .. ".")
+				minetest.chat_send_player(name, S("Successfully resetted silver coins to @1", param))
 			else
-				return false, param .. " has no silver coins yet."
+				minetest.chat_send_player(name, S("@1 has no silver coins yet.", param))
 			end
 			if coins and coins.gold_coins and coins.gold_coins ~= 0 then
-				minetest.chat_send_player(name, "Successfully resetted gold coins to " .. param .. ".")
+				minetest.chat_send_player(name, S("Successfully resetted gold coins to @1", param))
 			else
-				return false, param .. " has no gold coins yet."
+				minetest.chat_send_player(name, S("@1 has no gold coins yet.", param))
+			end
+		end,
+	})
+	-- Reset upgrades command
+	minetest.register_chatcommand("reset_upgrades", {
+		params = "<player>",
+		description = S("Resets all car upgrades (including Hovercraft) to the given player."),
+		privs = {
+			core_admin = true
+		},
+		func = function(name, param)
+			if param == "" then
+				return false, S("Invalid arguments. See /help reset_upgrades")
 			end
 
+			if not core.get_auth_handler().get_auth(param) then
+				return false, S("Player @1 does not exist.", param)
+			end
+
+			local player = minetest.get_player_by_name(param)
+			local meta = player:get_meta()
+
+			local car01_speed = minetest.deserialize(meta:get_string("speed"))
+			local hover_speed = minetest.deserialize(meta:get_string("hover_speed"))
+
+			if not car01_speed or not hover_speed then
+				return false, S("Player @1 doesn't have any updates yet.", param)
+			elseif car01_speed then
+				car01_speed.reverse_speed = vehicle_mash.car01_def.max_speed_reverse
+				car01_speed.forward_speed = vehicle_mash.car01_def.max_speed_forward
+				meta:set_string("speed", minetest.serialize(car01_speed))
+
+				minetest.chat_send_player(name, S("Successfully set CAR01 reverse/forward speed to default to @1.", param))
+				if hover_speed then
+					hover_speed.reverse_speed = vehicle_mash.hover_def.max_speed_reverse
+					hover_speed.forward_speed = vehicle_mash.hover_def.max_speed_forward
+					meta:set_string("hover_speed", minetest.serialize(hover_speed))
+
+					minetest.chat_send_player(name, S("Successfully set Hovercraft reverse/forward speed to default to @1.", param))
+				end
+			end
 		end,
 	})
 end
-
-minetest.register_chatcommand("start_race", {
-	params = "",
-	description = "Start a race with the current game configurations.",
-    privs = {
-        core_admin = true,
-    },
-    func = function(name, param)
-		-- TODO: make a start race command with the specified players
-	end,
-})
 
 --- @brief A function to show a donation formspec
 --- to the specified player(s), with donation links and perks.
