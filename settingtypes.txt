@@ -6,3 +6,6 @@ enable_car_shop (Enable car shop to upgrade/buy) bool true
 
 #     Enable premium features
 enable_premium_features (Enable premium features in the server) bool true
+
+#     Default lobby position
+lobby_position (Default lobby position) string

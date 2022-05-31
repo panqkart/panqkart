@@ -198,7 +198,7 @@ local register_marking_nodes = function(surface_friendlyname, surface_name, surf
 			wield_image = tex,
 			on_place = function(itemstack, placer, pointed_thing)
 				local player_name = placer:get_player_name()
-				local pos = {}
+				local pos = {} -- luacheck: no unused
 				if pointed_thing["type"] == "node" then
 					pos = pointed_thing.under
 					pos.y = pos.y + 1

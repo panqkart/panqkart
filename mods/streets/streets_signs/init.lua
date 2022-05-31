@@ -165,7 +165,7 @@ streets.register_road_sign({
 	},
 	type = "minetest",
 	section = "info",
-	dye_needed = { blue = 1, red = 1, yellow = 1, blue = 1 }
+	dye_needed = { blue = 1, red = 1, yellow = 1 }
 })
 
 streets.register_road_sign({
@@ -198,5 +198,3 @@ dofile(streets.conf.modpath .. "/streets_signs/eu/euprio.lua")
 dofile(streets.conf.modpath .. "/streets_signs/eu/eumandat.lua")
 dofile(streets.conf.modpath .. "/streets_signs/eu/euprohib.lua")
 dofile(streets.conf.modpath .. "/streets_signs/eu/euinfo.lua")
-
-

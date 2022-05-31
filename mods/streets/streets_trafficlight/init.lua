@@ -134,8 +134,10 @@ streets.on_digiline_receive = function(pos, node, channel, msg)
 			streets.tlSwitch(pos, "streets:trafficlight_top_right_green")
 		elseif name:find("beacon_hybrid") then
 			--Not Supported
+			return
 		elseif name:find("beacon") then
 			--Not Supported
+			return
 		else
 			streets.tlSwitch(pos, "streets:trafficlight_top_green")
 		end
@@ -154,6 +156,7 @@ streets.on_digiline_receive = function(pos, node, channel, msg)
 			streets.tlSwitch(pos, "streets:beacon_hybrid_red")
 		elseif name:find("beacon") then
 			--Not Supported
+			return
 		else
 			streets.tlSwitch(pos, "streets:trafficlight_top_red")
 		end
@@ -170,26 +173,33 @@ streets.on_digiline_receive = function(pos, node, channel, msg)
 			streets.tlSwitch(pos, "streets:trafficlight_top_right_flashgreen")
 		elseif name:find("beacon_hybrid") then
 			--Not Supported
+			return
 		elseif name:find("beacon") then
 			--Not Supported
+			return
 		else
 			streets.tlSwitch(pos, "streets:trafficlight_top_flashgreen")
 		end
 	elseif msg == "REDYELLOW" then
 		if name:find("pedlight") then
 			--Not Supported
+			return
 		elseif name:find("extender_left") then
 			--Not Supported
+			return
 		elseif name:find("extender_right") then
 			--Not Supported
+			return
 		elseif name:find("left") then
 			streets.tlSwitch(pos, "streets:trafficlight_top_left_redyellow")
 		elseif name:find("right") then
 			streets.tlSwitch(pos, "streets:trafficlight_top_right_redyellow")
 		elseif name:find("beacon_hybrid") then
 			--Not Supported
+			return
 		elseif name:find("beacon") then
 			--Not Supported
+			return
 		else
 			streets.tlSwitch(pos, "streets:trafficlight_top_redyellow")
 		end
@@ -226,6 +236,7 @@ streets.on_digiline_receive = function(pos, node, channel, msg)
 			streets.tlSwitch(pos, "streets:beacon_hybrid_yellow")
 		elseif name:find("beacon") then
 			--Not Supported
+			return
 		else
 			streets.tlSwitch(pos, "streets:trafficlight_top_yellow")
 		end

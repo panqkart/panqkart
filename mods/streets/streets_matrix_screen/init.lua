@@ -88,6 +88,14 @@ local function apply_changes(toggleds, t)
 					toggleds[y][x] = nil
 				end
 			end
+		elseif type(xs) == "number" then
+			for x = 1, 16 do
+				if math.floor(xs/2^(16-x))%2 == 1 then
+					toggleds[y][x] = true
+				else
+					toggleds[y][x] = nil
+				end
+			end
 		end
 	end
 	return true
@@ -207,8 +215,8 @@ minetest.register_entity("streets:matrix_screen_lights", {
 			self.object:remove()
 			return
 		end
-		minetest.after(0, function(pos)
-			update_screen(pos, get_data(minetest.get_meta(pos)))
+		minetest.after(0, function(position)
+			update_screen(position, get_data(minetest.get_meta(position)))
 		end, pos)
 	end,
 })

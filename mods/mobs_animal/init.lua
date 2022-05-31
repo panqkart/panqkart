@@ -3,14 +3,14 @@ local path = minetest.get_modpath(minetest.get_current_modname()) .. "/"
 local S
 
 -- Check for translation method
-local S
 if minetest.get_translator ~= nil then
 	S = minetest.get_translator("mobs_animal") -- 5.x translation function
 else
 	if minetest.get_modpath("intllib") then
 		dofile(minetest.get_modpath("intllib") .. "/init.lua")
 		if intllib.make_gettext_pair then
-			gettext, ngettext = intllib.make_gettext_pair() -- new gettext method
+			-- new gettext method
+			gettext, ngettext = intllib.make_gettext_pair() -- luacheck: ignore
 		else
 			gettext = intllib.Getter() -- old text file method
 		end
@@ -34,7 +34,7 @@ local input = io.open(path .. "spawn.lua", "r")
 if input then
 	mobs.custom_spawn_animal = true
 	input:close()
-	input = nil
+	input = nil -- luacheck: ignore
 end
 
 

@@ -458,6 +458,7 @@ minetest.register_node("streets:rrxing_bottom", {
 local function move_arm(pos)
 	local node = minetest.get_node(pos)
 	local param2 = node.param2
+	local dir
 
 	if param2 == 0 then
 		dir = "z-"

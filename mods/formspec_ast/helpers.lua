@@ -42,9 +42,7 @@ function formspec_ast.interpret(spec, custom_handlers)
     return formspec_ast.unparse(ast)
 end
 
--- Returns an iterator over all nodes in a formspec AST, including ones in
--- containers.
-function formspec_ast.walk(tree)
+local function walk_inner(tree, container_elems)
     local parents = {}
     local i = 1
     return function()
@@ -59,13 +57,20 @@ function formspec_ast.walk(tree)
         end
         i = i + 1
 
-        if res.type == 'container' or res.type == 'scroll_container' then
+        if container_elems[res.type] then
             table.insert(parents, {tree, i})
             tree = res
             i = 1
         end
         return res
     end
+end
+
+-- Returns an iterator over all nodes in a formspec AST, including ones in
+-- containers.
+local container_elems = {container = true, scroll_container = true}
+function formspec_ast.walk(tree)
+    return walk_inner(tree, container_elems)
 end
 
 -- Similar to formspec_ast.walk(), however only returns nodes which have a type
@@ -114,9 +119,10 @@ function formspec_ast.apply_offset(elems, x, y)
 end
 
 -- Removes container elements and fixes nodes inside containers.
+local flatten_containers = {container = true}
 function formspec_ast.flatten(tree)
     local res = {formspec_version=tree.formspec_version}
-    for elem in formspec_ast.walk(table.copy(tree)) do
+    for elem in walk_inner(table.copy(tree), flatten_containers) do
         if elem.type == 'container' then
             formspec_ast.apply_offset(elem, elem.x, elem.y)
         else
@@ -137,9 +143,9 @@ function formspec_ast.show_formspec(player, formname, formspec)
         return 'No such player!'
     end
 
-    local formspec, err = formspec_ast.interpret(formspec)
-    if formspec then
-        minetest.show_formspec(player, formname, formspec)
+    local new_fs, err = formspec_ast.interpret(formspec)
+    if new_fs then
+        minetest.show_formspec(player, formname, new_fs)
     else
         minetest.log('warning', 'formspec_ast.show_formspec(): ' ..
             tostring(err))
@@ -147,9 +153,19 @@ function formspec_ast.show_formspec(player, formname, formspec)
     end
 end
 
+-- Alias invsize[] to size[]
+formspec_ast.register_element('invsize', function(raw, parse)
+    return {
+        type = 'size',
+        w = parse.number(raw[1][1]),
+        h = parse.number(raw[1][2]),
+    }
+end)
+
 -- Centered labels
 -- Credit to https://github.com/v-rob/minetest_formspec_game for the click
 -- animation workaround.
+-- This may be removed from a later formspec_ast release.
 -- size[5,2]formspec_ast:centered_label[0,0;5,1;Centered label]
 formspec_ast.register_element('formspec_ast:centered_label', function(raw,
         parse)
@@ -166,7 +182,7 @@ formspec_ast.register_element('formspec_ast:centered_label', function(raw,
             y = 0,
             w = parse.number(raw[2][1]),
             h = parse.number(raw[2][2]),
-            texture_name = '',
+            texture_name = 'blank.png',
             name = '',
             label = parse.string(raw[3]),
             noclip = true,
@@ -193,7 +209,8 @@ formspec_ast.register_element('formspec_ast:centered_label', function(raw,
 end)
 
 -- Add a formspec element to crash clients
-formspec_ast.register_element('formspec_ast:crash', function(raw, parse)
+-- This may be removed from a later formspec_ast release.
+formspec_ast.register_element('formspec_ast:crash', function(_, _)
     return {
         type = 'list',
         inventory_location = '___die',

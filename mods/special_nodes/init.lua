@@ -52,4 +52,28 @@ minetest.register_node("special_nodes:start_race", {
 	end,
 })
 
+minetest.register_node("special_nodes:spawn_node", {
+	description = "Spawn node. Do not place multiple nodes.",
+	tiles = {"unknown.png"},
+	drop = "",
+	groups = {not_in_creative_inventory = 1, unbreakable = 1},
+	drawtype = "airlike",
+	paramtype = "light",
+	pointable = false,
+	walkable = false,
+	on_place = function(itemstack, placer, pointed_thing)
+		if not minetest.check_player_privs(placer, { core_admin = true }) then
+			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to place this node. Missing privileges: core_admin"))
+			return itemstack
+		end
+		return minetest.item_place(itemstack, placer, pointed_thing)
+	end,
+	after_place_node = function(pos, placer, itemstack, pointed_thing)
+		local meta = minetest.get_meta(pos)
+
+		minetest.settings:set("lobby_position", minetest.pos_to_string(pos)) -- Changed so we can access this value later.
+		meta:set_string("lobby_position", minetest.pos_to_string(pos))
+	end,
+})
+
 minetest.register_alias("core_game:junglenoob", "special_nodes:junglewood") -- Backwards compatibility (this used to be the old node name lol)

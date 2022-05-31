@@ -36,7 +36,7 @@ local function show_formspec(meta)
 		"field[0.375,2.13;5.25,0.8;silver;" .. S("Silver coins") .. ";${silver}]",
 		"field[0.375,3;5.25,0.8;gold;" .. S("Gold coins") .. ";${gold}]",
 		"button_exit[4,3.90;3,0.8;apply;" .. S("Apply changes") .. "]",
-		"checkbox[0.375,4.5;staff_coins;" .. S("Give coins to staff") .. ";", (meta:get_int("staff_coins") == 1) and "true" or "false", "]"
+		"checkbox[0.375,4.5;staff_coins;" .. S("Give coins to staff") .. ";", (meta:get_int("staff_coins") == 1) and "true" or "false", "]" -- Special thanks to LandarVangan/LoneWolfHT for helping!
 	}
 
     -- table.concat is faster than string concatenation - `..`
@@ -105,7 +105,7 @@ minetest.register_node("coin_chest:chest", {
 				-- End: special thanks to neinwhal for building the code!
 
 				minetest.chat_send_player(clicker:get_player_name(), S("You don't have the sufficient permissions to open this chest. Missing privileges: core_admin"))
-            	return--false, "You don't have the sufficient permissions to open this chest. Missing privileges: core_admin"
+				return
 			else
 				-- Start: special thanks to neinwhal for building the code!
 				if playerlist then
@@ -165,8 +165,7 @@ minetest.register_node("coin_chest:chest", {
 		meta:set_string("playerlist", minetest.serialize({}))
 		meta:set_string("fields", minetest.serialize({}))
 		meta:set_string("owner", "")
-		S = minetest.get_translator("default")
-		meta:set_string("infotext", S("Chest"));
+		meta:set_string("infotext", minetest.get_translator("default")("Chest"));
 	end,
 	after_place_node = function(pos, placer, itemstack, pointed_thing)
 		local meta = minetest.get_meta(pos)
@@ -189,26 +188,7 @@ minetest.register_node("coin_chest:chest", {
 			meta:set_string("formspec", show_formspec(meta))
 		end
 		if fields.staff_coins then
-			--[[if my_boolean[sender] == true then
-				my_boolean[sender] = false
-				meta:set_int("staff_coins", (my_boolean[sender] == true) and 1 or 0)
-				minetest.chat_send_all((meta:get_int("staff_coins") == 1) and "true" or "false")
-				return
-			end
-			my_boolean[sender] = true
-			meta:set_int("staff_coins", (my_boolean[sender] == true) and 1 or 0)
-			minetest.chat_send_all((meta:get_int("staff_coins") == 1) and "true" or "false")
-			if my_boolean[sender] == true then
-				my_boolean[sender] = false
-                meta:set_int("staff_coins", 0)
-                minetest.chat_send_all((meta:get_int("staff_coins") == 1) and "true" or "false")
-                return
-            end
-			my_boolean[sender] = true
-            meta:set_int("staff_coins", 1)
-            minetest.chat_send_all((meta:get_int("staff_coins") == 1) and "true" or "false")--]]
-
-			meta:set_int("staff_coins", (fields.staff_coins == "true") and 1 or 0)
+			meta:set_int("staff_coins", (fields.staff_coins == "true") and 1 or 0) -- Special thanks to LandarVangan/LoneWolfHT for helping!
 		end
 		if fields.quit then
 			minetest.sound_play("default_chest_close", {gain = 0.3,

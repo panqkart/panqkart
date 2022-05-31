@@ -21,19 +21,41 @@ USA
 --]]
 
 core_game = { }
-core_game.position = { x = -50.5, y = 71.5, z = 157.6 } -- Default lobby position. PLEASE EDIT TO YOUR NEEDS
-core_game.players_on_race = {} -- Save players on the current race in a vector
-core_game.level_position = {  } -- EDIT TO YOUR NEEDS
+
+if minetest.setting_get_pos("lobby_position") then
+    core_game.position = minetest.setting_get_pos("lobby_position")
+end
+
+minetest.register_lbm({
+	label = "Lobby/spawn node position",
+	name = "core_game:lobby_position",
+
+	nodenames = {"special_nodes:spawn_node"},
+	run_at_every_load = true,
+
+	action = function(pos, node)
+		if minetest.setting_get_pos("lobby_position") then return end
+		core_game.position = pos
+	end,
+})
+
+core_game.players_on_race = { } -- Save players on the current race in a vector
+core_game.level_position = { } -- EDIT TO YOUR NEEDS
 
 local modname = minetest.get_current_modname()
 local S = minetest.get_translator(modname)
+
+assert(
+	minetest.get_mapgen_setting("mg_name") == "singlenode",
+	"In order to play PanqKart, you must set your mapgen to 'singleworld'. If you need any help, don't hesitate to contact us via our Discord."
+)
 
 -- instant grow sapling if there is room (FROM SKYBLOCK, TEMPORARY)
 minetest.override_item('default:bush_sapling', {
 	after_place_node = function(pos)
 		-- check if node under belongs to the soil group
 		pos.y = pos.y - 1
-		local node_under = minetest.get_node(pos)
+		local node_under = minetest.get_node(pos) -- luacheck: no unused
 		pos.y = pos.y + 1
 		--if minetest.get_item_group(node_under.name, "soil") == 0 then
 			--return
@@ -109,6 +131,10 @@ minetest.register_privilege("core_admin", {
 	on_revoke = core_game.grant_revoke,
 })
 
+----------------
+-- Variables --
+----------------
+
 core_game.game_started = false -- Variable to verify if a race has started or not
 core_game.is_end = {} -- Array for multiple players to verify if they have ended the race or not
 core_game.count = {} -- Array for the players' countdown
@@ -171,6 +197,25 @@ function default.can_interact_with_node(player, pos)
 		return true
 	end
 	return old_default_can_interact_with_node(player, pos)
+end
+
+-- Do not allow players to dig/place nodes if they don't have the `core_admin` privilege
+local old_minetest_item_place_node = minetest.item_place_node
+function minetest.item_place_node(itemstack, placer, pointed_thing)
+	if not minetest.check_player_privs(placer, { core_admin = true }) then
+		minetest.chat_send_player(placer:get_player_name(), "You're not allowed to place nodes unless you are a staff. If this is a mistake, please contact the server administrator.")
+		return itemstack
+	end
+	return old_minetest_item_place_node(itemstack, placer, pointed_thing)
+end
+
+local old_minetest_node_dig = minetest.node_dig
+function minetest.node_dig(pos, node, digger)
+	if not minetest.check_player_privs(digger, { core_admin = true }) then
+		minetest.chat_send_player(digger:get_player_name(), "You're not allowed to dig nodes unless you are a staff. If this is a mistake, please contact the server administrator.")
+		return
+	end
+	return old_minetest_node_dig(pos, node, digger)
 end
 
 ----------------
@@ -395,6 +440,8 @@ local function player_count(player)
 	end
 end
 
+-- luacheck: no unused
+
 --- @brief Start counting the race after starting
 --- for the given player in the parameters.
 --- @details After 50 seconds pass (which is the limit of the race count,
@@ -544,7 +591,7 @@ local function countDown(player)
 				label = S("The race will start in: @1",pregame_count)
 			}
 		})
-       	minetest.after(1, function() countDown(player) end)
+		minetest.after(1, function() countDown(player) end)
     end
 end
 
@@ -642,6 +689,72 @@ local function race_end()
 	core_game.player_count = 0
 	core_game.players_on_race = {}
 end
+
+------------------------------------------------------
+-- Minetest `on_register` and miscellaneous callbacks
+------------------------------------------------------
+
+minetest.register_on_joinplayer(function(player)
+	minetest.after(1, function()
+		local meta = minetest.get_meta(core_game.position)
+
+		-- Let's use the position of the `spawn_node` node. This is very useful
+		-- when placing the lobby schematic and not the node itself.
+		if minetest.string_to_pos(meta:get_string("lobby_position")) then
+			player:set_pos(minetest.string_to_pos(meta:get_string("lobby_position")))
+			minetest.chat_send_all("`spawn_node` node position was used. Successfully teleported.")
+		else
+			-- If not found, use the default position defined in settings
+			player:set_pos(core_game.position)
+		end
+	end)
+	minetest.log("action", "[RACING GAME] Player " .. player:get_player_name() .. " joined and was teleported to the lobby successfully.")
+
+	minetest.sound_play("core_game.learn", {to_player = player:get_player_name(), gain = 1.0})
+	-- VIP/Premium users
+	if minetest.get_modpath("premium") and minetest.check_player_privs(player, { has_premium = true } ) then
+		player:set_nametag_attributes({
+			text = "[VIP] " .. player:get_player_name(),
+			color = {r = 255, g = 255, b = 0},
+			bgcolor = false
+		})
+	end
+
+	-- Administrators
+	if minetest.check_player_privs(player, { core_admin = true } ) then
+		player:set_nametag_attributes({
+			text = "[STAFF] " .. player:get_player_name(),
+			color = {r = 255, g = 0, b = 0},
+			bgcolor = false
+		})
+		player:set_properties({zoom_fov = 15}) -- Let administrators zoom
+	end
+end)
+
+minetest.register_on_respawnplayer(function(player)
+	player:set_pos(core_game.position)
+	minetest.log("action", "[RACING GAME] Player " .. player:get_player_name() .. " died. Teleported to the lobby successfully.")
+end)
+
+minetest.register_on_newplayer(function(player)
+	minetest.chat_send_all(S("@1 just joined! Welcome to the Racing Game!", player:get_player_name()))
+end)
+
+minetest.register_on_leaveplayer(function(player)
+	-- Reset all values to prevent crashes
+	reset_values(player)
+end)
+
+-- Keep players and map(s) protected
+minetest.register_on_punchplayer(function(player, hitter, time_from_last_punch, tool_capabilities, dir, damage)
+	minetest.after(0, function() player:set_hp(player:get_hp() + damage) end)
+end)
+
+minetest.register_on_player_hpchange(function(player, hp_change, reason)
+	if hp_change < 0 then
+		minetest.after(0, function() player:set_hp(player:get_hp() - hp_change) end)
+	end
+end)
 
 --------------------------
 -- Core game functions --
@@ -831,49 +944,6 @@ function core_game.ask_vehicle(name)
     -- table.concat is faster than string concatenation - `..`
     return table.concat(formspec, "")
 end
-
-minetest.register_on_joinplayer(function(player)
-	player:set_pos(core_game.position)
-	minetest.log("action", "[RACING GAME] Player " .. player:get_player_name() .. " joined and was teleported to the lobby successfully.")
-
-	minetest.sound_play("core_game.learn", {to_player = player:get_player_name(), gain = 1.0})
-	-- VIP/Premium users
-	if minetest.get_modpath("premium") and minetest.check_player_privs(player, { has_premium = true } ) then
-		player:set_nametag_attributes({
-			text = "[VIP] " .. player:get_player_name(),
-			color = {r = 255, g = 255, b = 0},
-			bgcolor = false
-		})
-	end
-
-	-- Administrators
-	if minetest.check_player_privs(player, { core_admin = true } ) then
-		player:set_nametag_attributes({
-			text = "[STAFF] " .. player:get_player_name(),
-			color = {r = 255, g = 0, b = 0},
-			bgcolor = false
-		})
-		player:set_properties({zoom_fov = 15}) -- Let administrators zoom
-	end
-end)
-
-minetest.register_on_respawnplayer(function(player)
-	player:set_pos(core_game.position)
-	minetest.log("action", "[RACING GAME] Player " .. player:get_player_name() .. " died. Teleported to the lobby successfully.")
-end)
-
-minetest.register_on_newplayer(function(player)
-	minetest.chat_send_all(S("@1 just joined! Welcome to the Racing Game!", player:get_player_name()))
-end)
-
-minetest.register_on_leaveplayer(function(player)
-	-- Reset all values to prevent crashes
-	reset_values(player)
-end)
-
-minetest.register_on_punchplayer(function(player, hitter, time_from_last_punch, tool_capabilities, dir, damage)
-	minetest.after(0, function() player:set_hp(player:get_hp() + damage) end)
-end)
 
 --- @brief Show a HUD to the specified player
 --- that there's a current race running.

@@ -5,7 +5,7 @@ local hairball = minetest.settings:get("mobs_hairball")
 -- Kitten by Jordach / BFD
 
 mobs:register_mob("mobs_animal:kitten", {
-stepheight = 0.6,
+--stepheight = 0.6,
 	type = "animal",
 --specific_attack = {"mobs_animal:rat"},
 --damage = 1,

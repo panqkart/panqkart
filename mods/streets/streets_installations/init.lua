@@ -13,9 +13,9 @@ for surface_name, surface_data in pairs(streets.surfaces.surfacetypes) do
 		paramtype2 = "facedir",
 		groups = { cracky = 3 },
 		on_rightclick = function(pos, node, name)
-			local name = name:get_player_name()
-			if minetest.is_protected(pos, name) and not minetest.check_player_privs(name, { protection_bypass = true }) then
-				minetest.record_protection_violation(pos, name)
+			local player_name = name:get_player_name()
+			if minetest.is_protected(pos, player_name) and not minetest.check_player_privs(player_name, { protection_bypass = true }) then
+				minetest.record_protection_violation(pos, player_name)
 				return
 			end
 			node.name = node.name .. "_open"
@@ -45,9 +45,9 @@ for surface_name, surface_data in pairs(streets.surfaces.surfacetypes) do
 		drop = "streets:" .. surface_name:sub(2, -1):split(":")[2] .. "_manhole",
 		groups = { cracky = 3, not_in_creative_inventory = 1 },
 		on_rightclick = function(pos, node, name)
-			local name = name:get_player_name()
-			if minetest.is_protected(pos, name) and not minetest.check_player_privs(name, { protection_bypass = true }) then
-				minetest.record_protection_violation(pos, name)
+			local player_name = name:get_player_name()
+			if minetest.is_protected(pos, player_name) and not minetest.check_player_privs(player_name, { protection_bypass = true }) then
+				minetest.record_protection_violation(pos, player_name)
 				return
 			end
 			node.name = string.sub(node.name, 1, -6)

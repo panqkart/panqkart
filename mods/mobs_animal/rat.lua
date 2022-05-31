@@ -23,12 +23,11 @@ stepheight = 0.6,
 	},
 	walk_velocity = 1,
 	run_velocity = 2,
-	runaway = true,
+	runaway = false,
 	jump = true,
 	water_damage = 0,
-	lava_damage = 4,
+	lava_damage = 0,
 	light_damage = 0,
-	fear_height = 2,
 	on_rightclick = function(self, clicker)
 		mobs:capture_mob(self, clicker, 50, 90, 0, true, "mobs_animal:rat")
 	end,
@@ -58,7 +57,7 @@ stepheight = 0.6,
 ]]
 })
 
-
+-- luacheck: no unused
 local function rat_spawn(self, pos)
 	self = self:get_luaentity()
 	print (self.name, pos.x, pos.y, pos.z)

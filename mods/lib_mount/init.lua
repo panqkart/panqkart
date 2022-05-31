@@ -89,10 +89,6 @@ local function get_v(v)
 	return math.sqrt(v.x ^ 2 + v.z ^ 2)
 end
 
-local function remove_hud(entity)
-	--entity.driver:hud_remove(entity.hud)
-end
-
 local function force_detach(player)
 	local attached_to = player:get_attach()
 	if attached_to then
@@ -462,7 +458,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		end
 		if s3 ~= get_sign(acce_y) then
 			entity.object:set_velocity({x=0, y=0, z=0})
-			acce_y = 0
+			acce_y = 0 -- luacheck: ignore
 			return
 		end
 	end

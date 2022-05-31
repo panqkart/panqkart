@@ -84,8 +84,8 @@ function ts_workshop.register_workshop(mod, name, def)
 			local timer = minetest.get_node_timer(pos)
 			timer:start(0.2)
 		else
-			meta:set_int("progress", 0)
 			progress = 0
+			meta:set_int("progress", progress)
 			local inv = meta:get_inventory()
 			inv:add_item("output", working_on)
 			meta:set_string("working_on", "")

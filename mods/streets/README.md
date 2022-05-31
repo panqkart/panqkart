@@ -26,8 +26,8 @@ Forum topic: https://forum.minetest.net/viewtopic.php?t=2984
   * `streets_lanuse_*.png` (partially modified)
 
 ## Recommended Mods
-* [ltc4000e](https://github.com/cheapie/ltc4000e) by cheapie
-* [arrowboards](https://github.com/cheapie/arrowboards) by cheapie
+* [ltc4000e](https://github.com/inpos/ltc4000e) originally by [cheapie](https://github.com/cheapie)
+* [arrowboards](https://github.com/inpos/arrowboards) originally by [cheapie](https://github.com/cheapie)
 
 ## License
 If not mentioned otherwise:
