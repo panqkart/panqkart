@@ -22,7 +22,7 @@ You can, later on, join a race from a special part of the lobby if you want to p
 So now, let's get started to set up the lobby!\
 In this section, we will setup our made lobby.
 
-### The UI part, non-code
+### Downloading the repository and loading the lobby
 
 You need to download this repository. If you are experienced with Git, head to <https://docs.github.com/articles/cloning-a-repository>\
 If you don't know anything about Git, click on the green `Code` button on this repository, then click on `Download ZIP`. For a more detailed guide, see <https://www.itpro.com/software/development/359246/how-to-download-from-github>.
@@ -44,9 +44,31 @@ If you already selected the area (we recommend placing position 1 and position 2
 Now that you're on that page, click on `Save/Load`. It will ask you the name of the file you want to load. `lobby.we` is the name we will load. Once you click on `Load`, boom! The lobby will be there now. 🎉<br>
 You will have to do some code changes in order to make the lobby successfully work properly. We will help you do it in the guide below.
 
-### The code part
+### Configuring the spawnpoint
 
-Let's get to configure some of the 
+There's a spawn node defined by `special_nodes` used to define the spawnpoint when you place it or either when it's loaded.\
+**Do not attempt to place two or more of this node, as the system will get confused with two spawnpoints.**
+
+You can either keep the spawnpoint as-is or change it via the Minetest settings.\
+For the 2nd point, the steps are here:
+
+1. Open Minetest.
+2. Go to the `Settings` tab.
+3. Go to `All settings`.
+4. Click on the `Games` dropdown.
+5. Click on the `PanqKart` dropdown.
+6. Double-click on the `Default lobby position`/`lobby_position` setting.
+7. Set the lobby position to your liking, using the format `(<x,y,z>)`.
+
+You're done now! The lobby is now set up 🎉 You can now play on LAN, add new features, or just try it out for yourself!\
+If you have any more questions or need any more help, feel free to reach us at `halfpacho@gmail.com` or in our Discord community.
+
+### Making your own lobby
+
+If you want to make your lobby, that's great, we're thrilled to see people making new lobbies for our game!\
+We might add multiple lobbies in the future or as well as update our current one with new ideas.
+
+I recommend the following tools/knowledge for the same:
 
 ## 📷 Gallery 📷
 
