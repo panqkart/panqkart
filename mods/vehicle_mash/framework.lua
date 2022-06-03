@@ -51,9 +51,6 @@ function vehicle_mash.register_vehicle(name, def)
 		removed = false,
 		offset = {x=0, y=0, z=0},
 		owner = "",
-		hp_min = def.hp_min,
-		hp_max = def.hp_max,
-		armor = def.armor,
 		rpm_values = {{16, 16, .5}, {10, 10, .4}, {0, 5, .3}},
 		on_rightclick = function(self, clicker)
 			if not clicker or not clicker:is_player() then
@@ -62,6 +59,7 @@ function vehicle_mash.register_vehicle(name, def)
 			if core_game.game_started == true or core_game.pregame_started == true and not minetest.check_player_privs(clicker, { core_admin = true }) then return end
 			-- if there is already a driver
 			if self.driver then
+				self.driver:set_armor_groups({immortal = 1})
 				-- if clicker is driver detach passengers and driver
 				if clicker == self.driver then
 					if self.passenger then

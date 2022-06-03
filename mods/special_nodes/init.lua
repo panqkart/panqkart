@@ -1,5 +1,5 @@
 --[[
-Adds nodes that look like other nodes with different functionalities.
+Adds nodes that look like other nodes (or just new ones) with different functionalities.
 
 Copyright (C) 2022 David Leal (halfpacho@gmail.com)
 Copyright (C) Various other Minetest developers/contributors
@@ -73,6 +73,23 @@ minetest.register_node("special_nodes:spawn_node", {
 
 		minetest.settings:set("lobby_position", minetest.pos_to_string(pos)) -- Changed so we can access this value later.
 		meta:set_string("lobby_position", minetest.pos_to_string(pos))
+	end,
+})
+
+minetest.register_node("special_nodes:tp_lobby", {
+	description = "Teleport back to lobby node.",
+	tiles = {"default_coral_brown.png"},
+	drop = "",
+	groups = {not_in_creative_inventory = 1, unbreakable = 1},
+	is_ground_content = false,
+	paramtype2 = "facedir",
+	legacy_facedir_simple = true,
+	on_place = function(itemstack, placer, pointed_thing)
+		if not minetest.check_player_privs(placer, { core_admin = true }) then
+			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to place this node. Missing privileges: core_admin"))
+			return itemstack
+		end
+		return minetest.item_place(itemstack, placer, pointed_thing)
 	end,
 })
 

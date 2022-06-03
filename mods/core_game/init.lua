@@ -22,6 +22,23 @@ USA
 
 core_game = { }
 
+if tonumber(minetest.settings:get("minimum_required_players")) == nil then
+	minetest.settings:set("minimum_required_players", 4) -- SET MINIMUM REQUIRED PLAYERS FOR A RACE
+elseif tonumber(minetest.settings:get("minimum_required_players")) > 12 then
+	error("The minimum required players cannot be over 12 players. Please specify a number between 1-12. Contact us if you need any help.", 1)
+end
+
+assert(
+	minetest.get_mapgen_setting("mg_name") == "singlenode",
+	"In order to play PanqKart, you must set your mapgen to 'singleworld'. If you need any help, don't hesitate to contact us via our Discord."
+)
+
+core_game.players_on_race = { } -- Save players on the current race in a vector
+core_game.level_position = { } -- EDIT TO YOUR NEEDS
+
+local modname = minetest.get_current_modname()
+local S = minetest.get_translator(modname)
+
 if minetest.setting_get_pos("lobby_position") then
     core_game.position = minetest.setting_get_pos("lobby_position")
 end
@@ -34,43 +51,8 @@ minetest.register_lbm({
 	run_at_every_load = true,
 
 	action = function(pos, node)
-		if minetest.setting_get_pos("lobby_position") then return end
+		if minetest.setting_get_pos("lobby_position") then return end -- If there's already another position, do not overwrite.
 		core_game.position = pos
-	end,
-})
-
-core_game.players_on_race = { } -- Save players on the current race in a vector
-core_game.level_position = { } -- EDIT TO YOUR NEEDS
-
-local modname = minetest.get_current_modname()
-local S = minetest.get_translator(modname)
-
-assert(
-	minetest.get_mapgen_setting("mg_name") == "singlenode",
-	"In order to play PanqKart, you must set your mapgen to 'singleworld'. If you need any help, don't hesitate to contact us via our Discord."
-)
-
--- instant grow sapling if there is room (FROM SKYBLOCK, TEMPORARY)
-minetest.override_item('default:bush_sapling', {
-	after_place_node = function(pos)
-		-- check if node under belongs to the soil group
-		pos.y = pos.y - 1
-		local node_under = minetest.get_node(pos) -- luacheck: no unused
-		pos.y = pos.y + 1
-		--if minetest.get_item_group(node_under.name, "soil") == 0 then
-			--return
-		--end
-
-		-- check if we have space to make a tree
-		for dy=1,4 do
-			pos.y = pos.y+dy
-			if minetest.get_node(pos).name ~= 'air' and minetest.get_node(pos).name ~= 'default:bush_leaves' then
-				return
-			end
-			pos.y = pos.y-dy
-		end
-		-- add the tree
-		default.grow_bush(pos)
 	end,
 })
 
@@ -161,10 +143,6 @@ local pregame_count_ended = false -- A variable to remove the pregame countdown 
 
 local racecount_check = {} -- An array used to store the value if a player's countdown already started.
 local max_racecount = 180 -- Maximum value for the race count (default 180)
-
-if tonumber(minetest.settings:get("minimum_required_players")) == nil then
-	minetest.settings:set("minimum_required_players", 4) -- SET MINIMUM REQUIRED PLAYERS FOR A RACE
-end
 
 ----------------
 -- Overrides --
@@ -695,14 +673,14 @@ end
 ------------------------------------------------------
 
 minetest.register_on_joinplayer(function(player)
-	minetest.after(1, function()
+	minetest.after(0.2, function()
 		local meta = minetest.get_meta(core_game.position)
 
 		-- Let's use the position of the `spawn_node` node. This is very useful
 		-- when placing the lobby schematic and not the node itself.
 		if minetest.string_to_pos(meta:get_string("lobby_position")) then
 			player:set_pos(minetest.string_to_pos(meta:get_string("lobby_position")))
-			minetest.chat_send_all("`spawn_node` node position was used. Successfully teleported.")
+			minetest.log("action", "`spawn_node` node position was used for player " .. player:get_player_name() .. ". Successfully teleported.")
 		else
 			-- If not found, use the default position defined in settings
 			player:set_pos(core_game.position)
@@ -737,7 +715,7 @@ minetest.register_on_respawnplayer(function(player)
 end)
 
 minetest.register_on_newplayer(function(player)
-	minetest.chat_send_all(S("@1 just joined! Welcome to the Racing Game!", player:get_player_name()))
+	minetest.chat_send_all(S("@1 just joined! Give them a warm welcome to our community!", player:get_player_name()))
 end)
 
 minetest.register_on_leaveplayer(function(player)
@@ -1023,16 +1001,26 @@ end
 minetest.register_globalstep(function(dtime)
 	for _, player in ipairs(minetest.get_connected_players()) do
 		local pos = player:get_pos()
-		local node = minetest.get_node(vector.subtract(pos, {x=0,y=1,z=0}))
+		local node = minetest.get_node(vector.subtract(pos, {x=0,y=0.5,z=0}))
 
-		if minetest.get_modpath("special_nodes") and node.name == "special_nodes:start_race" and not ran_once[player] == true then
-			reset_values(player) -- Reset values in case something was stored
-			core_game.start_game(player)
-			ran_once[player] = true
+		if minetest.get_modpath("special_nodes") then
+			if node.name == "special_nodes:start_race" and not ran_once[player] == true then
+				reset_values(player) -- Reset values in case something was stored
+				core_game.start_game(player)
+				ran_once[player] = true
+			elseif node.name == "special_nodes:tp_lobby" then
+				local meta = minetest.get_meta(core_game.position)
+
+				if minetest.string_to_pos(meta:get_string("lobby_position")) then
+					player:set_pos(minetest.string_to_pos(meta:get_string("lobby_position")))
+				else
+					player:set_pos(core_game.position)
+				end
+			end
 		end
 	end
 
-	-- Counting stuff yay
+	-- Counting stuff!
 	-- Special thanks to Warr1024 for helping!
 	for _,name in pairs(core_game.players_on_race) do
 		if not name then return end

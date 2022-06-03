@@ -32,3 +32,5 @@ Silver coins needed: 20=
 Silver coins needed: 10=
 Ready to upgrade your Hovercraft. All CAR01 updates done=
 Nothing to see here. All updates done!=
+Yes=
+No=

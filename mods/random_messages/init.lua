@@ -37,24 +37,25 @@ end
 
 function random_messages.read_messages()
 	random_messages.messages = {
-		S("This racing game was developed in around 3 months, by Panquesito7, Crystal741, and Pixel852, \namong other contributors and people. Anyone else is free to contribute and make improvements to the game."),
-		S("Looking for the source code? Want to contribute? Come check it out at github.com/Panquesito7/minetest-racing_game"),
-		S("You can upgrade your vehicles to make them faster! Check your inventory to upgrade your car. Note that this will result in acceleration and turn speed decrease."),
-		S("Get in-game bronze, silver, and gold coins by getting in the top 3 places\non a race. This is used to upgrade your car, buy new cars, and more!"),
-		S("Like our game? Don't hesitate to support our work by donating! Donating includes perks such as double coins, early access to new features, VIP house, and prioritized\nfeatures/maps, no matter the amount! You will get a shoutout on socials as well as an special role on our Discord to stand out. Use /donate for more information."),
-		S("We're still working on adding new features and maps to the game. Stay tuned on new additions to the game."),
-		S("Our hosting is powered by the awesome service of Universal Network. Thanks to them, we were able to make this game possible."),
-		S("There are a few secrets on the map which can give you coins and amazing perks! Try to find them."),
-		S("Wanna give feedback, report bugs, or chat with us? Feel free to mail us at halfpacho@gmail.com or by joining our Discord server."),
-		S("Read our rules frequently, show them to other users, or report users who are breaking the rules to us.\nWe might update our rules soon, so stay tuned for any new changes."),
-		S("Share the game with your friends and give feedback! You may also download the game for yourself to test it, make another version, or whatever changes you wanna make!")
+		"This racing game was developed in around 3 months, by Panquesito7, Crystal741, and Pixel852, \namong other contributors and people. Anyone else is free to contribute and make improvements to the game.",
+		"Looking for the source code? Want to contribute? Come check it out at github.com/Panquesito7/minetest-racing_game",
+		"You can upgrade your vehicles to make them faster! Check your inventory to upgrade your car. Note that this will result in acceleration and turn speed decrease.",
+		"Get in-game bronze, silver, and gold coins by getting in the top 3 places\non a race. This is used to upgrade your car, buy new cars, and more!",
+		"Like our game? Don't hesitate to support our work by donating! Donating includes perks such as double coins, early access to new features, VIP house, and prioritized\nfeatures/maps, no matter the amount! You will get a shoutout on socials as well as an special role on our Discord to stand out. Use /donate for more information.",
+		"We're still working on adding new features and maps to the game. Stay tuned on new additions to the game.",
+		"Our hosting is powered by the awesome service of Universal Network. Thanks to them, we were able to make this game possible.",
+		"There are a few secrets on the map which can give you coins and amazing perks! Try to find them.",
+		"Wanna give feedback, report bugs, or chat with us? Feel free to mail us at halfpacho@gmail.com or by joining our Discord server.",
+		"Read our rules frequently, show them to other users, or report users who are breaking the rules to us.\nWe might update our rules soon, so stay tuned for any new changes.",
+		"Share the game with your friends and give feedback! You may also download the game for yourself to test it, make another version, or whatever changes you wanna make!",
+		"You can create your own levels/maps and we might potentially add them to our game (in the future)! We have\na list of basic tools to use to make better buildings. Hop on to our Discord and we'll help you with it!",
 	}
 end
 
 function random_messages.display_message(message_number)
 	local msg = random_messages.messages[message_number] or message_number
 	if msg then
-		minetest.chat_send_all(minetest.colorize("#808080", msg))
+		minetest.chat_send_all(S(minetest.colorize("#808080", msg)))
 	end
 end
 

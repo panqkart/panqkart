@@ -83,8 +83,6 @@ minetest.register_node("coin_chest:chest", {
 		local coins = minetest.deserialize(player_meta:get_string("player_coins"))
 		local playerlist = minetest.deserialize(meta:get_string("playerlist"))
 
-		minetest.sound_play("default_chest_open", {gain = 0.3,
-			pos = pos, max_hear_distance = 10}, true)
 		if not minetest.check_player_privs(clicker, { core_admin = true }) then
 			if not meta:get_string("bronze") or meta:get_string("bronze") ~= "" then
 				meta:set_string("formspec", "")
@@ -134,9 +132,14 @@ minetest.register_node("coin_chest:chest", {
 					player_meta:set_string("player_coins", minetest.serialize(coins))
 				end
 				minetest.chat_send_player(clicker:get_player_name(), S("You got @1 bronze coins, @2 silver coins, and @3 gold coins!", tonumber(meta:get_string("bronze")), tonumber(meta:get_string("silver")), tonumber(meta:get_string("gold"))))
+
+				minetest.sound_play("default_chest_open", {gain = 0.3,
+				pos = pos, max_hear_distance = 10}, true)
 			end
 		else
 			meta:set_string("formspec", show_formspec(meta))
+			minetest.sound_play("default_chest_open", {gain = 0.3,
+			pos = pos, max_hear_distance = 10}, true)
         end
 	end,
 	on_punch = function(pos, node, puncher, pointed_thing)
@@ -144,6 +147,8 @@ minetest.register_node("coin_chest:chest", {
 		local player_meta = puncher:get_meta()
 
 		local coins = minetest.deserialize(player_meta:get_string("player_coins"))
+		minetest.sound_play("default_chest_open", {gain = 0.3,
+		pos = pos, max_hear_distance = 10}, true)
 		if meta and minetest.check_player_privs(puncher, { core_admin = true }) and meta:get_int("staff_coins") == 1 then
 			meta:set_string("formspec", "")
 				if coins then
@@ -163,7 +168,6 @@ minetest.register_node("coin_chest:chest", {
 		local meta = minetest.get_meta(pos)
 		meta:set_string("formspec", show_formspec(meta))
 		meta:set_string("playerlist", minetest.serialize({}))
-		meta:set_string("fields", minetest.serialize({}))
 		meta:set_string("owner", "")
 		meta:set_string("infotext", minetest.get_translator("default")("Chest"));
 	end,

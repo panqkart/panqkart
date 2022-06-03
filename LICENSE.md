@@ -37,6 +37,7 @@ Copyright (C) 2022 David Leal <halfpacho@gmail.com>
 All the mods fall under their respective licenses.\
 See their license/readme file for more information about that.
 
+**Some mods are being modified. All that code falls under the mod's respective license.**\
 If not yet specified, code falls under the license below.
 
                   GNU LESSER GENERAL PUBLIC LICENSE

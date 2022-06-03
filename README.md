@@ -14,66 +14,31 @@ place it in `../minetest/games/`
 - GNU/Linux: If you use a system-wide installation place
     it in `~/.minetest/games/`
 
-## 🏰 Setting up the lobby/game 🏰
+**Please check [`SETUP.md`](https://github.com/Panquesito7/panqkart/blob/main/SETUP.md) for how to setup the lobby/game.**
 
-We've made a lobby for players to hang out, have fun, search for prizes, and so much more.\
-You can, later on, join a race from a special part of the lobby if you want to play!
+## 🏁 Making your own maps 🏁
 
-So now, let's get started to set up the lobby!\
-In this section, we will setup our made lobby.
-
-### Downloading the repository and loading the lobby
-
-You need to download this repository. If you are experienced with Git, head to <https://docs.github.com/articles/cloning-a-repository>\
-If you don't know anything about Git, click on the green `Code` button on this repository, then click on `Download ZIP`. For a more detailed guide, see <https://www.itpro.com/software/development/359246/how-to-download-from-github>.
-
-After downloading, see the installation instructions above.\
-You will need to install the [`WorldEdit`](https://github.com/Uberi/Minetest-WorldEdit) mod to add the lobby and the level.
-
-Make a new world, with any name you want, with the mapgen set to `singlenode`, for the game `panqkart`. When joining, you will need to grant yourself all the privileges in order to fly and insert our pre-made lobby. Choose an area where you want to place the lobby by selecting position 1 and position 2. If you're unsure how to do this, check the [WorldEdit tutorial](https://github.com/Uberi/Minetest-WorldEdit/blob/master/Tutorial.md).
-
-On the `panqkart` folder, you'll see a `schematics` folder. You will see a `lobby.we` file.\
-Now, make a folder in your new world named `schems`, which can and will be accessed by WorldEdit.
-
-Copy and paste the `lobby.we` file into the `schems` folder in your world directory.\
-You're done pasting the lobby file into your world. Now, we must insert that file into our world.
-
-If you already selected the area (we recommend placing position 1 and position 2 at the same position), you will need to go to your<br> inventory (by clicking on `i`), go to the `Creation` tab, then click on the [![inventory_plus_worldedit_gui](https://user-images.githubusercontent.com/51391473/171032521-cd536e49-e3f0-4784-95a1-5b6917a21fe4.png)](https://github.com/Uberi/Minetest-WorldEdit/blob/master/worldedit_gui/textures/inventory_plus_worldedit_gui.png)
- WorldEdit icon.
-
-Now that you're on that page, click on `Save/Load`. It will ask you the name of the file you want to load. `lobby.we` is the name we will load. Once you click on `Load`, boom! The lobby will be there now. 🎉<br>
-You will have to do some code changes in order to make the lobby successfully work properly. We will help you do it in the guide below.
-
-### Configuring the spawnpoint
-
-There's a spawn node defined by `special_nodes` used to define the spawnpoint when you place it or either when it's loaded.\
-**Do not attempt to place two or more of this node, as the system will get confused with two spawnpoints.**
-
-You can either keep the spawnpoint as-is or change it via the Minetest settings.\
-For the 2nd point, the steps are here:
-
-1. Open Minetest.
-2. Go to the `Settings` tab.
-3. Go to `All settings`.
-4. Click on the `Games` dropdown.
-5. Click on the `PanqKart` dropdown.
-6. Double-click on the `Default lobby position`/`lobby_position` setting.
-7. Set the lobby position to your liking, using the format `(<x,y,z>)`.
-
-You're done now! The lobby is now set up 🎉 You can now play on LAN, add new features, or just try it out for yourself!\
-If you have any more questions or need any more help, feel free to reach us at `halfpacho@gmail.com` or in our Discord community.
-
-### Making your own lobby
-
-If you want to make your lobby, that's great, we're thrilled to see people making new lobbies for our game!\
-We might add multiple lobbies in the future or as well as update our current one with new ideas.
+If you want to make a new level/map for our game (or just for yourself), that's amazing! We have basic tools list below to get you started.\
+In the future, we will add multiple maps which will playable! Thank you for your interest in adding back to our community.
 
 I recommend the following tools/knowledge for the same:
+
+- [Streets](https://github.com/minetest-mods/streets) is one of the greatest streets mod for Minetest out there. It's fully customizable and includes street signals, concrete, asphalt, and so much more things.
+- [Map Tools](https://github.com/minetest-mods/maptools) is a great utility mod that includes lots of special nodes used for building, moderation, administrator pickaxe, and more.
+- Minetest Forums: [Map Category](https://forum.minetest.net/viewforum.php?f=12), which can help you in getting inspired by other maps or levels. Don't forget to check out its licenses before doing anything!
+- [WorldEdit](https://github.com/Uberi/Minetest-WorldEdit) is an ultimate in-game world editing tool that can help you build faster and better.
+- [More Blocks](https://github.com/minetest-mods/moreblocks) includes 100+ special blocks with different functionalities that help you make better buildings with more efficiency.
+- [Tree Capitator](https://content.minetest.net/packages/Hybrid%20Dog/treecapitator/), which destroys the whole tree when you destroy the root trunk.
+
+**Note: the `maptools:white` and `maptools:black` nodes are used when ending a race.**\
+Hopefully, we will soon make a detailed tutorial on making your own map!
+
+As always, if you need any help, do let us know about it and we will be glad to help!
 
 ## 📷 Gallery 📷
 
 Coming soon!
 
-## 📜 Licensing 📜
+## 📜 Legal/Licensing 📜
 
 Refer to `LICENSE.md` for more information.

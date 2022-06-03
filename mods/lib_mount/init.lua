@@ -2,7 +2,7 @@
 	An API framework for mounting objects.
 
 	Copyright (C) 2016 blert2112 and contributors
-	Copyright (C) 2019-2021 David Leal (halfpacho@gmail.com) and contributors
+	Copyright (C) 2019-2022 David Leal (halfpacho@gmail.com) and contributors
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -226,21 +226,8 @@ function lib_mount.detach(player, offset)
 	minetest.after(0.1, function()
 		player:set_pos(pos)
 	end)
+	player:set_armor_groups({ immortal = 0 })
 end
-
---[[local function add_hud(entity)
-	entity.hud = entity.driver:hud_add({
-		hud_elem_type = "text",
-		position      = {x = 0.9, y = 0.9},
-		offset        = {x = 0,   y = 0},
-		text          = tostring(math.abs(math.floor(entity.v*2.23694*10)/10)).." km/h",
-		alignment     = {x = 0, y = 0},  -- center aligned
-		scale         = {x = 100, y = 100}, -- covered later
-		number    = 0xFFFFFF,
-	})
-
-	--entity.driver:hud_remove(entity.hud)
-end--]]
 
 local aux_timer = 0
 local is_sneaking = {}
@@ -255,12 +242,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		end
 	end
 
-	-- After driver getting killed, entity.driver is not nil when it should be.
-	-- When attaching the driver, entity.driver will be inside the lib_mount.passengers
-	-- table. With this check, we can verify driver is "not" there.
+	-- Sanity checks
 	if entity.driver and not entity.driver:get_attach() then entity.driver = nil end
 
-	-- Same thing we do with driver, we do it with passengers
 	if entity.passenger and not entity.passenger:get_attach() then
 		entity.passenger = nil
 	end
@@ -313,39 +297,6 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 
 	local velo = entity.object:get_velocity()
 	entity.v = get_v(velo) * get_sign(entity.v)
-
-	--[[ Only play the engine sound on the road master car
-	if entity.name == "vehicle_mash:car_road_master" then
-        if not entity.timer1 then entity.timer1 = 0 end
-        entity.timer1 = entity.timer1 + dtime
-
-        local abs_v = math.abs(entity.v)
-        local rpm = 1
-
-	    for _, tab in pairs(entity.rpm_values) do
-			if abs_v >= tab[1] then
-				rpm = abs_v/tab[2]+tab[3]
-				break
-            end
-        end
-	    local pitch = rpm+.2
-        if entity.timer1 > .2/pitch-.05 then
-            local gain = pitch
-			if abs_v == 0 then
-				gain = .2
-			end
-			if abs_v == 0 then
-				gain = .15
-            end
-
-            minetest.sound_play("lib_mount.engine", {
-		        max_hear_distance = 48*gain,
-		        pitch = pitch,
-		        object = entity.object,
-                gain = gain,
-            }, true)
-        end
-    end--]]
 
 	-- process controls
 	if entity.driver then
@@ -463,9 +414,6 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		end
 	end
 
-	--entity.max_speed_forward = car_shop.max_speed_forward
-	--minetest.chat_send_all(car_shop.max_speed_forward)
-
 	if entity.driver and entity.owner then
 		local meta = entity.driver:get_meta()
 		if minetest.get_modpath("car_shop") then
@@ -477,34 +425,32 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				or entity.name == "vehicle_mash:hover_yellow" or entity.name == "vehicle_mash:hover_red" then
 				if hover_bought and hover_bought.bought_already == true then
 					if hover_speed then
-						--car_shop.hovercraft.max_speed_forward = hover_speed.forward_speed
 						entity.max_speed_forward = hover_speed.forward_speed
 
-						--car_shop.hovercraft.max_speed_reverse = hover_speed.reverse_speed
 						entity.max_speed_reverse = hover_speed.reverse_speed
 						entity.turn_spd = hover_speed.turn_speed
 						entity.accel = hover_speed.accel
 
-						local max_spd = hover_speed.reverse_speed--car_shop.max_speed_reverse--entity.max_speed_reverse
+						local max_spd = hover_speed.reverse_speed
 						if get_sign(entity.v) >= 0 then
-							max_spd = hover_speed.forward_speed--car_shop.max_speed_forward--entity.max_speed_forward
+							max_spd = hover_speed.forward_speed
 						end
 						if math.abs(entity.v) > max_spd then
 							entity.v = entity.v - get_sign(entity.v)
 						end
 					else
-						local max_spd = entity.max_speed_reverse--car_shop.max_speed_reverse--entity.max_speed_reverse
+						local max_spd = entity.max_speed_reverse
 						if get_sign(entity.v) >= 0 then
-							max_spd = entity.max_speed_forward--car_shop.max_speed_forward--entity.max_speed_forward
+							max_spd = entity.max_speed_forward
 						end
 						if math.abs(entity.v) > max_spd then
 							entity.v = entity.v - get_sign(entity.v)
 						end
 					end
 				else
-					local max_spd = entity.max_speed_reverse--car_shop.max_speed_reverse--entity.max_speed_reverse
+					local max_spd = entity.max_speed_reverse
 					if get_sign(entity.v) >= 0 then
-						max_spd = entity.max_speed_forward--car_shop.max_speed_forward--entity.max_speed_forward
+						max_spd = entity.max_speed_forward
 					end
 					if math.abs(entity.v) > max_spd then
 						entity.v = entity.v - get_sign(entity.v)
@@ -516,28 +462,24 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 			-- CAR01
 			local data = minetest.deserialize(meta:get_string("speed"))
 			if data then
-				--car_shop.max_speed_forward = data.forward_speed
 				entity.max_speed_forward = data.forward_speed
 
-				--car_shop.max_speed_reverse = data.reverse_speed
 				entity.max_speed_reverse = data.reverse_speed
 				entity.turn_spd = data.turn_speed
 				entity.accel = data.accel
 
-				local max_spd = data.reverse_speed--car_shop.max_speed_reverse--entity.max_speed_reverse
+				local max_spd = data.reverse_speed
 				if get_sign(entity.v) >= 0 then
-					max_spd = data.forward_speed--car_shop.max_speed_forward--entity.max_speed_forward
+					max_spd = data.forward_speed
 				end
 				if math.abs(entity.v) > max_spd then
 					entity.v = entity.v - get_sign(entity.v)
 				end
-
-				--minetest.chat_send_all(entity.name)
 			else
 				-- enforce speed limit forward and reverse
-				local max_spd = entity.max_speed_reverse--car_shop.max_speed_reverse--entity.max_speed_reverse
+				local max_spd = entity.max_speed_reverse
 				if get_sign(entity.v) >= 0 then
-					max_spd = entity.max_speed_forward--car_shop.max_speed_forward--entity.max_speed_forward
+					max_spd = entity.max_speed_forward
 				end
 				if math.abs(entity.v) > max_spd then
 					entity.v = entity.v - get_sign(entity.v)
@@ -547,9 +489,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	end
 	else
 		-- enforce speed limit forward and reverse
-		local max_spd = entity.max_speed_reverse--car_shop.max_speed_reverse--entity.max_speed_reverse
+		local max_spd = entity.max_speed_reverse
 		if get_sign(entity.v) >= 0 then
-			max_spd = entity.max_speed_forward--car_shop.max_speed_forward--entity.max_speed_forward
+			max_spd = entity.max_speed_forward
 		end
 		if math.abs(entity.v) > max_spd then
 			entity.v = entity.v - get_sign(entity.v)
@@ -580,21 +522,12 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	local new_velo = {x=0, y=0, z=0}
 	local new_acce = {x=0, y=-9.8, z=0}
 
-	--minetest.chat_send_all(entity.v)
-
 	p.y = p.y - 0.5
 	local ni = node_is(p)
 	local v = entity.v
 	if ni == "air" then
 		if can_fly == true then
 			new_acce.y = 0
-			--minetest.chat_send_all(velo.y)
-			--if velo.y > max_spd2 then
-				--velo.y = velo.y - get_sign(velo.y)
-			--end
-			--if acce_y > max_spd2 then
-				--acce_y = acce_y - get_sign(acce_y)
-			--end
 			acce_y = acce_y - get_sign(acce_y) -- When going down, this will prevent from exceeding the maximum speed.
 		end
 	elseif ni == "liquid" then
@@ -1097,29 +1030,6 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	if enable_crash then
 		local intensity = entity.v2 - v
 		if intensity >= crash_threshold then
-			--[[ Start code taken from https://gitlab.com/fearthesky/fts-game/-/blob/master/mods/falling_anvil/init.lua
-			local collisions = moveresult.collisions
-			for _, collision in ipairs(collisions) do
-				if collision.type == "object" and collision.object:get_hp() > 0 then
-					-- impulse transmission
-					-- TODO define object mass and reduce added velocity accordingly
-					collision.object:add_velocity(vector.subtract(collision.old_velocity, collision.new_velocity))
-				end
-			end
-			for _, collision in ipairs(collisions) do
-				if collision.type == "object" and collision.object:get_hp() > 0 then
-					local delta = vector.length(collision.old_velocity)^2 - vector.length(collision.new_velocity)^2
-					local damage = math.floor(delta * intensity)
-					if damage > 0 then
-						collision.object:punch(entity.object, math.huge, {
-							damage_groups = {fleshy = damage}
-						}, vector.direction(entity.object:get_pos(), collision.object:get_pos()))
-					end
-				end
-			end
-			-- End code taken from https://gitlab.com/fearthesky/fts-game/-/blob/master/mods/falling_anvil/init.lua
-			--]]
-
 			if is_mob then
 				entity.object:set_hp(entity.object:get_hp() - intensity)
 			else
