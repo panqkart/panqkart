@@ -6,7 +6,37 @@ rules = {}
 local S = minetest.get_translator(minetest.get_current_modname())
 
 local items = {
-	S("Welcome to PanqKart!"),}
+	S("Welcome to the official PanqKart server!"),
+	S("We're glad you're here. In this server, we have some rules:"),
+	"",
+	S("1. No swearing and dating. We do not allow any kind of bad") .. "\n" .. S("words or stuff like pretending to be 'best friends'."),
+	"", S("2. No using hacked or modified clients.") .. "\n" .. S("Use the only and official Minetest client."),
+	"",  S("3. Be respectful with everyone. Do not be rude."),
+	S("4. Do not spam or use full-CAPS."),
+	"", S("5. Avoid controversial topics, such as religion, politics, and") .. "\n" .. S("traditions. This includes topics such as the Ukraine war or COVID-19."),
+	"",  S("6. Do not share your password with anyone on the server. If we find someone doing") .. "\n" .. S("this, they might pontentially lose their account for security reasons."),
+	"",  S("7. Preferably, do not leave while in a race. If") .. "\n" .. S("you need to leave urgently, feel free to do so."),
+	"", S("8. Do not impersonate any member of our community. Doing so will result in an") .. "\n" .. S("immediate ban from both the Discord and the Minetest servers."),
+	"", S("9. Do not bully or make fun of anyone."),
+	S("10. Have common sense. This is a kid/family-friendly community."),
+	"", S("11. Report or ping a staff if someone's breaking the rules.") .. "\n" .. S("Our staff are always there to check the chat if all is OK."),
+	S("12. Staff always have the final decision."),
+	"",
+	S("Not following these rules will result in a kick,") .. "\n" .. S("ban, or a permanent ban, depending on the situation."),
+	"", S("Anything that makes you feel uncomfortable, any changes you want to be made,") .. "\n" .. S("bugs, etc., just report it to us, and we will help you ASAP."),
+	"",
+	"",
+	S("This game was developed by David Leal (Panquesito7), Crystal741,") .. "\n" .. S("Pixel852, among other Minetest contributors/developers."),
+	"", S("Thanks to everyone else who has") .. "\n" .. S("contributed to this game! It's very appreciated."),
+	"",
+	S("These rules might change in the future, without any later notice or") .. "\n" .. S("announcement. We suggest you stay up-to-date with the rules being changed."),
+	"", S("Big changes in the rules will be announced in our") .. "\n" .. S("Discord server. Stay tuned for any new updates."),
+	"",
+	"",
+	S("Like our game? Donate so we can keep the doing more for") .."\n" .. S("you and this game!") .. "\n" .. S("https://en.liberapay.com/Panquesito7"),
+	"",
+	S("Join our Discord community to stay tuned about new updates, chat with our community,") .. "\n" .. S("share your maps, races, and so much more: https://discord.gg"), -- PENDING DISCORD LINK
+}
 
 for i = 1, #items do
 	items[i] = minetest.formspec_escape(items[i])
@@ -18,7 +48,7 @@ if minetest.global_exists("sfinv") then
 		title = S("Rules"),
 		get = function(self, player, context)
 			return sfinv.make_formspec(player, context,
-				"textlist[0,0;7.85,8.5;help;" .. rules.txt .. "]", false)
+				"textlist[0,0;7.85,8;help;Hey! If you're looking to see the server rules,\nplease use /rules in the chat. Thank you!]", false)
 		end
 	})
 end
@@ -42,13 +72,13 @@ function rules.show(player)
 
 	if not has_password(pname) then
 		fs = fs .. "box[4,8.1;3.1,0.7;#900]"
-		fs = fs .. "label[4.2,8.2;Please set a password]"
-		fs = fs .. "button_exit[0.5,7.6;3.5,2;ok;Okay]"
+		fs = fs .. "label[4.2,8.2;" .. S("Please set a password") .. "]"
+		fs = fs .. "button_exit[0.5,7.6;3.5,2;ok;" .. S("Okay") .. "]"
 	elseif not can_grant_interact(player) then
-		fs = fs .. "button_exit[0.5,7.6;7,2;ok;Okay]"
+		fs = fs .. "button_exit[0.5,7.6;7,2;ok;" .. S("Okay") .. "]"
 	else
-		local yes = minetest.formspec_escape("Yes, let me play!")
-		local no = minetest.formspec_escape("No, get me out of here!")
+		local yes = minetest.formspec_escape(S("Yes, let me play!"))
+		local no = minetest.formspec_escape(S("No, get me out of here!"))
 
 		fs = fs .. "button_exit[0.5,7.6;3.5,2;no;" .. no .. "]"
 		fs = fs .. "button_exit[4,7.6;3.5,2;yes;" .. yes .. "]"
@@ -58,15 +88,17 @@ function rules.show(player)
 end
 
 function rules.show_pwd(pname, msg)
-	msg = msg or "You must set a password to be able to play"
+	msg = msg or S("You must set a password to be able to play")
 
 	minetest.show_formspec(pname, "rules:pwd",  [[
 			size[8,3]
 			no_prepends[]
 			bgcolor[#600]
-			pwdfield[0.8,1.5;7,1;pwd;Password]
-			button[0.5,2;7,2;setpwd;Set]
+			pwdfield[0.8,1.5;7,1;pwd;" .. S("Password") .. "]"
+			button[0.5,2;7,2;setpwd;" .. S("Set") .. "]"
 			label[0.2,0.2;]] .. minetest.formspec_escape(msg) .. "]")
+
+			--]]
 end
 
 minetest.register_chatcommand("rules", {
@@ -79,9 +111,9 @@ minetest.register_chatcommand("rules", {
 		local player = minetest.get_player_by_name(pname)
 		if player then
 			rules.show(player)
-			return true, "Rules shown."
+			return true, S("Rules shown.")
 		else
-			return false, "Player " .. pname .. " does not exist or is not online"
+			return false, S("Player @1 does not exist or is not online", pname)
 		end
 	end
 })
@@ -115,7 +147,7 @@ minetest.register_on_player_receive_fields(function(player, form, fields)
 			if not fields.pwd or fields.pwd:trim() == "" then
 				rules.show_pwd(pname)
 			elseif #fields.pwd < 5 then
-				rules.show_pwd(pname, "Needs at least 5 characters")
+				rules.show_pwd(pname, S("Needs at least 5 characters"))
 			else
 				handler.set_password(pname,
 						minetest.get_password_hash(pname, fields.pwd))
@@ -123,7 +155,7 @@ minetest.register_on_player_receive_fields(function(player, form, fields)
 			end
 		else
 			minetest.kick_player(pname,
-				"You need to set a password to play on this server.")
+				S("You need to set a password to play on this server."))
 		end
 
 		return true
@@ -142,8 +174,7 @@ minetest.register_on_player_receive_fields(function(player, form, fields)
 		return true
 	elseif not fields.yes or fields.no then
 		minetest.kick_player(pname,
-			"You need to agree to the rules to play on this server. " ..
-			"Please rejoin and confirm another time.")
+			S("You need to agree to the rules to play on this server.\nPlease rejoin and confirm another time."))
 		return true
 	end
 
@@ -152,7 +183,7 @@ minetest.register_on_player_receive_fields(function(player, form, fields)
 	privs.interact = true
 	minetest.set_player_privs(pname, privs)
 
-	minetest.chat_send_player(pname, "Welcome "..pname.."! You have now permission to play!")
+	minetest.chat_send_player(pname, S("Welcome, @1! You have now permission to play!", pname))
 
 	return true
 end)

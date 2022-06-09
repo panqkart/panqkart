@@ -55,7 +55,7 @@ end
 function random_messages.display_message(message_number)
 	local msg = random_messages.messages[message_number] or message_number
 	if msg then
-		minetest.chat_send_all(S(minetest.colorize("#808080", msg)))
+		minetest.chat_send_all(minetest.colorize("#808080", msg))
 	end
 end
 
@@ -103,7 +103,7 @@ minetest.after(MESSAGE_INTERVAL, step)
 local register_chatcommand_table = {
 	params = "viewmessages | removemessage <number> | addmessage <number>",
 	privs = {server = true},
-	description = "View and/or alter the server's random messages",
+	description = S("View and/or alter the server's random messages"),
 	func = function(name,param)
 		local t = string.split(param, " ")
 		if t[1] == "viewmessages" then
@@ -114,7 +114,7 @@ local register_chatcommand_table = {
 			function (params)
 				if not tonumber(params[2]) or
 				random_messages.messages[tonumber(params[2])] == nil then
-					return false,"ERROR: No such message."
+					return false, S("ERROR: No such message.")
 				end
 				return true
 			end,
@@ -122,12 +122,12 @@ local register_chatcommand_table = {
 			random_messages.remove_message(t[2])
 		elseif t[1] == "addmessage" then
 			if not t[2] then
-				minetest.chat_send_player(name,"ERROR: No message.")
+				minetest.chat_send_player(name, S("ERROR: No message."))
 			else
 				random_messages.add_message(t)
 			end
 		else
-				minetest.chat_send_player(name,"ERROR: Invalid command.")
+				minetest.chat_send_player(name, S("ERROR: Invalid command."))
 		end
 	end
 }

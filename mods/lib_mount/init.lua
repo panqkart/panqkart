@@ -61,6 +61,9 @@ local function node_is(pos)
 	if node.name == "maptools:black" then
 		return "maptools_black"
 	end
+	if node.name == "maptools:grass" then
+		return "maptools_grass"
+	end
 	if minetest.get_item_group(node.name, "liquid") ~= 0 then
 		return "liquid"
 	end
@@ -94,7 +97,6 @@ local function force_detach(player)
 	if attached_to then
 		local entity = attached_to:get_luaentity()
 		if entity.driver and entity.driver == player then
-			--remove_hud(entity)
 			entity.driver = nil
 			lib_mount.passengers[player] = nil
 		elseif entity.passenger and entity.passenger == player then
@@ -557,6 +559,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 --		v = 0
 --		new_acce.y = 1
 	end
+
 	if node_is(p) == "maptools_black" or node_is(p) == "maptools_white" and entity.driver then
 		if core_game.is_end[entity.driver] == true or not core_game.game_started == true then return end
 

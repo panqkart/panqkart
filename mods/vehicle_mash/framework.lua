@@ -1,4 +1,3 @@
---vehicle_mash = {}
 local drive = lib_mount.drive
 
 function vehicle_mash.register_vehicle(name, def)

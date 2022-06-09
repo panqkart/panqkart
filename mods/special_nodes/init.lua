@@ -54,7 +54,7 @@ minetest.register_node("special_nodes:start_race", {
 
 minetest.register_node("special_nodes:spawn_node", {
 	description = "Spawn node. Do not place multiple nodes.",
-	tiles = {"unknown.png"},
+	tiles = {},
 	drop = "",
 	groups = {not_in_creative_inventory = 1, unbreakable = 1},
 	drawtype = "airlike",
