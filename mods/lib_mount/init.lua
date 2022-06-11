@@ -228,11 +228,11 @@ function lib_mount.detach(player, offset)
 	minetest.after(0.1, function()
 		player:set_pos(pos)
 	end)
-	player:set_armor_groups({ immortal = 0 })
 end
 
 local aux_timer = 0
 local is_sneaking = {}
+local is_on_grass = {}
 
 function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_height, can_fly, can_go_down, can_go_up, enable_crash, moveresult)
 	if entity.driver and not minetest.check_player_privs(entity.driver:get_player_name(), {core_admin = true}) then
@@ -389,33 +389,6 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		end
 	end
 
-	-- Stop!
-	local s = get_sign(entity.v)
-	entity.v = entity.v - 0.02 * s
-	if s ~= get_sign(entity.v) then
-		entity.object:set_velocity({x=0, y=0, z=0})
-		entity.v = 0
-		return
-	end
-
-	-- Stop! (upwards and downwards; applies only if `can_fly` is enabled)
-	if can_fly == true then
-		local s2 = get_sign(velo.y)
-		local s3 = get_sign(acce_y)
-		velo.y = velo.y - 0.02 * s2
-		acce_y = acce_y - 0.02 * s3
-		if s2 ~= get_sign(velo.y) then
-			entity.object:set_velocity({x=0, y=0, z=0})
-			velo.y = 0
-			return
-		end
-		if s3 ~= get_sign(acce_y) then
-			entity.object:set_velocity({x=0, y=0, z=0})
-			acce_y = 0 -- luacheck: ignore
-			return
-		end
-	end
-
 	if entity.driver and entity.owner then
 		local meta = entity.driver:get_meta()
 		if minetest.get_modpath("car_shop") then
@@ -477,6 +450,17 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				if math.abs(entity.v) > max_spd then
 					entity.v = entity.v - get_sign(entity.v)
 				end
+
+				-- Slow down speed when on grass
+				if is_on_grass[entity.driver] == true then
+					max_spd = 4
+					if get_sign(entity.v) >= 0 then
+						max_spd = 5
+					end
+					if math.abs(entity.v) > max_spd then
+						entity.v = entity.v - get_sign(entity.v)
+					end
+				end
 			else
 				-- enforce speed limit forward and reverse
 				local max_spd = entity.max_speed_reverse
@@ -497,6 +481,33 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		end
 		if math.abs(entity.v) > max_spd then
 			entity.v = entity.v - get_sign(entity.v)
+		end
+	end
+
+	-- Stop!
+	local s = get_sign(entity.v)
+	entity.v = entity.v - 0.02 * s
+	if s ~= get_sign(entity.v) then
+		entity.object:set_velocity({x=0, y=0, z=0})
+		entity.v = 0
+		return
+	end
+
+	-- Stop! (upwards and downwards; applies only if `can_fly` is enabled)
+	if can_fly == true then
+		local s2 = get_sign(velo.y)
+		local s3 = get_sign(acce_y)
+		velo.y = velo.y - 0.02 * s2
+		acce_y = acce_y - 0.02 * s3
+		if s2 ~= get_sign(velo.y) then
+			entity.object:set_velocity({x=0, y=0, z=0})
+			velo.y = 0
+			return
+		end
+		if s3 ~= get_sign(acce_y) then
+			entity.object:set_velocity({x=0, y=0, z=0})
+			acce_y = 0 -- luacheck: ignore
+			return
 		end
 	end
 
@@ -527,6 +538,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	p.y = p.y - 0.5
 	local ni = node_is(p)
 	local v = entity.v
+
 	if ni == "air" then
 		if can_fly == true then
 			new_acce.y = 0
@@ -558,6 +570,13 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 --	elseif ni == "walkable" then
 --		v = 0
 --		new_acce.y = 1
+	end
+
+	-- Set the variable to true if on grass
+	if ni == "maptools_grass" then
+		is_on_grass[entity.driver] = true
+	elseif ni == "walkable" and not ni == "maptools_grass" then
+		is_on_grass[entity.driver] = false
 	end
 
 	if node_is(p) == "maptools_black" or node_is(p) == "maptools_white" and entity.driver then

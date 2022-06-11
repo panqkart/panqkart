@@ -48,7 +48,7 @@ if minetest.global_exists("sfinv") then
 		title = S("Rules"),
 		get = function(self, player, context)
 			return sfinv.make_formspec(player, context,
-				"textlist[0,0;7.85,8;help;Hey! If you're looking to see the server rules,\nplease use /rules in the chat. Thank you!]", false)
+				"textlist[0,0;7.85,8;help;" .. S("Hey! If you're looking to see the server rules,") .. "\n" .. S("please use /rules in the chat. Thank you!") .. "]", false)
 		end
 	})
 end

@@ -58,7 +58,6 @@ function vehicle_mash.register_vehicle(name, def)
 			if core_game.game_started == true or core_game.pregame_started == true and not minetest.check_player_privs(clicker, { core_admin = true }) then return end
 			-- if there is already a driver
 			if self.driver then
-				self.driver:set_armor_groups({immortal = 1})
 				-- if clicker is driver detach passengers and driver
 				if clicker == self.driver then
 					if self.passenger then
