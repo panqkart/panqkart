@@ -30,6 +30,10 @@ local S = minetest.get_translator(modname)
 
 local crash_threshold = 6.5		-- ignored if enable_crash is disabled
 
+local aux_timer = 0
+local is_sneaking = {}
+local is_on_grass = {}
+
 ------------------------------------------------------------------------------
 
 local mobs_redo = false
@@ -52,18 +56,22 @@ local function node_is(pos)
 	local node = minetest.get_node(pos)
 	if node.name == "air" then
 		return "air"
-	end
 	-- End/win blocks: white
-	if node.name == "maptools:white" then
+	elseif node.name == "maptools:white" then
 		return "maptools_white"
-	end
 	-- End/win blocks: black
-	if node.name == "maptools:black" then
+	elseif node.name == "maptools:black" then
 		return "maptools_black"
-	end
-	if node.name == "maptools:grass" then
+	-- End/win blocks: special asphalt
+	elseif node.name == "special_nodes:asphalt" then
+		return "special_asphalt"
+	-- Grass nodes
+	elseif node.name == "maptools:grass" then
 		return "maptools_grass"
+	elseif node.name == "default:dirt_with_grass" then
+		return "default_grass"
 	end
+
 	if minetest.get_item_group(node.name, "liquid") ~= 0 then
 		return "liquid"
 	end
@@ -112,6 +120,19 @@ local function force_detach(player)
 		player:set_detach()
 		player_api.player_attached[player:get_player_name()] = false
 		player:set_eye_offset({x=0, y=0, z=0}, {x=0, y=0, z=0})
+	end
+end
+
+local function slow_down_on_grass(entity, max_spd)
+	-- Slow down speed when on grass
+	if is_on_grass[entity.driver] == true then
+		max_spd = entity.max_speed_reverse / 2
+		if get_sign(entity.v) >= 0 then
+			max_spd = entity.max_speed_forward / 2
+		end
+		if math.abs(entity.v) > max_spd then
+			entity.v = entity.v - get_sign(entity.v)
+		end
 	end
 end
 
@@ -229,10 +250,6 @@ function lib_mount.detach(player, offset)
 		player:set_pos(pos)
 	end)
 end
-
-local aux_timer = 0
-local is_sneaking = {}
-local is_on_grass = {}
 
 function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_height, can_fly, can_go_down, can_go_up, enable_crash, moveresult)
 	if entity.driver and not minetest.check_player_privs(entity.driver:get_player_name(), {core_admin = true}) then
@@ -413,6 +430,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 						if math.abs(entity.v) > max_spd then
 							entity.v = entity.v - get_sign(entity.v)
 						end
+						slow_down_on_grass(entity, max_spd)
 					else
 						local max_spd = entity.max_speed_reverse
 						if get_sign(entity.v) >= 0 then
@@ -421,6 +439,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 						if math.abs(entity.v) > max_spd then
 							entity.v = entity.v - get_sign(entity.v)
 						end
+						slow_down_on_grass(entity, max_spd)
 					end
 				else
 					local max_spd = entity.max_speed_reverse
@@ -430,6 +449,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 					if math.abs(entity.v) > max_spd then
 						entity.v = entity.v - get_sign(entity.v)
 					end
+					slow_down_on_grass(entity, max_spd)
 				end
 
 			else
@@ -450,17 +470,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				if math.abs(entity.v) > max_spd then
 					entity.v = entity.v - get_sign(entity.v)
 				end
-
-				-- Slow down speed when on grass
-				if is_on_grass[entity.driver] == true then
-					max_spd = 4
-					if get_sign(entity.v) >= 0 then
-						max_spd = 5
-					end
-					if math.abs(entity.v) > max_spd then
-						entity.v = entity.v - get_sign(entity.v)
-					end
-				end
+				slow_down_on_grass(entity, max_spd)
 			else
 				-- enforce speed limit forward and reverse
 				local max_spd = entity.max_speed_reverse
@@ -470,6 +480,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				if math.abs(entity.v) > max_spd then
 					entity.v = entity.v - get_sign(entity.v)
 				end
+				slow_down_on_grass(entity, max_spd)
 			end
 		end
 	end
@@ -573,13 +584,13 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	end
 
 	-- Set the variable to true if on grass
-	if ni == "maptools_grass" then
+	if entity.driver and ni == "maptools_grass" or ni == "default_grass" then
 		is_on_grass[entity.driver] = true
-	elseif ni == "walkable" and not ni == "maptools_grass" then
+	elseif entity.driver and ni ~= "maptools_grass" or ni ~= "default_grass" then
 		is_on_grass[entity.driver] = false
 	end
 
-	if node_is(p) == "maptools_black" or node_is(p) == "maptools_white" and entity.driver then
+	if node_is(p) == "maptools_black" or node_is(p) == "maptools_white" or node_is(p) == "special_asphalt" and entity.driver then
 		if core_game.is_end[entity.driver] == true or not core_game.game_started == true then return end
 
 		if not core_game.players_on_race[entity.driver] == entity.driver

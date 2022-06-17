@@ -47,7 +47,7 @@ vehicle_mash.car01_def = {
 	accel = 2, -- 1.75
 	braking = 3,
 	turn_speed = 4, -- 2.5
-	stepheight = 0.9,
+	stepheight = 1.1,
 	-- model specific stuff
 	visual = "mesh",
 	mesh = "car.x",
@@ -105,7 +105,7 @@ vehicle_mash.hover_def = {
 	accel = 3, -- 2
 	braking = 2,
 	turn_speed = 3, -- 1.5
-	stepheight = 0.9,
+	stepheight = 1.1,
 	-- model specific stuff
 	visual = "mesh",
 	mesh = "hovercraft.x",

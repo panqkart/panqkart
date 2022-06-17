@@ -49,6 +49,8 @@ function random_messages.read_messages()
 		"Read our rules frequently, show them to other users, or report users who are breaking the rules to us.\nWe might update our rules soon, so stay tuned for any new changes.",
 		"Share the game with your friends and give feedback! You may also download the game for yourself to test it, make another version, or whatever changes you wanna make!",
 		"You can create your own levels/maps and we might potentially add them to our game (in the future)! We have\na list of basic tools to use to make better buildings. Hop on to our Discord and we'll help you with it!",
+		"Don't go onto the grass! It will slow down your speed by half, depending on your vehicle's speed.",
+		"We have a Discord community. Yes, you heard right: there you can talk with your friends regarding the game,\nmake suggestions, report bugs, as well as talk directly to the server users from Discord. Join today: https://discord.gg/HEweZuF3Vv"
 	}
 end
 

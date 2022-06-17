@@ -243,16 +243,23 @@ if minetest.get_modpath("car_shop") then
 
 			if coins and coins.bronze_coins and coins.bronze_coins ~= 0 then
 				minetest.chat_send_player(name, S("Successfully resetted bronze coins to @1", param))
+				coins.bronze_coins = 0
+				meta:set_string("player_coins", minetest.serialize(coins))
 			else
 				minetest.chat_send_player(name, S("@1 has no bronze coins yet.", param))
 			end
 			if coins and coins.silver_coins and coins.silver_coins ~= 0 then
 				minetest.chat_send_player(name, S("Successfully resetted silver coins to @1", param))
+				coins.silver_coins = 0
+				meta:set_string("player_coins", minetest.serialize(coins))
 			else
 				minetest.chat_send_player(name, S("@1 has no silver coins yet.", param))
 			end
 			if coins and coins.gold_coins and coins.gold_coins ~= 0 then
 				minetest.chat_send_player(name, S("Successfully resetted gold coins to @1", param))
+
+				coins.gold_coins = 0
+				meta:set_string("player_coins", minetest.serialize(coins))
 			else
 				minetest.chat_send_player(name, S("@1 has no gold coins yet.", param))
 			end
@@ -623,6 +630,11 @@ local function start(player)
 
 	minetest.chat_send_player(player:get_player_name(), S("The race will start in a few seconds. Please wait..."))
 
+	-- Remove nametag
+	player:set_nametag_attributes({
+		color = {a = 0, r = 255, g = 255, b = 255},
+	})
+
 	-- Start: HUD/count stuff
 	if not already_ran == true then
 		startCountdown(player)
@@ -662,6 +674,26 @@ local function race_end()
 		for _,player_name in ipairs(minetest.get_connected_players()) do
 			core_game.is_waiting_end[player_name] = false
 			hud_fs.close_hud(player_name, "core_game:pending_race")
+		end
+		-- Set nametags once the race ends
+		if minetest.check_player_privs(name, { core_admin = true }) then
+			name:set_nametag_attributes({
+				text = "[STAFF]" .. name:get_player_name(),
+				color = {r = 255, g = 0, b = 0},
+				bgcolor = false
+			})
+		elseif minetest.check_player_privs(name, { has_premium = true }) then
+			name:set_nametag_attributes({
+				text = "[VIP]" .. name:get_player_name(),
+				color = {r = 255, g = 255, b = 0},
+				bgcolor = false
+			})
+		else
+			name:set_nametag_attributes({
+				text = name:get_player_name(),
+				color = {r = 255, g = 255, b = 255},
+				bgcolor = false
+			})
 		end
 	end
 	core_game.player_count = 0

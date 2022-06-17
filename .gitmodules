@@ -1,0 +1,15 @@
+[submodule "mods/abriglass"]
+	path = mods/abriglass
+	url = https://github.com/Ezhh/abriglass
+[submodule "mods/moreblocks"]
+	path = mods/moreblocks
+	url = https://github.com/minetest-mods/moreblocks
+[submodule "mods/maptools"]
+	path = mods/maptools
+	url = https://github.com/minetest-mods/maptools
+[submodule "mods/minetest-hud_fs"]
+	path = mods/minetest-hud_fs
+	url = https://github.com/luk3yx/minetest-hud_fs
+[submodule "mods/minetest-formspec_ast"]
+	path = mods/minetest-formspec_ast
+	url = https://github.com/luk3yx/minetest-formspec_ast

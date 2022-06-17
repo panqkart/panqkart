@@ -35,7 +35,7 @@ local items = {
 	"",
 	S("Like our game? Donate so we can keep the doing more for") .."\n" .. S("you and this game!") .. "\n" .. S("https://en.liberapay.com/Panquesito7"),
 	"",
-	S("Join our Discord community to stay tuned about new updates, chat with our community,") .. "\n" .. S("share your maps, races, and so much more: https://discord.gg"), -- PENDING DISCORD LINK
+	S("Join our Discord community to stay tuned about new updates, chat with our community,") .. "\n" .. S("share your maps, races, and so much more: https://discord.gg/HEweZuF3Vv"), -- PENDING DISCORD LINK
 }
 
 for i = 1, #items do
@@ -48,7 +48,7 @@ if minetest.global_exists("sfinv") then
 		title = S("Rules"),
 		get = function(self, player, context)
 			return sfinv.make_formspec(player, context,
-				"textlist[0,0;7.85,8;help;" .. S("Hey! If you're looking to see the server rules,") .. "\n" .. S("please use /rules in the chat. Thank you!") .. "]", false)
+				"label[0,0;" .. S("Hey! If you're looking to see the server rules,") .. "\n" .. S("please use /rules in the chat. Thank you!") .. "]", false)
 		end
 	})
 end
