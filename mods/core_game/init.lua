@@ -142,7 +142,7 @@ local already_ran = false -- A variable to make sure if the pregame countdown ha
 local pregame_count_ended = false -- A variable to remove the pregame countdown HUD for those who weren't the first to run the countdown.
 
 local racecount_check = {} -- An array used to store the value if a player's countdown already started.
-local max_racecount = 180 -- Maximum value for the race count (default 180)
+local max_racecount = 120 -- Maximum value for the race count (default 180)
 
 ----------------
 -- Overrides --
@@ -292,12 +292,14 @@ if minetest.get_modpath("car_shop") then
 			elseif car01_speed then
 				car01_speed.reverse_speed = vehicle_mash.car01_def.max_speed_reverse
 				car01_speed.forward_speed = vehicle_mash.car01_def.max_speed_forward
+				car01_speed.turn_speed = vehicle_mash.car01_def.turn_speed
 				meta:set_string("speed", minetest.serialize(car01_speed))
 
 				minetest.chat_send_player(name, S("Successfully set CAR01 reverse/forward speed to default to @1.", param))
 				if hover_speed then
 					hover_speed.reverse_speed = vehicle_mash.hover_def.max_speed_reverse
 					hover_speed.forward_speed = vehicle_mash.hover_def.max_speed_forward
+					hover_speed.turn_speed = vehicle_mash.hover_def.turn_speed
 					meta:set_string("hover_speed", minetest.serialize(hover_speed))
 
 					minetest.chat_send_player(name, S("Successfully set Hovercraft reverse/forward speed to default to @1.", param))
@@ -710,7 +712,7 @@ minetest.register_on_joinplayer(function(player)
 
 		-- Let's use the position of the `spawn_node` node. This is very useful
 		-- when placing the lobby schematic and not the node itself.
-		if minetest.string_to_pos(meta:get_string("lobby_position")) then
+		if meta and minetest.string_to_pos(meta:get_string("lobby_position")) then
 			player:set_pos(minetest.string_to_pos(meta:get_string("lobby_position")))
 			minetest.log("action", "`spawn_node` node position was used for player " .. player:get_player_name() .. ". Successfully teleported.")
 		else
@@ -978,6 +980,27 @@ end
 --- @param player string the player that will be sent to the lobby
 --- @returns void
 function core_game.player_lost(player)
+	-- Set nametags once the race ends
+	if minetest.check_player_privs(player, { core_admin = true }) then
+		player:set_nametag_attributes({
+			text = "[STAFF]" .. player:get_player_name(),
+			color = {r = 255, g = 0, b = 0},
+			bgcolor = false
+		})
+	elseif minetest.check_player_privs(player, { has_premium = true }) then
+		player:set_nametag_attributes({
+			text = "[VIP]" .. player:get_player_name(),
+			color = {r = 255, g = 255, b = 0},
+			bgcolor = false
+		})
+	else
+		player:set_nametag_attributes({
+			text = player:get_player_name(),
+			color = {r = 255, g = 255, b = 255},
+			bgcolor = false
+		})
+	end
+
 	already_ran = false
 	pregame_count = 20
 	pregame_count_ended = false
@@ -1037,9 +1060,9 @@ minetest.register_globalstep(function(dtime)
 
 		if minetest.get_modpath("special_nodes") then
 			if node.name == "special_nodes:start_race" and not ran_once[player] == true then
-				reset_values(player) -- Reset values in case something was stored
-				core_game.start_game(player)
-				ran_once[player] = true
+				--reset_values(player) -- Reset values in case something was stored
+				--core_game.start_game(player)
+				--ran_once[player] = true
 			elseif node.name == "special_nodes:tp_lobby" then
 				local meta = minetest.get_meta(core_game.position)
 

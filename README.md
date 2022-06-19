@@ -1,5 +1,9 @@
 # 🚗 PanqKart 🚗
 
+[![build](https://github.com/Panquesito7/minetest-racing_game/actions/workflows/build.yml/badge.svg)](https://github.com/Panquesito7/minetest-racing_game/actions/)
+[![Discord chat](https://img.shields.io/discord/984496578922442753.svg?logo=discord&colorB=5865F2)](https://discord.gg/HEweZuF3Vv)
+[![Donate](https://liberapay.com/assets/widgets/donate.svg)](https://en.liberapay.com/Panquesito7/donate)
+
 A racing game with upgradable cars, fun races with up to 10 players, and so much more.\
 Built by [Panquesito7 (David Leal)](https://github.com/Panquesito7), Pixel852, Crystal741, and other Minetest contributors.
 
@@ -15,6 +19,10 @@ place it in `../minetest/games/`
     it in `~/.minetest/games/`
 
 **Please check [`SETUP.md`](https://github.com/Panquesito7/panqkart/blob/main/SETUP.md) for how to setup the lobby/game.**
+
+## 💻 Cloning and keeping Git Modules 💻
+
+<!-- TO-DO -->
 
 ## 🏁 Making your own maps 🏁
 

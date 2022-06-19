@@ -47,4 +47,17 @@ For the 2nd point, the steps are here:
 _Please note that once you change the spawnpoint position, the spawnpoint node position will be ignored._
 
 You're done now! The lobby is now set up 🎉 You can now play on LAN, add new features, or just try it out for yourself!\
-If you have any more questions or need any more help, feel free to reach us at `halfpacho@gmail.com` or in our Discord community.
+If you have any more questions or need any more help, feel free to reach us at `halfpacho@gmail.com` or in our [Discord community](https://discord.gg/HEweZuF3Vv).
+
+## 🏞 Setting up the level 🏞
+
+Once you have the lobby, you will need to setup the level to play, otherwise, it'd be just boring without playing.\
+So below here, we will explain how to add the level to your map!
+
+If you've already downloaded the repository, look out in the `schematics` folder.\
+There should be a file named `level.we` there. You can follow the steps above for how to load the level.
+
+**WARNING:** The level is very big! We recommend putting it far away from the lobby or other buildings you have around.
+
+Once you've set up the level, well, you're practically done now. You just need to configure the `start_race` node, which can be found\
+on the lobby, on the stonebrick tunnel. Right-click on it, and set positions for 1st player, 2nd player, 3rd player, and all the way to 12.
