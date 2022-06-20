@@ -32,7 +32,7 @@ local function start_race_formspec()
 	local formspec = {
 		"formspec_version[4]",
 		"size[12,8]",
-		"label[4.5,0.5;", minetest.formspec_escape(text), "]",
+		"label[2.5,0.5;", minetest.formspec_escape(text), "]",
 		"field[0.375,1.2;5.25,0.8;player_one;1st player position;${player1}]",
 		"field[0.375,2.13;5.25,0.8;player_two;2nd player position;${player2}]",
 		"field[0.375,3;5.25,0.8;player_three;3rd player position;${player3}]",
@@ -45,7 +45,7 @@ local function start_race_formspec()
 		"field[6,5;5.25,0.8;player_tenth;10th player position;${player10}]",
 		"field[6,6;5.25,0.8;player_eleventh;11th player position;${player11}]",
 		"field[6,7;5.25,0.8;player_twelveth;12th player position;${player12}]",
-		"button_exit[4,4.4;3,0.8;apply;Apply changes]",
+		"button_exit[4,4.05;3,0.8;apply;Apply changes]",
 	}
 
     -- table.concat is faster than string concatenation - `..`
@@ -131,7 +131,12 @@ minetest.register_node("special_nodes:start_race", {
 				end
 			end
 			for i,player_name in ipairs(strings) do
-				meta:set_string(player_name, field[i])
+				if minetest.string_to_pos(field[i]) then
+					meta:set_string(player_name, field[i])
+				else
+					minetest.chat_send_player(sender:get_player_name(), "Please set ALL positions and use only a valid Minetest position. Use: <x,y,z>")
+					return
+				end
 			end
 
 			minetest.chat_send_player(sender:get_player_name(), "Successfully updated player positions!")
@@ -178,17 +183,30 @@ minetest.register_globalstep(function(dtime)
 		"player12",
 	}
 
+	-- Used to place the player in a random position
+	local position = strings[math.random(#strings)]
+
 	for _, player in ipairs(minetest.get_connected_players()) do
 		local pos = player:get_pos()
 		local node = minetest.get_node(vector.subtract(pos, {x=0,y=0.5,z=0}))
 
-		if node.name == "special_nodes:start_race" then
+		if node.name == "special_nodes:start_race" and not core_game.ran_once[player] == true then
 			local meta = minetest.get_meta({x = pos.x, y = pos.y - 0.1, z = pos.z})
 			for _,string in ipairs(strings) do
+				if core_game.ran_once[player] == true then break end
 				if not minetest.string_to_pos(meta:get_string(string)) then
 					minetest.chat_send_player(player:get_player_name(), "Positions haven't been set. Cannot start race. Aborting.")
 					minetest.chat_send_player(player:get_player_name(), "If you think this is a mistake, please report it on the official's PanqKart Discord server or contact the server administrator.")
+
+					core_game.ran_once[player] = true
+					minetest.after(20, function() core_game.ran_once[player] = false end)
 					return
+				else
+					player:move_to(minetest.string_to_pos(meta:get_string(position)))
+
+					core_game.reset_values(player) -- Reset values in case something was stored
+					core_game.start_game(player)
+					core_game.ran_once[player] = true
 				end
 			end
 		end

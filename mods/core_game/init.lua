@@ -134,7 +134,7 @@ local run_once = {} -- An array to ensure a player hasn't ran more than one time
 					-- This comes handy to not run this in the globalstep function.
 local use_hovercraft = {} -- An array to save the players who chose to use the Hovercraft.
 local use_car01 = {} -- An array to save the players who chose to use CAR01.
-local ran_once = {} -- Utility array to make sure the player hasn't stand on the start race block more than once.
+core_game.ran_once = {} -- Utility array to make sure the player hasn't stand on the start race block more than once.
 
 core_game.pregame_started = false -- The variable's name says it all. :)
 local pregame_count = 20 -- A variable to save the pregame countdown. This can be customized to any number.
@@ -365,7 +365,7 @@ minetest.register_chatcommand("donate", {
 --- from the current/previous race. This can prevent crashes/bugs.
 --- @param player string the player to reset the values to
 --- @returns void
-local function reset_values(player)
+function core_game.reset_values(player)
 	if core_game.players_on_race[player] == player then
 		core_game.player_count = core_game.player_count - 1
 	end
@@ -377,7 +377,7 @@ local function reset_values(player)
 	core_game.is_waiting_end[player] = nil
 	core_game.is_waiting[player] = nil
 
-	ran_once[player] = nil
+	core_game.ran_once[player] = nil
 	racecount_check[player] = false
 end
 
@@ -507,7 +507,7 @@ local function hud_321(player)
 		minetest.chat_send_player(player:get_player_name(), S("There's a current race running. Please wait until it finishes."))
 		core_game.players_on_race[player] = player
 
-		reset_values(player)
+		core_game.reset_values(player)
 		core_game.waiting_to_end(player)
 		return
 	end
@@ -607,7 +607,7 @@ local function start(player)
 		-- Clear values in case something was stored
 		core_game.players_on_race[player] = nil
 
-		reset_values(player)
+		core_game.reset_values(player)
 		core_game.waiting_to_end(player)
 		return
 	end
@@ -754,7 +754,7 @@ end)
 
 minetest.register_on_leaveplayer(function(player)
 	-- Reset all values to prevent crashes
-	reset_values(player)
+	core_game.reset_values(player)
 end)
 
 -- Keep players and map(s) protected
@@ -1022,7 +1022,7 @@ function core_game.player_lost(player)
 	--core_game.player_count = 0
 
 	core_game.pregame_started = false
-	ran_once = {}
+	core_game.ran_once = {}
 	racecount_check[player] = false
 end
 
@@ -1059,11 +1059,7 @@ minetest.register_globalstep(function(dtime)
 		local node = minetest.get_node(vector.subtract(pos, {x=0,y=0.5,z=0}))
 
 		if minetest.get_modpath("special_nodes") then
-			if node.name == "special_nodes:start_race" and not ran_once[player] == true then
-				--reset_values(player) -- Reset values in case something was stored
-				--core_game.start_game(player)
-				--ran_once[player] = true
-			elseif node.name == "special_nodes:tp_lobby" then
+			if node.name == "special_nodes:tp_lobby" then
 				local meta = minetest.get_meta(core_game.position)
 
 				if minetest.string_to_pos(meta:get_string("lobby_position")) then
@@ -1079,7 +1075,16 @@ minetest.register_globalstep(function(dtime)
 	-- Special thanks to Warr1024 for helping!
 	for _,name in pairs(core_game.players_on_race) do
 		if not name then return end
+
+		if not core_game.game_started == true then
+			-- Do not let users move before the race starts
+			minetest.after(0.1, function() name:set_physics_override({speed = 0.001}) end)
+		end
+
 		if core_game.game_started == true then
+			name:set_physics_override({
+				speed = 1 -- Set speed back to normal
+			})
 
 			if racecount_check[name] == false then
 				core_game.count[name] = 0 -- Let's initialize from 0 to prevent crashes
@@ -1132,7 +1137,7 @@ minetest.register_globalstep(function(dtime)
 	-- Let's separate this from the code above to avoid issues
 	for _,name in pairs(core_game.players_on_race) do
 		if use_hovercraft[name] == true or use_car01[name] == true then return end
-		if core_game.game_started == true and not run_once[name] == true then
+		if core_game.pregame_started == true and not run_once[name] == true then
 			local meta = name:get_meta()
 			local data = minetest.deserialize(meta:get_string("hovercraft_bought"))
 
@@ -1188,7 +1193,7 @@ end)
 --- @returns void
 function core_game.start_game(player)
 	-- Start: reset values in case something was stored
-	reset_values(player)
+	core_game.reset_values(player)
 	-- End: reset values in case something was stored
 
 	-- Start: player count checks
