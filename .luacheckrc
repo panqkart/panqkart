@@ -1,6 +1,6 @@
 unused_args = false
 allow_defined_top = true
-max_line_length = 999
+max_line_length = false
 
 globals = {
     "default", "minetest", "core", "core_game",
@@ -39,6 +39,7 @@ read_globals = {
 	"isprotect",
 	"protector",
 	"digiline",
+	"modlib",
 }
 
 -- Don't report on legacy definitions of globals.
@@ -56,10 +57,6 @@ files["mods/mobs_redo/api.lua"].ignore = { "" }
 files["mods/mobs_animal/locale/po2tr.lua"].ignore = { "" }
 
 -- Code below taken from https://github.com/luk3yx/minetest-formspec_ast/blob/master/.luacheckrc
-
--- The elements.lua file is auto-generated and has a hideously long line which
--- luacheck complains about.
-files["mods/formspec_ast/elements.lua"].ignore = {""}
 
 -- This error is thrown for methods that don't use the implicit "self"
 -- parameter.

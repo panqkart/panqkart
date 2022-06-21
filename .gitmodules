@@ -13,3 +13,45 @@
 [submodule "mods/minetest-formspec_ast"]
 	path = mods/minetest-formspec_ast
 	url = https://github.com/luk3yx/minetest-formspec_ast
+[submodule "mods/abripanes"]
+	path = mods/abripanes
+	url = https://github.com/Ezhh/abripanes.git
+[submodule "mods/creative"]
+	path = mods/creative
+	url = https://github.com/minetest-game/creative
+[submodule "mods/doors"]
+	path = mods/doors
+	url = https://github.com/minetest-game/doors
+[submodule "mods/dye"]
+	path = mods/dye
+	url = https://github.com/minetest-game/dye
+[submodule "mods/env_sounds"]
+	path = mods/env_sounds
+	url = https://github.com/minetest-game/env_sounds
+[submodule "mods/farming"]
+	path = mods/farming
+	url = https://github.com/minetest-game/farming
+[submodule "mods/fire"]
+	path = mods/fire
+	url = https://github.com/minetest-game/fire
+[submodule "mods/flowers"]
+	path = mods/flowers
+	url = https://github.com/minetest-game/flowers
+[submodule "mods/screwdriver"]
+	path = mods/screwdriver
+	url = https://github.com/minetest-game/screwdriver
+[submodule "mods/sfinv"]
+	path = mods/sfinv
+	url = https://github.com/minetest-game/sfinv
+[submodule "mods/stairs"]
+	path = mods/stairs
+	url = https://github.com/minetest-game/stairs
+[submodule "mods/vessels"]
+	path = mods/vessels
+	url = https://github.com/minetest-game/vessels
+[submodule "mods/wool"]
+	path = mods/wool
+	url = https://github.com/minetest-game/wool
+[submodule "mods/xpanes"]
+	path = mods/xpanes
+	url = https://github.com/minetest-game/xpanes

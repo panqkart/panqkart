@@ -123,7 +123,7 @@ local function force_detach(player)
 	end
 end
 
-local function slow_down_on_grass(entity, max_spd)
+local function slow_down_on_grass(entity, max_spd) -- luacheck: ignore
 	-- Slow down speed when on grass
 	if is_on_grass[entity.driver] == true then
 		max_spd = entity.max_speed_reverse / 2
@@ -584,10 +584,12 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	end
 
 	-- Set the variable to true if on grass
-	if entity.driver and ni == "maptools_grass" or ni == "default_grass" then
-		is_on_grass[entity.driver] = true
-	elseif entity.driver and ni ~= "maptools_grass" or ni ~= "default_grass" then
-		is_on_grass[entity.driver] = false
+	if entity.driver then
+		if ni == "maptools_grass" or ni == "default_grass" then
+			is_on_grass[entity.driver] = true
+		elseif ni ~= "maptools_grass" or ni ~= "default_grass" then
+			is_on_grass[entity.driver] = false
+		end
 	end
 
 	if node_is(p) == "maptools_black" or node_is(p) == "maptools_white" or node_is(p) == "special_asphalt" and entity.driver then
@@ -599,28 +601,18 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 			return
 		end
 		if not entity.driver then return end
-		--[[for _,player in ipairs(minetest.get_connected_players()) do
-			local name = player:get_player_name()
-			--if name == entity.owner then return end
-			if not name == entity.owner and not core_game.count[entity.driver] == core_game.count[player] then
-				minetest.chat_send_player(entity.driver:get_player_name(), "You are in 1st place!")
-			elseif not core_game.is_end[entity.driver] == true then
-				minetest.chat_send_player(entity.driver:get_player_name(), "You are in 2nd place!")
-			end
-		end--]]
+
 		local meta = entity.driver:get_meta()
 		local data = minetest.deserialize(meta:get_string("player_coins"))
 		core_game.is_end[entity.driver] = true
+
 		-- Maximum 12 players per race, so let's do this twelve times
 		if lib_mount.win_count == 1 then
 			minetest.chat_send_player(entity.driver:get_player_name(), S("You are in 1st place! Congratulations!"))
 			minetest.chat_send_player(entity.driver:get_player_name(), S("You won 3 gold coins, 6 silver coins, and 10 bronze coins."))
 			core_game.players_that_won[0] = entity.driver
 
-			if data then--car_shop.player_gold_coins[entity.driver] ~= nil or car_shop.player_silver_coins[entity.driver] ~= nil or car_shop.player_bronze_coins[entity.driver] ~= nil then
-				--car_shop.player_gold_coins[entity.driver] = car_shop.player_gold_coins[entity.driver] + 3
-				--car_shop.player_silver_coins[entity.driver] = car_shop.player_silver_coins[entity.driver] + 6
-				--car_shop.player_bronze_coins[entity.driver] = car_shop.player_bronze_coins[entity.driver] + 10
+			if data then
 				if minetest.get_modpath("premium") and minetest.check_player_privs(entity.driver, { has_premium = true }) then
 					data.gold_coins = data.gold_coins + 6
 					data.silver_coins = data.silver_coins + 12
@@ -640,16 +632,11 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 					data = { gold_coins = 3, silver_coins = 6, bronze_coins = 10 }
 				end
 				meta:set_string("player_coins", minetest.serialize(data))
-
-				--car_shop.player_gold_coins[entity.driver] = 3
-				--car_shop.player_silver_coins[entity.driver] = 6
-				--car_shop.player_bronze_coins[entity.driver] = 10
 			end
 			lib_mount.win_count = lib_mount.win_count + 1
 			if core_game.player_count == 1 then
 				core_game.players_that_won[0] = entity.driver
 
-				--core_game.game_started = false
 				hud_fs.close_hud(entity.driver, "core_game:pending_race")
 				for _,player in ipairs(minetest.get_connected_players()) do
 					core_game.is_waiting_end[player] = false
@@ -676,7 +663,6 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				core_game.players_that_won[1] = entity.driver
 				minetest.chat_send_player(entity.driver:get_player_name(), S("You are in the last place! You lost."))
 
-				--core_game.game_started = false
 				hud_fs.close_hud(entity.driver, "core_game:pending_race")
 				for _,player in ipairs(minetest.get_connected_players()) do
 					core_game.is_waiting_end[player] = false
@@ -701,10 +687,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 			minetest.chat_send_player(entity.driver:get_player_name(), S("You are in 2nd place! You won 5 silver coins and 8 bronze coins."))
 			core_game.players_that_won[1] = entity.driver
 
-			if data then--car_shop.player_gold_coins[entity.driver] ~= nil or car_shop.player_silver_coins[entity.driver] ~= nil or car_shop.player_bronze_coins[entity.driver] ~= nil then
-				--car_shop.player_gold_coins[entity.driver] = car_shop.player_gold_coins[entity.driver] + 3
-				--car_shop.player_silver_coins[entity.driver] = car_shop.player_silver_coins[entity.driver] + 6
-				--car_shop.player_bronze_coins[entity.driver] = car_shop.player_bronze_coins[entity.driver] + 10
+			if data then
 				if minetest.get_modpath("premium") and minetest.check_player_privs(entity.driver, { has_premium = true }) then
 					data.silver_coins = data.silver_coins + 10
 					data.bronze_coins = data.bronze_coins + 16
@@ -722,10 +705,6 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 					data = { gold_coins = 0, silver_coins = 5, bronze_coins = 8 }
 				end
 				meta:set_string("player_coins", minetest.serialize(data))
-
-				--car_shop.player_gold_coins[entity.driver] = 3
-				--car_shop.player_silver_coins[entity.driver] = 6
-				--car_shop.player_bronze_coins[entity.driver] = 10
 			end
 			lib_mount.win_count = lib_mount.win_count + 1
 		elseif lib_mount.win_count == 3 then
@@ -733,7 +712,6 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				core_game.players_that_won[2] = entity.driver
 				minetest.chat_send_player(entity.driver:get_player_name(), S("You are in the last place! You lost."))
 
-				--core_game.game_started = false
 				hud_fs.close_hud(entity.driver, "core_game:pending_race")
 				for _,player in ipairs(minetest.get_connected_players()) do
 					core_game.is_waiting_end[player] = false
@@ -759,10 +737,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 			core_game.players_that_won[2] = entity.driver
 			lib_mount.win_count = lib_mount.win_count + 1
 
-			if data then--car_shop.player_gold_coins[entity.driver] ~= nil or car_shop.player_silver_coins[entity.driver] ~= nil or car_shop.player_bronze_coins[entity.driver] ~= nil then
-				--car_shop.player_gold_coins[entity.driver] = car_shop.player_gold_coins[entity.driver] + 3
-				--car_shop.player_silver_coins[entity.driver] = car_shop.player_silver_coins[entity.driver] + 6
-				--car_shop.player_bronze_coins[entity.driver] = car_shop.player_bronze_coins[entity.driver] + 10
+			if data then
 				if minetest.get_modpath("premium") and minetest.check_player_privs(entity.driver, { has_premium = true }) then
 					data.bronze_coins = data.bronze_coins + 10
 					minetest.chat_send_player(entity.driver:get_player_name(), S("You won double coins for having premium!"))
@@ -778,17 +753,12 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 					data = { gold_coins = 0, silver_coins = 0, bronze_coins = 5 }
 				end
 				meta:set_string("player_coins", minetest.serialize(data))
-
-				--car_shop.player_gold_coins[entity.driver] = 3
-				--car_shop.player_silver_coins[entity.driver] = 6
-				--car_shop.player_bronze_coins[entity.driver] = 10
 			end
 		elseif lib_mount.win_count == 4 then
 			if core_game.player_count == 4 then
 				core_game.players_that_won[3] = entity.driver
 				minetest.chat_send_player(entity.driver:get_player_name(), S("You are in the last place! You lost."))
 
-				--core_game.game_started = false
 				hud_fs.close_hud(entity.driver, "core_game:pending_race")
 				for _,player in ipairs(minetest.get_connected_players()) do
 					core_game.is_waiting_end[player] = false
@@ -848,7 +818,6 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				core_game.players_that_won[5] = entity.driver
 				minetest.chat_send_player(entity.driver:get_player_name(), S("You are in the last place! You lost."))
 
-				--core_game.game_started = false
 				hud_fs.close_hud(entity.driver, "core_game:pending_race")
 				for _,player in ipairs(minetest.get_connected_players()) do
 					core_game.is_waiting_end[player] = false
@@ -878,7 +847,6 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				core_game.players_that_won[6] = entity.driver
 				minetest.chat_send_player(entity.driver:get_player_name(), S("You are in the last place! You lost."))
 
-				--core_game.game_started = false
 				hud_fs.close_hud(entity.driver, "core_game:pending_race")
 				for _,player in ipairs(minetest.get_connected_players()) do
 					core_game.is_waiting_end[player] = false
@@ -908,7 +876,6 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				core_game.players_that_won[7] = entity.driver
 				minetest.chat_send_player(entity.driver:get_player_name(), S("You are in the last place! You lost."))
 
-				--core_game.game_started = false
 				hud_fs.close_hud(entity.driver, "core_game:pending_race")
 				for _,player in ipairs(minetest.get_connected_players()) do
 					core_game.is_waiting_end[player] = false
@@ -938,7 +905,6 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				core_game.players_that_won[8] = entity.driver
 				minetest.chat_send_player(entity.driver:get_player_name(), S("You are in the last place! You lost."))
 
-				--core_game.game_started = false
 				hud_fs.close_hud(entity.driver, "core_game:pending_race")
 				for _,player in ipairs(minetest.get_connected_players()) do
 					core_game.is_waiting_end[player] = false
@@ -968,7 +934,6 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				core_game.players_that_won[9] = entity.driver
 				minetest.chat_send_player(entity.driver:get_player_name(), S("You are in the last place! You lost."))
 
-				--core_game.game_started = false
 				hud_fs.close_hud(entity.driver, "core_game:pending_race")
 				for _,player in ipairs(minetest.get_connected_players()) do
 					core_game.is_waiting_end[player] = false
@@ -1027,7 +992,6 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 			minetest.chat_send_player(entity.driver:get_player_name(), S("You are in the last place! You lost."))
 			core_game.players_that_won[11] = entity.driver
 
-			--core_game.game_started = false
 			hud_fs.close_hud(entity.driver, "core_game:pending_race")
 			for _,player in ipairs(minetest.get_connected_players()) do
 				core_game.is_waiting_end[player] = false
@@ -1048,10 +1012,11 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				end
 			end)
 		end
-		--velo.y = 6 -- This will make the vehicle jump :D
-		--entity.object:set_pos({x = -94.3, y = 3.5, z = 149.7})
 		minetest.chat_send_player(entity.driver:get_player_name(), S("Game's up! You finished the race in @1 seconds.", core_game.count[entity.driver]))
 	end
+
+	-- UNUSED:
+	--velo.y = 6 -- This will make the vehicle jump
 
 	new_velo = get_velocity(v, entity.object:get_yaw() - rot_view, velo.y)
 	new_acce.y = new_acce.y + acce_y
