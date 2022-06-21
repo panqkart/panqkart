@@ -40,6 +40,10 @@ read_globals = {
 	"protector",
 	"digiline",
 	"modlib",
+	"sfinv",
+	"farming",
+	"stairsplus",
+	"creative",
 }
 
 -- Don't report on legacy definitions of globals.
