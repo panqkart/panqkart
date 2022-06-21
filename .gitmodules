@@ -1,6 +1,3 @@
-[submodule "mods/abriglass"]
-	path = mods/abriglass
-	url = https://github.com/Ezhh/abriglass
 [submodule "mods/moreblocks"]
 	path = mods/moreblocks
 	url = https://github.com/minetest-mods/moreblocks
@@ -13,9 +10,6 @@
 [submodule "mods/minetest-formspec_ast"]
 	path = mods/minetest-formspec_ast
 	url = https://github.com/luk3yx/minetest-formspec_ast
-[submodule "mods/abripanes"]
-	path = mods/abripanes
-	url = https://github.com/Ezhh/abripanes.git
 [submodule "mods/creative"]
 	path = mods/creative
 	url = https://github.com/minetest-game/creative
@@ -55,3 +49,9 @@
 [submodule "mods/xpanes"]
 	path = mods/xpanes
 	url = https://github.com/minetest-game/xpanes
+[submodule "mods/abriglass"]
+	path = mods/abriglass
+	url = https://github.com/panqkart/abriglass
+[submodule "mods/abripanes"]
+	path = mods/abripanes
+	url = https://github.com/panqkart/abripanes
