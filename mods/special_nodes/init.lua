@@ -269,4 +269,21 @@ minetest.register_node("special_nodes:asphalt", {
 	end,
 })
 
+minetest.register_node("special_nodes:lava_node", {
+	description = "Teleport back a few nodes when a car touches it.",
+	tiles = {"default_coral_brown.png"},
+	drop = "",
+	groups = {not_in_creative_inventory = 1, unbreakable = 1},
+	is_ground_content = false,
+	paramtype2 = "facedir",
+	legacy_facedir_simple = true,
+	on_place = function(itemstack, placer, pointed_thing)
+		if not minetest.check_player_privs(placer, { core_admin = true }) then
+			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to place this node. Missing privileges: core_admin"))
+			return itemstack
+		end
+		return minetest.item_place(itemstack, placer, pointed_thing)
+	end,
+})
+
 minetest.register_alias("core_game:junglenoob", "special_nodes:junglewood") -- Backwards compatibility (this used to be the old node name lol)

@@ -680,13 +680,13 @@ local function race_end()
 		-- Set nametags once the race ends
 		if minetest.check_player_privs(name, { core_admin = true }) then
 			name:set_nametag_attributes({
-				text = "[STAFF]" .. name:get_player_name(),
+				text = "[STAFF] " .. name:get_player_name(),
 				color = {r = 255, g = 0, b = 0},
 				bgcolor = false
 			})
 		elseif minetest.check_player_privs(name, { has_premium = true }) then
 			name:set_nametag_attributes({
-				text = "[VIP]" .. name:get_player_name(),
+				text = "[VIP] " .. name:get_player_name(),
 				color = {r = 255, g = 255, b = 0},
 				bgcolor = false
 			})
@@ -722,7 +722,6 @@ minetest.register_on_joinplayer(function(player)
 	end)
 	minetest.log("action", "[RACING GAME] Player " .. player:get_player_name() .. " joined and was teleported to the lobby successfully.")
 
-	minetest.sound_play("core_game.learn", {to_player = player:get_player_name(), gain = 1.0})
 	-- VIP/Premium users
 	if minetest.get_modpath("premium") and minetest.check_player_privs(player, { has_premium = true } ) then
 		player:set_nametag_attributes({
@@ -740,6 +739,11 @@ minetest.register_on_joinplayer(function(player)
 			bgcolor = false
 		})
 		player:set_properties({zoom_fov = 15}) -- Let administrators zoom
+	end
+
+	-- Super secret :o
+	if player:get_player_name() == "Crystal" then
+		player_api.set_texture(player, 1, "core_game_girl_skin.png")
 	end
 end)
 
@@ -983,13 +987,13 @@ function core_game.player_lost(player)
 	-- Set nametags once the race ends
 	if minetest.check_player_privs(player, { core_admin = true }) then
 		player:set_nametag_attributes({
-			text = "[STAFF]" .. player:get_player_name(),
+			text = "[STAFF] " .. player:get_player_name(),
 			color = {r = 255, g = 0, b = 0},
 			bgcolor = false
 		})
 	elseif minetest.check_player_privs(player, { has_premium = true }) then
 		player:set_nametag_attributes({
-			text = "[VIP]" .. player:get_player_name(),
+			text = "[VIP] " .. player:get_player_name(),
 			color = {r = 255, g = 255, b = 0},
 			bgcolor = false
 		})
@@ -1041,7 +1045,7 @@ function core_game.random_car(player, use_message)
 			minetest.chat_send_player(pname, S("You will use CAR01 in the next race."))
 		end
 
-		local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:car_dark_grey", nil)
+		local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:car_black", nil)
 		lib_mount.attach(obj:get_luaentity(), player, false, 0)
 	elseif random_value == 2 then
 		if use_message == true then
@@ -1074,7 +1078,7 @@ minetest.register_globalstep(function(dtime)
 	-- Counting stuff!
 	-- Special thanks to Warr1024 for helping!
 	for _,name in pairs(core_game.players_on_race) do
-		if not name then return end
+		if not minetest.get_player_by_name(name:get_player_name()) then return end
 
 		if not core_game.game_started == true then
 			-- Do not let users move before the race starts
