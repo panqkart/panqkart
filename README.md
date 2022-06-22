@@ -22,6 +22,12 @@ place it in `../minetest/games/`
 
 ## 💻 Cloning and keeping Git Modules 💻
 
+Use the following to clone the repository with submodules in Git.
+
+```bash
+git clone --recurse-submodules https://github.com/Panquesito7/panqkart
+```
+
 <!-- TO-DO -->
 
 ## 🏁 Making your own maps 🏁
