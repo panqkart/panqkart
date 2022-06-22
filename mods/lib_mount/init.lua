@@ -65,6 +65,8 @@ local function node_is(pos)
 	-- End/win blocks: special asphalt
 	elseif node.name == "special_nodes:asphalt" then
 		return "special_asphalt"
+	elseif node.name == "special_nodes:lava_node" then
+		return "special_lava"
 	-- Grass nodes
 	elseif node.name == "maptools:grass" then
 		return "maptools_grass"
@@ -355,6 +357,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 			is_sneaking[pname] = false
 		end -- End: Code by rubenwardy
 		if minetest.settings:get_bool("lib_mount.use_mouselook") == true or minetest.settings:get_bool("lib_mount.use_mouselook") == nil then
+
 			if entity.mouselook then
 				if ctrl.left then
 					entity.object:set_yaw(entity.object:get_yaw()+get_sign(entity.v)*math.rad(1+dtime)*entity.turn_spd)
@@ -590,6 +593,11 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		elseif ni ~= "maptools_grass" or ni ~= "default_grass" then
 			is_on_grass[entity.driver] = false
 		end
+	end
+
+	-- Teleport the player 40 nodes back when touching this node.
+	if entity.driver and ni == "special_lava" then
+		entity.object:set_pos({x = p.x - -40, y = p.y + 1, z = p.z})
 	end
 
 	if node_is(p) == "maptools_black" or node_is(p) == "maptools_white" or node_is(p) == "special_asphalt" and entity.driver then

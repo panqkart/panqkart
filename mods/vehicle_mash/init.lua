@@ -46,7 +46,7 @@ vehicle_mash.car01_def = {
 	max_speed_reverse = 7,
 	accel = 2, -- 1.75
 	braking = 3,
-	turn_speed = 4, -- 2.5
+	turn_speed = 3, -- 2.25
 	stepheight = 1.1,
 	-- model specific stuff
 	visual = "mesh",

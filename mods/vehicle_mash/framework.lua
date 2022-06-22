@@ -151,7 +151,7 @@ function vehicle_mash.register_vehicle(name, def)
 			end
 			if moveresult.collides then
 				for index, _ in pairs(moveresult.collisions) do
-					if moveresult.collisions[index].type == "object" then
+					if moveresult.collisions[index].type == "object" and not moveresult.collisions[2] == "y" then
 						self.object:move_to(vector.add(self.object:get_pos(), vector.multiply(vector.direction(moveresult.collisions[index].old_velocity,
 							moveresult.collisions[index].new_velocity), 1.80))) -- Credits to appgurueu for helping!
 					end

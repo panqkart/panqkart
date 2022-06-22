@@ -740,11 +740,6 @@ minetest.register_on_joinplayer(function(player)
 		})
 		player:set_properties({zoom_fov = 15}) -- Let administrators zoom
 	end
-
-	-- Super secret :o
-	if player:get_player_name() == "Crystal" then
-		player_api.set_texture(player, 1, "core_game_girl_skin.png")
-	end
 end)
 
 minetest.register_on_respawnplayer(function(player)
