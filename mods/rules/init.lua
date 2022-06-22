@@ -35,7 +35,7 @@ local items = {
 	"",
 	S("Like our game? Donate so we can keep the doing more for") .."\n" .. S("you and this game!") .. "\n" .. S("https://en.liberapay.com/Panquesito7"),
 	"",
-	S("Join our Discord community to stay tuned about new updates, chat with our community,") .. "\n" .. S("share your maps, races, and so much more: https://discord.gg/HEweZuF3Vv"), -- PENDING DISCORD LINK
+	S("Join our Discord community to stay tuned about new updates, chat with our community,") .. "\n" .. S("share your maps, races, and so much more: https://discord.gg/HEweZuF3Vv"),
 }
 
 for i = 1, #items do
