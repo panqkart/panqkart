@@ -294,7 +294,7 @@ if minetest.get_modpath("car_shop") then
 				car01_speed.forward_speed = vehicle_mash.car01_def.max_speed_forward
 				car01_speed.turn_speed = vehicle_mash.car01_def.turn_speed
 				car01_speed.accel = vehicle_mash.car01_def.accel
-				--meta:set_string("speed", minetest.serialize(car01_speed))
+
 				meta:set_string("speed", "")
 
 				minetest.chat_send_player(name, S("Successfully set CAR01 reverse/forward speed to default to @1.", param))
@@ -303,7 +303,7 @@ if minetest.get_modpath("car_shop") then
 				hover_speed.forward_speed = vehicle_mash.hover_def.max_speed_forward
 				hover_speed.turn_speed = vehicle_mash.hover_def.turn_speed
 				hover_speed.accel = vehicle_mash.hover_def.accel
-				--meta:set_string("hover_speed", minetest.serialize(hover_speed))
+
 				meta:set_string("hover_speed", "")
 
 				minetest.chat_send_player(name, S("Successfully set Hovercraft reverse/forward speed to default to @1.", param))
