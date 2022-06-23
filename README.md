@@ -28,8 +28,6 @@ Use the following to clone the repository with submodules in Git.
 git clone --recurse-submodules https://github.com/Panquesito7/panqkart
 ```
 
-<!-- TO-DO -->
-
 ## 🏁 Making your own maps 🏁
 
 If you want to make a new level/map for our game (or just for yourself), that's amazing! We have basic tools list below to get you started.\
@@ -43,6 +41,9 @@ I recommend the following tools/knowledge for the same:
 - [WorldEdit](https://github.com/Uberi/Minetest-WorldEdit) is an ultimate in-game world editing tool that can help you build faster and better.
 - [More Blocks](https://github.com/minetest-mods/moreblocks) includes 100+ special blocks with different functionalities that help you make better buildings with more efficiency.
 - [Tree Capitator](https://content.minetest.net/packages/Hybrid%20Dog/treecapitator/), which destroys the whole tree when you destroy the root trunk.
+
+You can also use mods such as Mobs Animal to add animals to your map!\
+We currently use a modified version of it. You can check it out here: <https://github.com/panqkart/mobs_animal>
 
 **Note: the `maptools:white` and `maptools:black` nodes are used when ending a race.**\
 Hopefully, we will soon make a detailed tutorial on making your own map!
