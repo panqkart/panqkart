@@ -287,23 +287,26 @@ if minetest.get_modpath("car_shop") then
 			local car01_speed = minetest.deserialize(meta:get_string("speed"))
 			local hover_speed = minetest.deserialize(meta:get_string("hover_speed"))
 
-			if not car01_speed or not hover_speed then
+			if not car01_speed and not hover_speed then
 				return false, S("Player @1 doesn't have any updates yet.", param)
 			elseif car01_speed then
 				car01_speed.reverse_speed = vehicle_mash.car01_def.max_speed_reverse
 				car01_speed.forward_speed = vehicle_mash.car01_def.max_speed_forward
 				car01_speed.turn_speed = vehicle_mash.car01_def.turn_speed
-				meta:set_string("speed", minetest.serialize(car01_speed))
+				car01_speed.accel = vehicle_mash.car01_def.accel
+				--meta:set_string("speed", minetest.serialize(car01_speed))
+				meta:set_string("speed", "")
 
 				minetest.chat_send_player(name, S("Successfully set CAR01 reverse/forward speed to default to @1.", param))
-				if hover_speed then
-					hover_speed.reverse_speed = vehicle_mash.hover_def.max_speed_reverse
-					hover_speed.forward_speed = vehicle_mash.hover_def.max_speed_forward
-					hover_speed.turn_speed = vehicle_mash.hover_def.turn_speed
-					meta:set_string("hover_speed", minetest.serialize(hover_speed))
+			elseif hover_speed then
+				hover_speed.reverse_speed = vehicle_mash.hover_def.max_speed_reverse
+				hover_speed.forward_speed = vehicle_mash.hover_def.max_speed_forward
+				hover_speed.turn_speed = vehicle_mash.hover_def.turn_speed
+				hover_speed.accel = vehicle_mash.hover_def.accel
+				--meta:set_string("hover_speed", minetest.serialize(hover_speed))
+				meta:set_string("hover_speed", "")
 
-					minetest.chat_send_player(name, S("Successfully set Hovercraft reverse/forward speed to default to @1.", param))
-				end
+				minetest.chat_send_player(name, S("Successfully set Hovercraft reverse/forward speed to default to @1.", param))
 			end
 		end,
 	})
@@ -1107,7 +1110,7 @@ minetest.register_globalstep(function(dtime)
 			end--]]
 
 			minetest.after(0, function()
-				if not core_game.is_end[name] == true then
+				if minetest.get_player_by_name(name:get_player_name()) and not core_game.is_end[name] == true then
 					core_game.count[name] = core_game.count[name] + dtime
 				end
 			end)
@@ -1144,7 +1147,7 @@ minetest.register_globalstep(function(dtime)
 
 			if not data then
 				minetest.chat_send_player(name:get_player_name(), S("You will use CAR01 in the next race."))
-				local obj = minetest.add_entity(name:get_pos(), "vehicle_mash:car_dark_grey", nil)
+				local obj = minetest.add_entity(name:get_pos(), "vehicle_mash:car_black", nil)
 				lib_mount.attach(obj:get_luaentity(), name, false, 0)
 				return
 			else
@@ -1172,7 +1175,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	elseif fields.use_car then
         minetest.chat_send_player(pname, S("You will use CAR01 in the next race."))
 
-		local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:car_dark_grey", nil)
+		local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:car_black", nil)
 		lib_mount.attach(obj:get_luaentity(), player, false, 0)
 
 		use_car01[player] = true
