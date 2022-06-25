@@ -52,6 +52,28 @@ local function start_race_formspec()
     return table.concat(formspec, "")
 end
 
+--- @brief Verifies if the players aren't in the same position.
+--- This is used before starting a race.
+--- @param player string the player that will be teleported to
+--- @param meta string the metadata that will be checked
+--- @param strings table the strings table that will be used for the destination
+--- @param position string the destination the player will be teleported to
+local function player_position(player, meta, strings, position)
+	local players = minetest.get_connected_players()
+
+	for i = 1, #players - 1 do
+		-- Check if a player matches the same position as another player
+		if players[i]:get_pos() == players[i + 1]:get_pos() then
+			local position2 = strings[math.random(#strings)]
+			if position2 == position then
+				player_position(player, meta, strings, position)
+			end
+			minetest.after(0, function() player:move_to(minetest.string_to_pos(meta:get_string(strings[math.random(#strings)]))) end)
+			return
+		end
+	end
+end
+
 --------------
 -- Nodes --
 --------------
@@ -133,13 +155,21 @@ minetest.register_node("special_nodes:start_race", {
 			for i,player_name in ipairs(strings) do
 				if minetest.string_to_pos(field[i]) then
 					meta:set_string(player_name, field[i])
+
+					if i == 1 then
+						minetest.chat_send_player(sender:get_player_name(), "Successfully updated the " .. i .. "st field!\n")
+					elseif i == 2 then
+						minetest.chat_send_player(sender:get_player_name(), "Successfully updated the " .. i .. "nd field!\n")
+					elseif i >= 3 then
+						minetest.chat_send_player(sender:get_player_name(), "Successfully updated the " .. i .. "th field!")
+					end
+				-- Tell the user the current position is invalid
 				else
-					minetest.chat_send_player(sender:get_player_name(), "Please set ALL positions and use only a valid Minetest position. Use: <x,y,z>")
-					return
+					minetest.chat_send_player(sender:get_player_name(), "\nCertain fields are not a valid Minetest position. These will not be updated. Use: <x,y,z>")
+					break
 				end
 			end
 
-			minetest.chat_send_player(sender:get_player_name(), "Successfully updated player positions!")
 			meta:set_string("formspec", start_race_formspec())
 		end
 	end,
@@ -185,6 +215,7 @@ minetest.register_globalstep(function(dtime)
 
 	-- Used to place the player in a random position
 	local position = strings[math.random(#strings)]
+	local players = minetest.get_connected_players()
 
 	for _, player in ipairs(minetest.get_connected_players()) do
 		local pos = player:get_pos()
@@ -198,10 +229,11 @@ minetest.register_globalstep(function(dtime)
 					minetest.chat_send_player(player:get_player_name(), "Positions haven't been set. Cannot start race. Aborting.")
 					minetest.chat_send_player(player:get_player_name(), "If you think this is a mistake, please report it on the official's PanqKart Discord server or contact the server administrator.")
 
-					core_game.ran_once[player] = true
-					minetest.after(20, function() core_game.ran_once[player] = false end)
+					--core_game.ran_once[player] = true
+					--minetest.after(20, function() core_game.ran_once[player] = false end)
 					return
 				else
+					player_position(player, meta, strings, position)
 					player:move_to(minetest.string_to_pos(meta:get_string(position)))
 
 					core_game.reset_values(player) -- Reset values in case something was stored
@@ -270,8 +302,8 @@ minetest.register_node("special_nodes:asphalt", {
 })
 
 minetest.register_node("special_nodes:lava_node", {
-	description = "Teleport back a few nodes when a car touches it.",
-	tiles = {"default_coral_brown.png"},
+	description = "Teleport back a few nodes when an entity touches it.",
+	tiles = {"default_stone.png"},
 	drop = "",
 	groups = {not_in_creative_inventory = 1, unbreakable = 1},
 	is_ground_content = false,

@@ -142,7 +142,7 @@ local already_ran = false -- A variable to make sure if the pregame countdown ha
 local pregame_count_ended = false -- A variable to remove the pregame countdown HUD for those who weren't the first to run the countdown.
 
 local racecount_check = {} -- An array used to store the value if a player's countdown already started.
-local max_racecount = 120 -- Maximum value for the race count (default 180)
+local max_racecount = 130 -- Maximum value for the race count (default 180)
 
 ----------------
 -- Overrides --
@@ -243,6 +243,7 @@ if minetest.get_modpath("car_shop") then
 
 			if coins and coins.bronze_coins and coins.bronze_coins ~= 0 then
 				minetest.chat_send_player(name, S("Successfully resetted bronze coins to @1", param))
+
 				coins.bronze_coins = 0
 				meta:set_string("player_coins", minetest.serialize(coins))
 			else
@@ -250,6 +251,7 @@ if minetest.get_modpath("car_shop") then
 			end
 			if coins and coins.silver_coins and coins.silver_coins ~= 0 then
 				minetest.chat_send_player(name, S("Successfully resetted silver coins to @1", param))
+
 				coins.silver_coins = 0
 				meta:set_string("player_coins", minetest.serialize(coins))
 			else
@@ -282,6 +284,11 @@ if minetest.get_modpath("car_shop") then
 			end
 
 			local player = minetest.get_player_by_name(param)
+
+			if not player then
+				return false, S("Player @1 is not online.", param)
+			end
+
 			local meta = player:get_meta()
 
 			local car01_speed = minetest.deserialize(meta:get_string("speed"))
@@ -430,76 +437,6 @@ local function player_count(player)
 	end
 end
 
--- luacheck: no unused
-
---- @brief Start counting the race after starting
---- for the given player in the parameters.
---- @details After 50 seconds pass (which is the limit of the race count,
---- to prevent people from standing AFK without doing anything), it will end the race and
---- will run the `player_lost` function, which can be found below
---- @param player string the player to start the count for
---- @returns void
-local function count(player)
-	for i = 1,50, 1
-	do
-		if core_game.game_started == false then do break end end
-		minetest.after(i, function()
-			if core_game.game_started == false then
-				hud_fs.close_hud(player, "core_game:race_count")
-				return
-			end
-
-			if core_game.is_end[player] == true then
-				hud_fs.show_hud(player, "core_game:race_count", {
-					{type = "size", w = 40, h = 0.5},
-					{type = "position", x = 0.9, y = 0.9},
-					{
-						type = "label", x = 0, y = 0,
-						label = "You finished at: " .. core_game.count[player] .. " seconds!"
-					}
-				})
-				if core_game.game_started == false then
-					hud_fs.close_hud(player, "core_game:race_count")
-					return
-				end
-				return
-			end
-
-			minetest.chat_send_all(core_game.player_count)
-
-			core_game.count[player] = i
-			hud_fs.show_hud(player, "core_game:race_count", {
-				{type = "size", w = 40, h = 0.5},
-				{type = "position", x = 0.9, y = 0.9},
-				{
-					type = "label", x = 0, y = 0,
-					label = "Race count: " .. core_game.count[player]
-				}
-			})
-
-			if core_game.count[player] == 50 then
-				for _,name in pairs(core_game.players_on_race) do
-					if not core_game.is_end[name] == true then
-						minetest.chat_send_player(name:get_player_name(), "You lost the race for ending out of time.")
-					end
-					player_count(player)
-					minetest.show_formspec(name:get_player_name(), "core_game:scoreboard", core_game.show_scoreboard(name))
-					core_game.player_lost(name)
-					minetest.chat_send_player(name:get_player_name(), "Race ended! Heading back to the lobby...")
-
-					hud_fs.close_hud(player, "core_game:pending_race")
-					for _,player_name in ipairs(minetest.get_connected_players()) do
-						core_game.is_waiting_end[player_name] = false
-						hud_fs.close_hud(player_name, "core_game:pending_race")
-					end
-					core_game.players_on_race = {}
-				end
-				return
-			end
-		end)
-	end
-end
-
 --- @brief Show `3 2 1 GO!` HUD to the given player
 --- Start up race count and toggle `core_game.game_started` value to `true`.
 --- This function will also reproduce a sound on each number.
@@ -541,7 +478,7 @@ local function hud_321(player)
    end)
    -- 5
    minetest.after(3, function() player:hud_change(hud, "text", "core_game_go.png") for _,name in pairs(core_game.players_on_race) do minetest.sound_play("core_game.race_go", {to_player = name:get_player_name(), gain = 1.0})
-   end core_game.game_started = true end)--count(player) end)
+   end core_game.game_started = true end)
    -- 7
    minetest.after(5, function() player:hud_remove(hud) end)
 end
@@ -570,15 +507,12 @@ local function countDown(player)
     if pregame_count == 0 then
         hud_fs.close_hud(player, "core_game:pregame_count")
     else
-		--if pregame_count == 3 then
-			--hud_321(player)
-		--end
 		hud_fs.show_hud(player, "core_game:pregame_count", {
 			{type = "size", w = 40, h = 0.5},
 			{type = "position", x = 0.9, y = 0.9},
 			{
 				type = "label", x = 0, y = 0,
-				label = S("The race will start in: @1",pregame_count)
+				label = S("The race will start in: @1", pregame_count)
 			}
 		})
 		minetest.after(1, function() countDown(player) end)
@@ -590,7 +524,6 @@ end
 --- @returns void
 local function startCountdown(player)
 	already_ran = true
-    --pregame_count = 30
     minetest.after(1, function() countDown(player) end)
 end
 
@@ -666,7 +599,7 @@ end
 -- No player parameter included; this is ran for all players who are on race.
 --- @returns void
 local function race_end()
-	for _,name in pairs(core_game.players_on_race) do
+	for i,name in pairs(core_game.players_on_race) do
 		if not core_game.is_end[name] == true then
 			minetest.chat_send_player(name:get_player_name(), S("You lost the race for ending out of time."))
 		end
@@ -699,10 +632,14 @@ local function race_end()
 				color = {r = 255, g = 255, b = 255},
 				bgcolor = false
 			})
+			if i == #core_game.players_on_race then -- Reset variables once the code runs for the last player
+				minetest.after(0, function()
+					core_game.player_count = 0
+					core_game.players_on_race = {}
+				end)
+			end
 		end
 	end
-	core_game.player_count = 0
-	core_game.players_on_race = {}
 end
 
 ------------------------------------------------------
@@ -1021,7 +958,6 @@ function core_game.player_lost(player)
 	end)
 	core_game.is_end[player] = true
 	core_game.game_started = false
-	--core_game.player_count = 0
 
 	core_game.pregame_started = false
 	core_game.ran_once = {}
@@ -1096,18 +1032,6 @@ minetest.register_globalstep(function(dtime)
 			if core_game.count[name] >= max_racecount then
 				race_end() -- Run function to end a race
 			end
-
-			--[[if core_game.is_end[name] == true then
-				hud_fs.show_hud(name, "core_game:race_count", {
-					{type = "size", w = 40, h = 0.5},
-					{type = "position", x = 0.9, y = 0.9},
-					{
-						type = "label", x = 0, y = 0,
-						label = "You finished at: " .. core_game.count[name] .. " seconds!"
-					}
-				})
-				return
-			end--]]
 
 			minetest.after(0, function()
 				if minetest.get_player_by_name(name:get_player_name()) and not core_game.is_end[name] == true then

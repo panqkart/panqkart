@@ -1,9 +1,0 @@
-{
-    "Lua.diagnostics.globals": [
-        "minetest",
-        "ItemStack",
-        "vector",
-        "hud_fs",
-        "core"
-    ]
-}

@@ -38,7 +38,7 @@ end
 function random_messages.read_messages()
 	random_messages.messages = {
 		"This racing game was developed in around 3 months, by Panquesito7, Crystal741, and Pixel852, \namong other contributors and people. Anyone else is free to contribute and make improvements to the game.",
-		"Looking for the source code? Want to contribute? Come check it out at github.com/Panquesito7/minetest-racing_game",
+		"Looking for the source code? Want to contribute? Come check it out at github.com/Panquesito7/panqkart",
 		"You can upgrade your vehicles to make them faster! Check your inventory to upgrade your car. Note that this will result in acceleration and turn speed decrease.",
 		"Get in-game bronze, silver, and gold coins by getting in the top 3 places\non a race. This is used to upgrade your car, buy new cars, and more!",
 		"Like our game? Don't hesitate to support our work by donating! Donating includes perks such as double coins, early access to new features, VIP house, and prioritized\nfeatures/maps, no matter the amount! You will get a shoutout on socials as well as an special role on our Discord to stand out. Use /donate for more information.",
