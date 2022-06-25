@@ -215,7 +215,6 @@ minetest.register_globalstep(function(dtime)
 
 	-- Used to place the player in a random position
 	local position = strings[math.random(#strings)]
-	local players = minetest.get_connected_players()
 
 	for _, player in ipairs(minetest.get_connected_players()) do
 		local pos = player:get_pos()
