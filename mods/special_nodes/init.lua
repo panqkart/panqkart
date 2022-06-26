@@ -62,14 +62,16 @@ local function player_position(player, meta, strings, position)
 	local players = minetest.get_connected_players()
 
 	for i = 1, #players - 1 do
-		-- Check if a player matches the same position as another player
-		if players[i]:get_pos() == players[i + 1]:get_pos() then
-			local position2 = strings[math.random(#strings)]
-			if position2 == position then
-				player_position(player, meta, strings, position)
+		for j = i + 1, #players do
+			-- Check if a player matches the same position as another player
+			if players[i]:get_pos() == players[j + 1]:get_pos() then
+				local position2 = strings[math.random(#strings)]
+				if position2 == position then
+					player_position(player, meta, strings, position)
+				end
+				minetest.after(0, function() player:move_to(minetest.string_to_pos(meta:get_string(strings[math.random(#strings)]))) end)
+				return
 			end
-			minetest.after(0, function() player:move_to(minetest.string_to_pos(meta:get_string(strings[math.random(#strings)]))) end)
-			return
 		end
 	end
 end
@@ -160,9 +162,13 @@ minetest.register_node("special_nodes:start_race", {
 						minetest.chat_send_player(sender:get_player_name(), "Successfully updated the " .. i .. "st field!\n")
 					elseif i == 2 then
 						minetest.chat_send_player(sender:get_player_name(), "Successfully updated the " .. i .. "nd field!\n")
-					elseif i >= 3 then
+					elseif i == 3 then
+						minetest.chat_send_player(sender:get_player_name(), "Successfully updated the " .. i .. "rd field!\n")
+					elseif i >= 4 then
 						minetest.chat_send_player(sender:get_player_name(), "Successfully updated the " .. i .. "th field!")
 					end
+				elseif field[i] == "" then
+					meta:set_string(player_name, field[i])
 				-- Tell the user the current position is invalid
 				else
 					minetest.chat_send_player(sender:get_player_name(), "\nCertain fields are not a valid Minetest position. These will not be updated. Use: <x,y,z>")
@@ -221,23 +227,23 @@ minetest.register_globalstep(function(dtime)
 		local node = minetest.get_node(vector.subtract(pos, {x=0,y=0.5,z=0}))
 
 		if node.name == "special_nodes:start_race" and not core_game.ran_once[player] == true then
-			local meta = minetest.get_meta({x = pos.x, y = pos.y - 0.1, z = pos.z})
+			local meta = minetest.get_meta({x = pos.x, y = pos.y - 0.5, z = pos.z})
 			for _,string in ipairs(strings) do
 				if core_game.ran_once[player] == true then break end
-				if not minetest.string_to_pos(meta:get_string(string)) then
-					minetest.chat_send_player(player:get_player_name(), "Positions haven't been set. Cannot start race. Aborting.")
-					minetest.chat_send_player(player:get_player_name(), "If you think this is a mistake, please report it on the official's PanqKart Discord server or contact the server administrator.")
-
-					--core_game.ran_once[player] = true
-					--minetest.after(20, function() core_game.ran_once[player] = false end)
-					return
-				else
+				if minetest.string_to_pos(meta:get_string(string)) then
 					player_position(player, meta, strings, position)
 					player:move_to(minetest.string_to_pos(meta:get_string(position)))
 
 					core_game.reset_values(player) -- Reset values in case something was stored
 					core_game.start_game(player)
 					core_game.ran_once[player] = true
+					return
+				else
+					minetest.chat_send_player(player:get_player_name(), "Positions haven't been set. Cannot start race. Aborting.")
+					minetest.chat_send_player(player:get_player_name(), "If you think this is a mistake, please report it on the official's PanqKart Discord server or contact the server administrator.")
+
+					core_game.ran_once[player] = true
+					minetest.after(10, function() core_game.ran_once[player] = false end)
 				end
 			end
 		end
@@ -317,4 +323,3 @@ minetest.register_node("special_nodes:lava_node", {
 	end,
 })
 
-minetest.register_alias("core_game:junglenoob", "special_nodes:junglewood") -- Backwards compatibility (this used to be the old node name lol)
