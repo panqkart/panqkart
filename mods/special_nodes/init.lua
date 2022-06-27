@@ -147,6 +147,7 @@ minetest.register_node("special_nodes:start_race", {
 		}
 
 		local meta = minetest.get_meta(pos)
+
 		if fields.apply then
 			for _,number in ipairs(field) do
 				if number == "0" then
@@ -155,16 +156,16 @@ minetest.register_node("special_nodes:start_race", {
 				end
 			end
 			for i,player_name in ipairs(strings) do
+				local old_field = meta:get_string(player_name)
 				if minetest.string_to_pos(field[i]) then
 					meta:set_string(player_name, field[i])
-
-					if i == 1 then
+					if i == 1 and old_field ~= meta:get_string(player_name) then
 						minetest.chat_send_player(sender:get_player_name(), "Successfully updated the " .. i .. "st field!\n")
-					elseif i == 2 then
+					elseif i == 2 and old_field ~= meta:get_string(player_name) then
 						minetest.chat_send_player(sender:get_player_name(), "Successfully updated the " .. i .. "nd field!\n")
-					elseif i == 3 then
+					elseif i == 3 and old_field ~= meta:get_string(player_name) then
 						minetest.chat_send_player(sender:get_player_name(), "Successfully updated the " .. i .. "rd field!\n")
-					elseif i >= 4 then
+					elseif i >= 4 and old_field ~= meta:get_string(player_name) then
 						minetest.chat_send_player(sender:get_player_name(), "Successfully updated the " .. i .. "th field!")
 					end
 				elseif field[i] == "" then
@@ -322,4 +323,3 @@ minetest.register_node("special_nodes:lava_node", {
 		return minetest.item_place(itemstack, placer, pointed_thing)
 	end,
 })
-
