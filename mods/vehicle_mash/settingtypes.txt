@@ -7,6 +7,8 @@ vehicle_mash.enable_crafts (Allows crafting vehicles) bool true
 #	for registering vehicles, somebody may use this option in their server.
 vehicle_mash.api_mode (Disables all vehicles and only enables API functions) bool false
 
+vehicle_mash.player_api_fix (Fix eyeheight when using cars) bool true
+
 # Other cars
 
 vehicle_mash.enable_126r_car (Enables 126r car) bool true

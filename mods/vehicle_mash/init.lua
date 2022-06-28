@@ -1,5 +1,10 @@
 vehicle_mash = {}
 
+-- Fix `player_api` eye height model if desired
+if minetest.settings:get_bool("vehicle_mash.player_api_fix") == true or minetest.settings:get_bool("vehicle_mash.player_api_fix") == nil then
+	player_api.registered_models["character.b3d"].animations.sit.eye_height = 1.47
+end
+
 -- get modpath
 
 local mpath = minetest.get_modpath("vehicle_mash")

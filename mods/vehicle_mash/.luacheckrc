@@ -3,7 +3,7 @@ allow_defined_top = true
 max_line_length = 999
 
 globals = {
-    "vehicle_mash",
+    "vehicle_mash", "player_api",
 }
 
 read_globals = {
@@ -11,5 +11,5 @@ read_globals = {
     table = {fields = {"copy", "getn"}},
 
     "minetest", "lib_mount",
-    "core", "vector",
+    "core",
 }

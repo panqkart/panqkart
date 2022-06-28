@@ -12,8 +12,8 @@ player_api.register_model("character.b3d", {
 		walk      = {x = 168, y = 187},
 		mine      = {x = 189, y = 198},
 		walk_mine = {x = 200, y = 219},
-		sit       = {x = 81,  y = 160, override_local = true,
-			collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.0, 0.3}} -- Old eye_height: 0.8
+		sit       = {x = 81,  y = 160, eye_height = 0.8, override_local = true,
+			collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.0, 0.3}}
 	},
 	collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.7, 0.3},
 	stepheight = 0.6,
