@@ -196,15 +196,6 @@ function minetest.node_dig(pos, node, digger)
 	return old_minetest_node_dig(pos, node, digger)
 end
 
-local old_minetest_node_dig = minetest.node_dig
-function minetest.node_dig(pos, node, digger)
-	if not minetest.check_player_privs(digger, { core_admin = true }) then
-		minetest.chat_send_player(digger:get_player_name(), "You're not allowed to dig nodes unless you are a staff. If this is a mistake, please contact the server administrator.")
-		return
-	end
-	return old_minetest_node_dig(pos, node, digger)
-end
-
 -- Override the signs to make them unbreakable and uneditable, only by owners or those who have permissions.
 local function register_sign(material, desc, def)
 	minetest.register_node(":default:sign_wall_" .. material, {
