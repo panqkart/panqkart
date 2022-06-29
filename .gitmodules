@@ -55,3 +55,6 @@
 [submodule "mods/abripanes"]
 	path = mods/abripanes
 	url = https://github.com/panqkart/abripanes
+[submodule "mods/default"]
+	path = mods/default
+	url = https://github.com/minetest-game/default

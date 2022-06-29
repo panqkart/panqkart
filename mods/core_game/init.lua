@@ -196,6 +196,110 @@ function minetest.node_dig(pos, node, digger)
 	return old_minetest_node_dig(pos, node, digger)
 end
 
+local old_minetest_node_dig = minetest.node_dig
+function minetest.node_dig(pos, node, digger)
+	if not minetest.check_player_privs(digger, { core_admin = true }) then
+		minetest.chat_send_player(digger:get_player_name(), "You're not allowed to dig nodes unless you are a staff. If this is a mistake, please contact the server administrator.")
+		return
+	end
+	return old_minetest_node_dig(pos, node, digger)
+end
+
+-- Override the signs to make them unbreakable and uneditable, only by owners or those who have permissions.
+local function register_sign(material, desc, def)
+	minetest.register_node(":default:sign_wall_" .. material, {
+		description = desc,
+		drawtype = "nodebox",
+		tiles = {"default_sign_wall_" .. material .. ".png"},
+		inventory_image = "default_sign_" .. material .. ".png",
+		wield_image = "default_sign_" .. material .. ".png",
+		paramtype = "light",
+		paramtype2 = "wallmounted",
+		sunlight_propagates = true,
+		is_ground_content = false,
+		walkable = false,
+		use_texture_alpha = "opaque",
+		node_box = {
+			type = "wallmounted",
+			wall_top    = {-0.4375, 0.4375, -0.3125, 0.4375, 0.5, 0.3125},
+			wall_bottom = {-0.4375, -0.5, -0.3125, 0.4375, -0.4375, 0.3125},
+			wall_side   = {-0.5, -0.3125, -0.4375, -0.4375, 0.3125, 0.4375},
+		},
+		groups = def.groups,
+		legacy_wallmounted = true,
+		sounds = def.sounds,
+
+		on_construct = function(pos)
+			local meta = minetest.get_meta(pos)
+			meta:set_string("formspec", "field[text;;${text}]")
+			meta:set_string("owner", "") -- Added by team PanqKart
+		end,
+		after_place_node = function(pos, placer)
+			-- Added by team PanqKart
+
+			local meta = minetest.get_meta(pos)
+			meta:set_string("owner", placer:get_player_name() or "")
+			meta:set_string("infotext", '')
+		end,
+		can_dig = function(pos, player)
+			-- Added by team PanqKart
+
+			local meta = minetest.get_meta(pos)
+			if meta:get_string("infotext") ~= '' then return end
+
+			return default.can_interact_with_node(player, pos)
+		end,
+		on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+			-- Added by team PanqKart
+			local player_name = clicker:get_player_name()
+			local meta = minetest.get_meta(pos)
+			if minetest.is_protected(pos, player_name) or default.can_interact_with_node(clicker, pos) == false then
+				minetest.record_protection_violation(pos, player_name)
+				meta:set_string("formspec", "")
+				return
+			else
+				meta:set_string("formspec", "field[text;;${text}]")
+			end
+		end,
+		on_receive_fields = function(pos, formname, fields, sender)
+			local player_name = sender:get_player_name()
+														-- Added by team PanqKart
+			if minetest.is_protected(pos, player_name) or default.can_interact_with_node(sender, pos) == false and not material == "wood" then
+				minetest.record_protection_violation(pos, player_name)
+				return
+			end
+			local text = fields.text
+			if not text then
+				return
+			end
+			if string.len(text) > 512 then
+				minetest.chat_send_player(player_name, minetest.get_translator("default")("Text too long"))
+				return
+			end
+			minetest.log("action", player_name .. " wrote \"" .. text ..
+				"\" to the sign at " .. minetest.pos_to_string(pos))
+			local meta = minetest.get_meta(pos)
+			meta:set_string("text", text)
+
+			if #text > 0 then
+				meta:set_string("infotext", minetest.get_translator("default")('"@1"', text))
+			else
+				meta:set_string("infotext", '')
+			end
+		end,
+	})
+end
+
+register_sign("wood", minetest.get_translator("default")("Wooden Sign"), {
+	sounds = default.node_sound_wood_defaults(),
+	groups = {choppy = 2, attached_node = 1, flammable = 2, oddly_breakable_by_hand = 3}
+})
+
+register_sign("steel", minetest.get_translator("default")("Steel Sign"), {
+	sounds = default.node_sound_metal_defaults(),
+	groups = {cracky = 2, attached_node = 1}
+})
+
 ----------------
 -- Commands --
 ----------------
