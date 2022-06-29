@@ -17,16 +17,15 @@ place it in `../minetest/games/`
 
 - GNU/Linux: If you use a system-wide installation place
     it in `~/.minetest/games/`
-
-**Please check [`SETUP.md`](https://github.com/Panquesito7/panqkart/blob/main/SETUP.md) for how to setup the lobby/game.**
-
-## 💻 Cloning and keeping Git Modules 💻
-
-Use the following to clone the repository with submodules in Git.
+    
+**In order to keep Git modules (which some of them are mods on this repository), you will have to clone the repository using Git.**\
+You can download the Git software on this website: https://git-scm.com
 
 ```bash
-git clone --recurse-submodules https://github.com/Panquesito7/panqkart
+$ git clone --recurse-submodules https://github.com/Panquesito7/panqkart
 ```
+
+**Please check [`SETUP.md`](https://github.com/Panquesito7/panqkart/blob/main/SETUP.md) for how to setup the lobby/game.**
 
 ## 🏁 Making your own maps 🏁
 
