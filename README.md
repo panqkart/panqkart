@@ -17,9 +17,9 @@ place it in `../minetest/games/`
 
 - GNU/Linux: If you use a system-wide installation place
     it in `~/.minetest/games/`
-    
+
 **In order to keep Git modules (which some of them are mods on this repository), you will have to clone the repository using Git.**\
-You can download the Git software on this website: https://git-scm.com
+You can download the Git software on this website: <https://git-scm.com>
 
 ```bash
 $ git clone --recurse-submodules https://github.com/Panquesito7/panqkart
