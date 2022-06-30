@@ -743,6 +743,9 @@ end
 
 minetest.register_on_joinplayer(function(player)
 	minetest.after(0.2, function()
+		if not minetest.string_to_pos(core_game.position) or not minetest.setting_get_pos("lobby_position") then
+			core_game.position = player:get_pos()
+		end
 		local meta = minetest.get_meta(core_game.position)
 
 		-- Let's use the position of the `spawn_node` node. This is very useful
