@@ -64,6 +64,7 @@ local function player_position(player, meta, strings, position)
 	for i = 1, #players - 1 do
 		for j = i + 1, #players do
 			-- Check if a player matches the same position as another player
+			-- Thanks to rubenwardy and appgurueu for helping!
 			if players[i]:get_pos() == players[j + 1]:get_pos() then
 				local position2 = strings[math.random(#strings)]
 				if position2 == position then
