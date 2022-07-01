@@ -17,7 +17,10 @@ You will need to install the [`WorldEdit`](https://github.com/Uberi/Minetest-Wor
 Make a new world, with any name you want, with the mapgen set to `singlenode`, for the game `panqkart`. When joining, you will need to grant yourself all the privileges in order to fly and insert our pre-made lobby. Choose an area where you want to place the lobby by selecting position 1 and position 2. If you're unsure how to do this, check the [WorldEdit tutorial](https://github.com/Uberi/Minetest-WorldEdit/blob/master/Tutorial.md).
 
 On the `panqkart` folder, you'll see a `schematics` folder. You will see a `lobby.we` file.\
-Now, make a folder in your new world named `schems`, which can and will be accessed by WorldEdit.
+Now, make a folder in your **world's directory** named `schems`, which can and will be accessed by WorldEdit.
+
+If your world is named `my_world`, you should see a folder named `my_world` in the `../minetest/worlds` directory.\
+There is where you need to create the `schems` folder. That is how WorldEdit will access the `lobby.we` file.
 
 Copy and paste the `lobby.we` file into the `schems` folder in your world directory.\
 You're done pasting the lobby file into your world. Now, we must insert that file into our world.
@@ -34,7 +37,7 @@ There's a spawn node defined by `special_nodes` used to define the spawnpoint wh
 **Do not attempt to place two or more of this node, as the system will get confused with two spawnpoints.**
 
 You can either keep the spawnpoint as-is or change it via the Minetest settings.\
-For the 2nd point, the steps are here:
+For the 2nd point, he steps are here:
 
 1. Open Minetest.
 2. Go to the `Settings` tab.
