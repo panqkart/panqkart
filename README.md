@@ -22,7 +22,7 @@ place it in `../minetest/games/`
 You can download the Git software on this website: <https://git-scm.com>
 
 ```bash
-$ git clone --recurse-submodules https://github.com/Panquesito7/panqkart
+git clone --recurse-submodules https://github.com/Panquesito7/panqkart
 ```
 
 **Please check [`SETUP.md`](https://github.com/Panquesito7/panqkart/blob/main/SETUP.md) for how to setup the lobby/game.**
