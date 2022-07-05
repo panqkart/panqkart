@@ -595,9 +595,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		end
 	end
 
-	-- Teleport the player 40 nodes back when touching this node.
-	if entity.driver and ni == "special_lava" then
-		entity.object:set_pos({x = p.x - -40, y = p.y + 1, z = p.z})
+	-- Teleport the player 35 nodes back when touching this node.
+	if entity.driver and ni == "special_lava" and not core_game.is_end[entity.driver] then
+		entity.object:set_pos({x = p.x - -35, y = p.y + 1, z = p.z})
 	end
 
 	if node_is(p) == "maptools_black" or node_is(p) == "maptools_white" or node_is(p) == "special_asphalt" and entity.driver then
