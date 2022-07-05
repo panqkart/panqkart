@@ -30,7 +30,7 @@ end
 
 assert(
 	minetest.get_mapgen_setting("mg_name") == "singlenode",
-	"In order to play PanqKart, you must set your mapgen to 'singleworld'. If you need any help, don't hesitate to contact us via our Discord."
+	"In order to play PanqKart, you must set your mapgen to 'singlenode'. If you need any help, don't hesitate to contact us via our Discord."
 )
 
 core_game.players_on_race = { } -- Save players on the current race in a vector
