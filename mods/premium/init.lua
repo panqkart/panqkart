@@ -55,7 +55,7 @@ minetest.register_chatcommand("premium_house", {
     },
     func = function(name, param)
 		if param == "" then
-			if not minetest.check_player_privs(minetest.get_player_by_name(name), { has_premium = true }) then
+			if minetest.check_player_privs(minetest.get_player_by_name(name), { has_premium = false }) then
 				return false, S("You don't have sufficient permissions to run this command. Missing privileges: has_premium")
 			else
 				minetest.get_player_by_name(name):set_pos(house_location)

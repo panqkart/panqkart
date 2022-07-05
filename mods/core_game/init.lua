@@ -1117,12 +1117,13 @@ minetest.register_globalstep(function(dtime)
 
 		if not core_game.game_started == true then
 			-- Do not let users move before the race starts
-			minetest.after(0.1, function() name:set_physics_override({speed = 0.001}) end)
+			minetest.after(0.1, function() name:set_physics_override({speed = 0.001, jump = 0.01}) end)
 		end
 
 		if core_game.game_started == true then
 			name:set_physics_override({
-				speed = 1 -- Set speed back to normal
+				speed = 1, -- Set speed back to normal
+				jump = 1, -- Set jump back to normal
 			})
 
 			if racecount_check[name] == false then
@@ -1238,6 +1239,14 @@ function core_game.start_game(player)
 			}
 		})
 		core_game.is_waiting[player] = player
+		player:set_physics_override({speed = 0.001, jump = 0.01})
+
+		-- Teleport back to lobby if no players join in the next half and a minute
+		minetest.after(90, function()
+			player:set_physics_override({speed = 1, jump = 1})
+			core_game.is_waiting[player] = nil
+			player:set_pos(core_game.position)
+		end)
 		return
 	elseif core_game.player_count >= tonumber(minetest.settings:get("minimum_required_players")) then
 		for _,name in pairs(core_game.is_waiting) do
