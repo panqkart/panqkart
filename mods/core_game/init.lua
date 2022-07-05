@@ -1054,8 +1054,10 @@ function core_game.player_lost(player)
 	if attached_to then
 		local entity = attached_to:get_luaentity()
 
-		lib_mount.detach(player, {x=0, y=0, z=0})
-		entity.object:remove()
+		if entity then
+			lib_mount.detach(player, {x=0, y=0, z=0})
+			entity.object:remove()
+		end
 	end
 	minetest.after(3.5, function()
 		player:set_pos(core_game.position)
@@ -1208,15 +1210,23 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
     if fields.use_hovercraft then
         minetest.chat_send_player(pname, S("You will use Hovercraft in the next race."))
 
-		local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:hover_blue", nil)
-		lib_mount.attach(obj:get_luaentity(), player, false, 0)
+		minetest.after(0.1, function()
+			local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:hover_blue", nil)
+			if obj then
+				lib_mount.attach(obj:get_luaentity(), player, false, 0)
+			end
+		end)
 
 		use_hovercraft[player] = true
 	elseif fields.use_car then
         minetest.chat_send_player(pname, S("You will use CAR01 in the next race."))
 
-		local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:car_black", nil)
-		lib_mount.attach(obj:get_luaentity(), player, false, 0)
+		minetest.after(0.1, function()
+			local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:car_black", nil)
+			if obj then
+				lib_mount.attach(obj:get_luaentity(), player, false, 0)
+			end
+		end)
 
 		use_car01[player] = true
 	else -- Show formspec again if they don't click on any field
