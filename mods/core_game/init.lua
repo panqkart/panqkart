@@ -734,6 +734,10 @@ local function race_end()
 				end)
 			end
 		end
+		name:set_physics_override({
+			speed = 1, -- Set speed back to normal
+			jump = 1, -- Set jump back to normal
+		})
 	end
 end
 
@@ -1080,8 +1084,12 @@ function core_game.random_car(player, use_message)
 			minetest.chat_send_player(pname, S("You will use CAR01 in the next race."))
 		end
 
-		local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:car_black", nil)
-		lib_mount.attach(obj:get_luaentity(), player, false, 0)
+		minetest.after(0.1, function()
+			local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:car_black", nil)
+			if obj then
+				lib_mount.attach(obj:get_luaentity(), player, false, 0)
+			end
+		end)
 	elseif random_value == 2 then
 		if use_message == true then
 			minetest.chat_send_player(pname, S("You will use the Hovercraft in the next race."))
@@ -1169,12 +1177,18 @@ minetest.register_globalstep(function(dtime)
 			local meta = name:get_meta()
 			local data = minetest.deserialize(meta:get_string("hovercraft_bought"))
 
+			local player_pos = name:get_pos()
+
 			run_once[name] = true
 
 			if not data then
 				minetest.chat_send_player(name:get_player_name(), S("You will use CAR01 in the next race."))
-				local obj = minetest.add_entity(name:get_pos(), "vehicle_mash:car_black", nil)
-				lib_mount.attach(obj:get_luaentity(), name, false, 0)
+				minetest.after(0.1, function()
+					local obj = minetest.add_entity(player_pos, "vehicle_mash:car_black", nil)
+					if obj then
+						lib_mount.attach(obj:get_luaentity(), name, false, 0)
+					end
+				end)
 				return
 			else
 				core_game.random_car(name, true)
