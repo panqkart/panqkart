@@ -202,7 +202,7 @@ minetest.register_node("coin_chest:chest", {
 	on_blast = function(pos)
 		local meta = minetest.get_meta(pos)
 
-		if meta:get_string("bronze") ~= "" and meta:get_string("silver") ~= "" and meta:get_string("gold") ~= "" then
+		if meta:get_string("bronze") == "" and meta:get_string("silver") == "" and meta:get_string("gold") == "" then
 			local drops = {}
 			default.get_inventory_drops(pos, "main", drops)
 			drops[#drops+1] = "coin_chest:chest"
