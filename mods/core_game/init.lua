@@ -1243,6 +1243,8 @@ function core_game.start_game(player)
 
 		-- Teleport back to lobby if no players join in the next half and a minute
 		minetest.after(90, function()
+			if core_game.game_started or core_game.pregame_started or pregame_count_ended == false then return end
+
 			player:set_physics_override({speed = 1, jump = 1})
 			core_game.is_waiting[player] = nil
 			player:set_pos(core_game.position)
