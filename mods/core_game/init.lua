@@ -122,7 +122,7 @@ core_game.is_end = {} -- Array for multiple players to verify if they have ended
 core_game.count = {} -- Array for the players' countdown
 
 core_game.is_waiting_end = {} -- Array to show the players' a HUD to wait for the current race to finish.
-							  -- This comes handy when you wanna let know all the players there's a current race running.
+							  -- This comes in handy when you wanna let know all the players there's a current race running.
 core_game.is_waiting = {} -- Array to show the players' a HUD to wait for more players to join.
 						  -- The minimum default value is 4 players.
 core_game.player_count = 0 -- Player count in a race. This is decreased if a player leaves and they were in a race.
@@ -130,15 +130,15 @@ core_game.player_count = 0 -- Player count in a race. This is decreased if a pla
 core_game.players_that_won = {} -- An array to save all the players who won, in their respective place.
 core_game.show_leaderboard = false -- Utility boolean to show the leaderboard at the end of the race.
 
-local run_once = {} -- An array to ensure a player hasn't ran more than one time the select car formspec.
-					-- This comes handy to not run this in the globalstep function.
+local run_once = {} -- An array to ensure a player hasn't run more than one time the select car formspec.
+					-- This comes hin andy to not run this in the globalstep function.
 local use_hovercraft = {} -- An array to save the players who chose to use the Hovercraft.
 local use_car01 = {} -- An array to save the players who chose to use CAR01.
-core_game.ran_once = {} -- Utility array to make sure the player hasn't stand on the start race block more than once.
+core_game.ran_once = {} -- Utility array to make sure the player hasn't stood on the start race block more than once.
 
 core_game.pregame_started = false -- The variable's name says it all. :)
 local pregame_count = 20 -- A variable to save the pregame countdown. This can be customized to any number.
-local already_ran = false -- A variable to make sure if the pregame countdown has been already ran.
+local already_ran = false -- A variable to make sure if the pregame countdown has been already run.
 local pregame_count_ended = false -- A variable to remove the pregame countdown HUD for those who weren't the first to run the countdown.
 
 local racecount_check = {} -- An array used to store the value if a player's countdown already started.
@@ -582,7 +582,7 @@ end
 --- @details This will start a countdown from 30 to 0. When it reaches 3,
 --- it will run the HUD function above for all the players that are waiting.
 -- When it reaches 0, it will remove the HUD and will stop the countdown.
---- The countdown variable will decrease only when it is ran once. This is to prevent more than 1 decrease per second.
+--- The countdown variable will decrease only when it is run once. This is to prevent more than 1 decrease per second.
 ---
 --- For all those who weren't the first player, it will just show the HUD when will the race start.
 --- After that, the HUD will be removed and the race will start for the waiting players.
@@ -624,9 +624,9 @@ end
 
 --- @brief Initialize variables for the race startup and
 --- show formspec to select car if applicable. Make sure
---- there's not a current racing running, otherwise it will make a mess with the current race.
+--- there's not a current racing running, otherwise, it will make a mess with the current race.
 --- @details We'll start up the pregame countdown as well before starting the race.
---- If the pregame countdown has been ran before, it will just show the HUD for the 2nd, 3rd, etc. players, to make sure
+--- If the pregame countdown has been run before, it will just show the HUD for the 2nd, 3rd, etc. players, to make sure
 -- the variable isn't decreased more than one time per second. We'll remove the HUD if the current countdown has stopped, as we're using a loop.
 --- @param player string the player to be added into the race
 --- @returns void
@@ -1203,9 +1203,9 @@ end)
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local pname = player:get_player_name()
-    if formname ~= "core_game:choose_car" then
-        return
-    end
+	if formname ~= "core_game:choose_car" then
+		return
+	end
 
     if fields.use_hovercraft then
         minetest.chat_send_player(pname, S("You will use Hovercraft in the next race."))
@@ -1274,6 +1274,7 @@ function core_game.start_game(player)
 			player:set_pos(core_game.position)
 
 			hud_fs.close_hud(player:get_player_name(), "core_game:waiting_for_players")
+			core_game.ran_once[player] = nil
 		end)
 		return
 	elseif core_game.player_count >= tonumber(minetest.settings:get("minimum_required_players")) then
