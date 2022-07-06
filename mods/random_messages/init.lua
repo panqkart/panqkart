@@ -41,9 +41,9 @@ function random_messages.read_messages()
 		"Looking for the source code? Want to contribute? Come check it out at github.com/Panquesito7/panqkart",
 		"You can upgrade your vehicles to make them faster! Check your inventory to upgrade your car. Note that this will result in acceleration and turn speed decrease.",
 		"Get in-game bronze, silver, and gold coins by getting in the top 3 places\non a race. This is used to upgrade your car, buy new cars, and more!",
-		"Like our game? Don't hesitate to support our work by donating! Donating includes perks such as double coins, early access to new features, VIP house, and prioritized\nfeatures/maps, no matter the amount! You will get a shoutout on socials as well as an special role on our Discord to stand out. Use /donate for more information.",
-		"We're still working on adding new features and maps to the game. Stay tuned on new additions to the game.",
-		"Our hosting is powered by the awesome service of Universal Network. Thanks to them, we were able to make this game possible.",
+		"Like our game? Don't hesitate to support our work by donating! Donating includes perks such as double coins, early access to new features, VIP house, and prioritized\nfeatures/maps, no matter the amount! You will get a shoutout on socials as well as a special role on our Discord to stand out. Use /donate for more information.",
+		"We're still working on adding new features and maps to the game. Stay tuned for new additions to the game.",
+		"Our hosting is powered by the awesome service of great community volunteers! Thanks to them, we were able to make this game possible.",
 		"There are a few secrets on the map which can give you coins and amazing perks! Try to find them.",
 		"Wanna give feedback, report bugs, or chat with us? Feel free to mail us at halfpacho@gmail.com or by joining our Discord server.",
 		"Read our rules frequently, show them to other users, or report users who are breaking the rules to us.\nWe might update our rules soon, so stay tuned for any new changes.",
@@ -57,7 +57,9 @@ end
 function random_messages.display_message(message_number)
 	local msg = random_messages.messages[message_number] or message_number
 	if msg then
-		minetest.chat_send_all(minetest.colorize("#808080", msg))
+		for _,player in ipairs(minetest.get_connected_players()) do
+			minetest.chat_send_player(player:get_player_name(), minetest.colorize("#808080", msg))
+		end
 	end
 end
 
