@@ -111,7 +111,7 @@ local function update_speed(player, fields)
 			max_speed_forward = 12
 			max_speed_reverse = 9
 
-			turn_speed = 2.10
+			turn_speed = 3
 			accel = 1.75
 			already_upgraded = true -- luacheck: no unused
 
@@ -197,7 +197,7 @@ local function update_hover(player, fields)
 			max_speed_reverse = 7
 			max_speed_forward = 14
 
-			turn_speed = 1.75
+			turn_speed = 2.35
 			accel = 2
 
 			coins.silver_coins = coins.silver_coins - 10

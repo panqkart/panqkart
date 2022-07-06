@@ -67,8 +67,11 @@ local function node_is(pos)
 		return "special_asphalt"
 	elseif node.name == "special_nodes:lava_node" then
 		return "special_lava"
-	elseif node.name == "streets:asphalt" then
-		return "streets_asphalt"
+		-- Grass nodes
+	elseif node.name == "maptools:grass" then
+		return "maptools_grass"
+	elseif node.name == "default:dirt_with_grass" then
+		return "default_grass"
 	end
 
 	if minetest.get_item_group(node.name, "liquid") ~= 0 then
@@ -585,9 +588,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 
 	-- Set the variable to true if on grass
 	if entity.driver then
-		if ni ~= "streets_asphalt" then
+		if ni == "maptools_grass" or ni == "default_grass" then
 			is_on_grass[entity.driver] = true
-		elseif ni == "streets_asphalt" then
+		elseif ni ~= "maptools_grass" or ni ~= "default_grass" then
 			is_on_grass[entity.driver] = false
 		end
 	end
