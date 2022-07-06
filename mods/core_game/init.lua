@@ -527,7 +527,13 @@ local function player_count(player)
 	elseif lib_mount.win_count == 12 then
 		core_game.players_that_won[11] = player
 	else
-		minetest.log("error", "[RACING GAME] An error ocurred while saving the player in the players that won array.")
+		-- Players who have lost do not increment the `lib_mount.win_count` variable.
+		-- Here we will update it manually to ensure there are no crashes or bugs.
+		if lib_mount.win_count < core_game.player_count then
+			lib_mount.win_count = core_game.player_count -- STILL TESTING
+			return
+		end
+		minetest.log("error", "[PanqKart] An error ocurred while saving the player in the players that won array.")
 		return
 	end
 end
@@ -974,8 +980,8 @@ elseif core_game.player_count == 12 then
 		"," .. "12th 					" .. core_game.players_that_won[11]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[11]] .. " seconds;1]",
     }
 else
-	print("[RACING GAME] Failed to show leaderboard")
-	minetest.log("error", "[RACING GAME] Failed to show leaderboard")
+	print("[PanqKart] Failed to show leaderboard")
+	minetest.log("error", "[PanqKart] Failed to show leaderboard")
 end
 
     -- table.concat is faster than string concatenation - `..`
@@ -1015,6 +1021,7 @@ function core_game.waiting_to_end(player)
 		}
 	})
 	core_game.is_waiting_end[player] = true
+	player:set_pos(core_game.position)
 end
 
 --- @brief Utility function to reset the necessary
@@ -1081,13 +1088,15 @@ function core_game.random_car(player, use_message)
 	local pname = player:get_player_name()
 	local random_value = math.random(1, 2)
 
+	local pos = player:get_pos()
+
 	if random_value == 1 then
 		if use_message == true then
 			minetest.chat_send_player(pname, S("You will use CAR01 in the next race."))
 		end
 
 		minetest.after(0.1, function()
-			local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:car_black", nil)
+			local obj = minetest.add_entity(pos, "vehicle_mash:car_black", nil)
 			if obj then
 				lib_mount.attach(obj:get_luaentity(), player, false, 0)
 			end
@@ -1097,8 +1106,10 @@ function core_game.random_car(player, use_message)
 			minetest.chat_send_player(pname, S("You will use the Hovercraft in the next race."))
 		end
 
-		local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:hover_blue", nil)
-		lib_mount.attach(obj:get_luaentity(), player, false, 0)
+		minetest.after(0.1, function()
+			local obj = minetest.add_entity(pos, "vehicle_mash:hover_blue", nil)
+			lib_mount.attach(obj:get_luaentity(), player, false, 0)
+		end)
 	end
 end
 
@@ -1128,6 +1139,7 @@ minetest.register_globalstep(function(dtime)
 		if not core_game.game_started == true then
 			-- Do not let users move before the race starts
 			minetest.after(0.1, function() name:set_physics_override({speed = 0.001, jump = 0.01}) end)
+			name:set_velocity({x = 0, y = 0, z = 0})
 		end
 
 		if core_game.game_started == true then
@@ -1207,11 +1219,13 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		return
 	end
 
+	local pos = player:get_pos()
+
     if fields.use_hovercraft then
         minetest.chat_send_player(pname, S("You will use Hovercraft in the next race."))
 
 		minetest.after(0.1, function()
-			local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:hover_blue", nil)
+			local obj = minetest.add_entity(pos, "vehicle_mash:hover_blue", nil)
 			if obj then
 				lib_mount.attach(obj:get_luaentity(), player, false, 0)
 			end
@@ -1222,7 +1236,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
         minetest.chat_send_player(pname, S("You will use CAR01 in the next race."))
 
 		minetest.after(0.1, function()
-			local obj = minetest.add_entity(player:get_pos(), "vehicle_mash:car_black", nil)
+			local obj = minetest.add_entity(pos, "vehicle_mash:car_black", nil)
 			if obj then
 				lib_mount.attach(obj:get_luaentity(), player, false, 0)
 			end
