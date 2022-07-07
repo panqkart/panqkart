@@ -527,12 +527,6 @@ local function player_count(player)
 	elseif lib_mount.win_count == 12 then
 		core_game.players_that_won[11] = player
 	else
-		-- Players who have lost do not increment the `lib_mount.win_count` variable.
-		-- Here we will update it manually to ensure there are no crashes or bugs.
-		if lib_mount.win_count < core_game.player_count then
-			lib_mount.win_count = core_game.player_count -- STILL TESTING
-			return
-		end
 		minetest.log("error", "[PanqKart] An error ocurred while saving the player in the players that won array.")
 		return
 	end
@@ -700,6 +694,7 @@ end
 -- No player parameter included; this is ran for all players who are on race.
 --- @returns void
 local function race_end()
+	lib_mount.win_count = lib_mount.win_count + 1
 	for i,name in pairs(core_game.players_on_race) do
 		if not core_game.is_end[name] == true then
 			minetest.chat_send_player(name:get_player_name(), S("You lost the race for ending out of time."))
