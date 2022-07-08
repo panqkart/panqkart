@@ -694,7 +694,6 @@ end
 -- No player parameter included; this is ran for all players who are on race.
 --- @returns void
 local function race_end()
-	lib_mount.win_count = lib_mount.win_count + 1
 	for i,name in pairs(core_game.players_on_race) do
 		if not core_game.is_end[name] == true then
 			minetest.chat_send_player(name:get_player_name(), S("You lost the race for ending out of time."))
@@ -728,12 +727,12 @@ local function race_end()
 				color = {r = 255, g = 255, b = 255},
 				bgcolor = false
 			})
-			if i == #core_game.players_on_race then -- Reset variables once the code runs for the last player
-				minetest.after(0, function()
-					core_game.player_count = 0
-					core_game.players_on_race = {}
-				end)
-			end
+		end
+		if i == #core_game.players_on_race then -- Reset variables once the code runs for the last player
+			minetest.after(0, function()
+				core_game.player_count = 0
+				core_game.players_on_race = {}
+			end)
 		end
 		name:set_physics_override({
 			speed = 1, -- Set speed back to normal
@@ -802,7 +801,7 @@ minetest.register_on_leaveplayer(function(player)
 	core_game.reset_values(player)
 end)
 
--- Keep players and map(s) protected
+-- Keep players protected
 minetest.register_on_punchplayer(function(player, hitter, time_from_last_punch, tool_capabilities, dir, damage)
 	minetest.after(0, function() player:set_hp(player:get_hp() + damage) end)
 end)
@@ -1047,6 +1046,8 @@ function core_game.player_lost(player)
 		})
 	end
 
+	lib_mount.win_count = lib_mount.win_count + 1
+
 	already_ran = false
 	pregame_count = 20
 	pregame_count_ended = false
@@ -1131,10 +1132,10 @@ minetest.register_globalstep(function(dtime)
 	for _,name in pairs(core_game.players_on_race) do
 		if not minetest.get_player_by_name(name:get_player_name()) then return end
 
-		if not core_game.game_started == true then
+		if not core_game.game_started == true and not core_game.is_end[name] == true then
 			-- Do not let users move before the race starts
+			minetest.after(0.13, function() name:set_velocity({x = 0, y = 0, z = 0}) end)
 			minetest.after(0.1, function() name:set_physics_override({speed = 0.001, jump = 0.01}) end)
-			name:set_velocity({x = 0, y = 0, z = 0})
 		end
 
 		if core_game.game_started == true then
