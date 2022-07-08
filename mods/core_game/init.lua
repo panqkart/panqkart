@@ -1216,8 +1216,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 	local pos = player:get_pos()
 
-    if fields.use_hovercraft then
-        minetest.chat_send_player(pname, S("You will use Hovercraft in the next race."))
+	if fields.use_hovercraft then
+		minetest.chat_send_player(pname, S("You will use Hovercraft in the next race."))
 
 		minetest.after(0.1, function()
 			local obj = minetest.add_entity(pos, "vehicle_mash:hover_blue", nil)
@@ -1228,7 +1228,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 		use_hovercraft[player] = true
 	elseif fields.use_car then
-        minetest.chat_send_player(pname, S("You will use CAR01 in the next race."))
+		minetest.chat_send_player(pname, S("You will use CAR01 in the next race."))
 
 		minetest.after(0.1, function()
 			local obj = minetest.add_entity(pos, "vehicle_mash:car_black", nil)
@@ -1284,6 +1284,7 @@ function core_game.start_game(player)
 
 			hud_fs.close_hud(player:get_player_name(), "core_game:waiting_for_players")
 			core_game.ran_once[player] = nil
+			core_game.player_count = core_game.player_count - 1
 		end)
 		return
 	elseif core_game.player_count >= tonumber(minetest.settings:get("minimum_required_players")) then
