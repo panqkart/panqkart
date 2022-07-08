@@ -195,7 +195,7 @@ local function update_hover(player, fields)
 			minetest.chat_send_player(player:get_player_name(), S("Successfully updated car's reverse speed to 7!"))
 
 			max_speed_reverse = 7
-			max_speed_forward = 14
+			max_speed_forward = 13
 
 			turn_speed = 2.35
 			accel = 2

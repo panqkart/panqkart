@@ -727,17 +727,17 @@ local function race_end()
 				color = {r = 255, g = 255, b = 255},
 				bgcolor = false
 			})
+			if i == #core_game.players_on_race then -- Reset variables once the code runs for the last player
+				minetest.after(0, function()
+					core_game.player_count = 0
+					core_game.players_on_race = {}
+				end)
+			end
+			name:set_physics_override({
+				speed = 1, -- Set speed back to normal
+				jump = 1, -- Set jump back to normal
+			})
 		end
-		if i == #core_game.players_on_race then -- Reset variables once the code runs for the last player
-			minetest.after(0, function()
-				core_game.player_count = 0
-				core_game.players_on_race = {}
-			end)
-		end
-		name:set_physics_override({
-			speed = 1, -- Set speed back to normal
-			jump = 1, -- Set jump back to normal
-		})
 	end
 end
 
