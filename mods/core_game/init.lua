@@ -728,12 +728,12 @@ local function race_end()
 				bgcolor = false
 			})
 		end
-			--if i == #core_game.players_on_race then -- Reset variables once the code runs for the last player
-				--minetest.after(0, function()
-					--core_game.player_count = 0
-					--core_game.players_on_race = {}
-				--end)
-			--end
+		if i == #core_game.players_on_race then -- Reset variables once the code runs for the last player
+			minetest.after(0, function()
+				core_game.player_count = 0
+				core_game.players_on_race = {}
+			end)
+		end
 		name:set_physics_override({
 			speed = 1, -- Set speed back to normal
 			jump = 1, -- Set jump back to normal
@@ -1144,6 +1144,17 @@ minetest.register_globalstep(function(dtime)
 				jump = 1, -- Set jump back to normal
 			})
 
+			-- Still testing. May contain bugs.
+			local attached_to = name:get_attach()
+			if not attached_to then
+				local pos = name:get_pos()
+
+				local obj = minetest.add_entity(pos, "vehicle_mash:car_black", nil)
+				if obj then
+					lib_mount.attach(obj:get_luaentity(), name, false, 0)
+				end
+			end
+
 			if racecount_check[name] == false then
 				core_game.count[name] = 0 -- Let's initialize from 0 to prevent crashes
 				racecount_check[name] = true
@@ -1151,9 +1162,6 @@ minetest.register_globalstep(function(dtime)
 
 			if core_game.count[name] >= max_racecount then
 				race_end() -- Run function to end a race
-
-				core_game.player_count = 0
-				core_game.players_on_race = {}
 			end
 
 			minetest.after(0, function()
@@ -1259,6 +1267,9 @@ end)
 function core_game.start_game(player)
 	-- Start: reset values in case something was stored
 	core_game.reset_values(player)
+
+	core_game.player_count = 0     -- Still testing
+	core_game.players_on_race = {} -- Still testing
 	-- End: reset values in case something was stored
 
 	-- Start: player count checks
