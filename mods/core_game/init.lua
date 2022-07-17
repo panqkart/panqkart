@@ -694,7 +694,7 @@ end
 -- No player parameter included; this is ran for all players who are on race.
 --- @returns void
 local function race_end()
-	for i,name in pairs(core_game.players_on_race) do
+	for i,name in ipairs(core_game.players_on_race) do
 		if not core_game.is_end[name] == true then
 			minetest.chat_send_player(name:get_player_name(), S("You lost the race for ending out of time."))
 		end
@@ -732,6 +732,8 @@ local function race_end()
 			minetest.after(0, function()
 				core_game.player_count = 0
 				core_game.players_on_race = {}
+
+				minetest.log("action", "[PANQKART] Sucessfully resetted player count and players on race.")
 			end)
 		end
 		name:set_physics_override({
