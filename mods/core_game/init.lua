@@ -1267,9 +1267,6 @@ end)
 function core_game.start_game(player)
 	-- Start: reset values in case something was stored
 	core_game.reset_values(player)
-
-	core_game.player_count = 0     -- Still testing
-	core_game.players_on_race = {} -- Still testing
 	-- End: reset values in case something was stored
 
 	-- Start: player count checks
