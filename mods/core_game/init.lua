@@ -142,7 +142,7 @@ local already_ran = false -- A variable to make sure if the pregame countdown ha
 local pregame_count_ended = false -- A variable to remove the pregame countdown HUD for those who weren't the first to run the countdown.
 
 local racecount_check = {} -- An array used to store the value if a player's countdown already started.
-local max_racecount = 130 -- Maximum value for the race count (default 180)
+local max_racecount = 130 -- Maximum value for the race count (default 130)
 
 ----------------
 -- Overrides --
@@ -801,6 +801,18 @@ end)
 minetest.register_on_leaveplayer(function(player)
 	-- Reset all values to prevent crashes
 	core_game.reset_values(player)
+
+	if core_game.game_started == true then
+		local attached_to = player:get_attach()
+		if attached_to then
+			local entity = attached_to:get_luaentity()
+
+			if entity then
+				lib_mount.detach(player, {x=0, y=0, z=0})
+				entity.object:remove()
+			end
+		end
+	end
 end)
 
 -- Keep players protected

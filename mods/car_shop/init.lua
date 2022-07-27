@@ -105,11 +105,11 @@ local function update_speed(player, fields)
 			minetest.chat_send_player(player:get_player_name(), S("You don't have the enough silver coins to upgrade"))
 			return
 		elseif coins and coins.silver_coins >= 10 and not already_upgraded == true then
-			minetest.chat_send_player(player:get_player_name(), S("Successfully updated car's forward speed to 12!"))
-			minetest.chat_send_player(player:get_player_name(), S("Successfully updated car's reverse speed to 9!"))
+			minetest.chat_send_player(player:get_player_name(), S("Successfully updated car's forward speed to 10.75!"))
+			minetest.chat_send_player(player:get_player_name(), S("Successfully updated car's reverse speed to 8!"))
 
-			max_speed_forward = 12
-			max_speed_reverse = 9
+			max_speed_forward = 10.75
+			max_speed_reverse = 8
 
 			turn_speed = 3
 			accel = 1.75
@@ -191,11 +191,11 @@ local function update_hover(player, fields)
 			minetest.chat_send_player(player:get_player_name(), S("You don't have the enough silver coins to upgrade"))
 			return
 		elseif coins and coins.silver_coins >= 10 then
-			minetest.chat_send_player(player:get_player_name(), S("Successfully updated car's forward speed to 14!"))
-			minetest.chat_send_player(player:get_player_name(), S("Successfully updated car's reverse speed to 7!"))
+			minetest.chat_send_player(player:get_player_name(), S("Successfully updated car's forward speed to 12!"))
+			minetest.chat_send_player(player:get_player_name(), S("Successfully updated car's reverse speed to 6!"))
 
-			max_speed_reverse = 7
-			max_speed_forward = 13
+			max_speed_reverse = 6
+			max_speed_forward = 12
 
 			turn_speed = 2.35
 			accel = 2
