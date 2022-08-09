@@ -105,7 +105,7 @@ end
 vehicle_mash.hover_def = {
 	-- adjust to change how vehicle reacts while driving
 	terrain_type = 3,
-	max_speed_forward = 11.5,
+	max_speed_forward = 11.10,
 	max_speed_reverse = 5,
 	accel = 3, -- 2
 	braking = 2,

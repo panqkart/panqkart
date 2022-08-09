@@ -112,7 +112,7 @@ local function update_speed(player, fields)
 			max_speed_reverse = 8
 
 			turn_speed = 3
-			accel = 1.75
+			accel = 2
 			already_upgraded = true -- luacheck: no unused
 
 			coins.silver_coins = coins.silver_coins - 10
@@ -195,10 +195,10 @@ local function update_hover(player, fields)
 			minetest.chat_send_player(player:get_player_name(), S("Successfully updated car's reverse speed to 6!"))
 
 			max_speed_reverse = 6
-			max_speed_forward = 12
+			max_speed_forward = 11.75
 
 			turn_speed = 2.35
-			accel = 2
+			accel = 1.75
 
 			coins.silver_coins = coins.silver_coins - 10
 			meta:set_string("player_coins", minetest.serialize(coins))

@@ -527,7 +527,7 @@ local function player_count(player)
 	elseif lib_mount.win_count == 12 then
 		core_game.players_that_won[11] = player
 	else
-		minetest.log("error", "[PanqKart] An error ocurred while saving the player in the players that won array.")
+		minetest.log("error", "[PanqKart] An error has ocurred while saving the player in the players that won array.")
 		return
 	end
 end
@@ -1163,10 +1163,23 @@ minetest.register_globalstep(function(dtime)
 			if not attached_to then
 				local pos = name:get_pos()
 
-				local obj = minetest.add_entity(pos, "vehicle_mash:car_black", nil)
-				if obj then
-					lib_mount.attach(obj:get_luaentity(), name, false, 0)
+				if use_hovercraft[name] == true then
+					local obj = minetest.add_entity(pos, "vehicle_mash:hover_blue", nil)
+					if obj then
+						lib_mount.attach(obj:get_luaentity(), name, false, 0)
+					end
+				elseif use_car01[name] == true then
+					local obj = minetest.add_entity(pos, "vehicle_mash:car_black", nil)
+					if obj then
+						lib_mount.attach(obj:get_luaentity(), name, false, 0)
+					end
+				else
+					core_game.random_car(name, false)
 				end
+			end
+
+			if core_game.count[name] >= max_racecount then
+				race_end() -- Run function to end a race
 			end
 
 			if racecount_check[name] == false then
@@ -1174,22 +1187,17 @@ minetest.register_globalstep(function(dtime)
 				racecount_check[name] = true
 			end
 
-			if core_game.count[name] >= max_racecount then
-				race_end() -- Run function to end a race
+			if minetest.get_player_by_name(name:get_player_name()) and not core_game.is_end[name] == true then
+				core_game.count[name] = core_game.count[name] + dtime
 			end
 
-			minetest.after(0, function()
-				if minetest.get_player_by_name(name:get_player_name()) and not core_game.is_end[name] == true then
-					core_game.count[name] = core_game.count[name] + dtime
-				end
-			end)
 			if not core_game.is_end[name] == true then
 				hud_fs.show_hud(name, "core_game:race_count", {
 					{type = "size", w = 40, h = 0.5},
 					{type = "position", x = 0.9, y = 0.9},
 					{
 						type = "label", x = 0, y = 0,
-						label = "Race count: " .. core_game.count[name]
+						label = S("Race count: @1", core_game.count[name])
 					}
 				})
 			else
