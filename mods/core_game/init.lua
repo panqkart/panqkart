@@ -694,7 +694,7 @@ end
 -- No player parameter included; this is ran for all players who are on race.
 --- @returns void
 local function race_end()
-	for i,name in ipairs(core_game.players_on_race) do
+	for i,name in pairs(core_game.players_on_race) do
 		if not core_game.is_end[name] == true then
 			minetest.chat_send_player(name:get_player_name(), S("You lost the race for ending out of time."))
 		end
@@ -1178,13 +1178,13 @@ minetest.register_globalstep(function(dtime)
 				end
 			end
 
-			if core_game.count[name] >= max_racecount then
-				race_end() -- Run function to end a race
-			end
-
 			if racecount_check[name] == false then
 				core_game.count[name] = 0 -- Let's initialize from 0 to prevent crashes
 				racecount_check[name] = true
+			end
+
+			if core_game.count[name] >= max_racecount then
+				race_end() -- Run function to end a race
 			end
 
 			if minetest.get_player_by_name(name:get_player_name()) and not core_game.is_end[name] == true then
