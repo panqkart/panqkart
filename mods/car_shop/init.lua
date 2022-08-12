@@ -90,7 +90,6 @@ local function update_speed(player, fields)
 
 	local turn_speed = vehicle_mash.car01_def.turn_speed
 	local accel = vehicle_mash.car01_def.accel
-	--local inv = player:get_inventory()
 
 	local meta = player:get_meta()
 	local coins = minetest.deserialize(meta:get_string("player_coins"))
@@ -191,7 +190,7 @@ local function update_hover(player, fields)
 			minetest.chat_send_player(player:get_player_name(), S("You don't have the enough silver coins to upgrade"))
 			return
 		elseif coins and coins.silver_coins >= 10 then
-			minetest.chat_send_player(player:get_player_name(), S("Successfully updated car's forward speed to 12!"))
+			minetest.chat_send_player(player:get_player_name(), S("Successfully updated car's forward speed to 11.75!"))
 			minetest.chat_send_player(player:get_player_name(), S("Successfully updated car's reverse speed to 6!"))
 
 			max_speed_reverse = 6
