@@ -691,7 +691,7 @@ end
 
 --- @brief Function that contains the
 -- code to successfully end a race at the given time.
--- No player parameter included; this is ran for all players who are on race.
+-- No player parameter included; this is ran for all players who are on a race.
 --- @returns void
 local function race_end()
 	for i,name in pairs(core_game.players_on_race) do
