@@ -662,6 +662,7 @@ local function start(player)
 	-- End: cleanup race count and ending booleans
 
 	minetest.chat_send_player(player:get_player_name(), S("The race will start in a few seconds. Please wait..."))
+	minetest.chat_send_player(player:get_player_name(), S("You might not be able to move. Meanwhile, wait until " .. tonumber(minetest.settings:get("minimum_required_players")) .. " more players join."))
 
 	-- Remove nametag
 	player:set_nametag_attributes({
