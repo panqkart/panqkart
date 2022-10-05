@@ -3,6 +3,8 @@
 We've made a lobby for players to hang out, have fun, search for prizes, and so much more.\
 You can, later on, join a race from a special part of the lobby if you want to play!
 
+**Before getting started, please download the [Mobs Redo](https://notabug.org/TenPlus1/mobs_redo) mod.
+
 So now, let's get started to set up the lobby!\
 In this section, we will setup our made lobby.
 
