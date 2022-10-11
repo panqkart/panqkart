@@ -39,6 +39,10 @@ core_game.level_position = { } -- EDIT TO YOUR NEEDS
 local modname = minetest.get_current_modname()
 local S = minetest.get_translator(modname)
 
+-------------------
+-- Lobby/mapgen --
+-------------------
+
 if minetest.setting_get_pos("lobby_position") then
     core_game.position = minetest.setting_get_pos("lobby_position")
 end
@@ -52,9 +56,13 @@ minetest.register_lbm({
 
 	action = function(pos, node)
 		if minetest.setting_get_pos("lobby_position") then return end -- If there's already another position, do not overwrite.
+
 		core_game.position = pos
+		minetest.settings:set("lobby_position", minetest.pos_to_string(pos))
 	end,
 })
+
+-- TODO: load the lobby/level on the first initialization
 
 ------------------
 -- Privileges --
@@ -109,6 +117,7 @@ minetest.register_privilege("core_admin", {
     description = S("Can manage the lobby position and core game configurations."),
     give_to_singleplayer = true,
 	give_to_admin = true,
+
 	on_grant = core_game.grant_revoke,
 	on_revoke = core_game.grant_revoke,
 })
@@ -145,155 +154,9 @@ local racecount_check = {} -- An array used to store the value if a player's cou
 local max_racecount = 130 -- Maximum value for the race count (default 130)
 
 ----------------
--- Overrides --
-----------------
-
--- Override the hand item
--- Do not let users break any nodes but let them rightclick on items
-minetest.override_item("", {
-	range = 4,
-	tool_capabilities = {
-		full_punch_interval = 0.5,
-		max_drop_level = 3,
-		groupcaps = {
-			crumbly = nil,
-			cracky  = nil,
-			snappy  = nil,
-			choppy  = nil,
-			oddly_breakable_by_hand = nil,
-			-- dig_immediate group doesn't use value 1. Value 3 is instant dig
-			dig_immediate =
-				{times = {[2] = nil, [3] = nil}, uses = 0, maxlevel = 0},
-		},
-		damage_groups = {fleshy = 1},
-	}
-})
-
-local old_default_can_interact_with_node = default.can_interact_with_node
-function default.can_interact_with_node(player, pos)
-	if minetest.check_player_privs(player, { core_admin = true }) then
-		return true
-	end
-	return old_default_can_interact_with_node(player, pos)
-end
-
--- Do not allow players to dig/place nodes if they don't have the `core_admin` privilege
-local old_minetest_item_place_node = minetest.item_place_node
-function minetest.item_place_node(itemstack, placer, pointed_thing)
-	if not minetest.check_player_privs(placer, { core_admin = true }) then
-		minetest.chat_send_player(placer:get_player_name(), "You're not allowed to place nodes unless you are a staff. If this is a mistake, please contact the server administrator.")
-		return itemstack
-	end
-	return old_minetest_item_place_node(itemstack, placer, pointed_thing)
-end
-
-local old_minetest_node_dig = minetest.node_dig
-function minetest.node_dig(pos, node, digger)
-	if not minetest.check_player_privs(digger, { core_admin = true }) then
-		minetest.chat_send_player(digger:get_player_name(), "You're not allowed to dig nodes unless you are a staff. If this is a mistake, please contact the server administrator.")
-		return
-	end
-	return old_minetest_node_dig(pos, node, digger)
-end
-
--- Override the signs to make them unbreakable and uneditable, only by owners or those who have permissions.
-local function register_sign(material, desc, def)
-	minetest.register_node(":default:sign_wall_" .. material, {
-		description = desc,
-		drawtype = "nodebox",
-		tiles = {"default_sign_wall_" .. material .. ".png"},
-		inventory_image = "default_sign_" .. material .. ".png",
-		wield_image = "default_sign_" .. material .. ".png",
-		paramtype = "light",
-		paramtype2 = "wallmounted",
-		sunlight_propagates = true,
-		is_ground_content = false,
-		walkable = false,
-		use_texture_alpha = "opaque",
-		node_box = {
-			type = "wallmounted",
-			wall_top    = {-0.4375, 0.4375, -0.3125, 0.4375, 0.5, 0.3125},
-			wall_bottom = {-0.4375, -0.5, -0.3125, 0.4375, -0.4375, 0.3125},
-			wall_side   = {-0.5, -0.3125, -0.4375, -0.4375, 0.3125, 0.4375},
-		},
-		groups = def.groups,
-		legacy_wallmounted = true,
-		sounds = def.sounds,
-
-		on_construct = function(pos)
-			local meta = minetest.get_meta(pos)
-			meta:set_string("formspec", "field[text;;${text}]")
-			meta:set_string("owner", "") -- Added by team PanqKart
-		end,
-		after_place_node = function(pos, placer)
-			-- Added by team PanqKart
-
-			local meta = minetest.get_meta(pos)
-			meta:set_string("owner", placer:get_player_name() or "")
-			meta:set_string("infotext", '')
-		end,
-		can_dig = function(pos, player)
-			-- Added by team PanqKart
-
-			local meta = minetest.get_meta(pos)
-			if meta:get_string("infotext") ~= '' then return end
-
-			return default.can_interact_with_node(player, pos)
-		end,
-		on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-			-- Added by team PanqKart
-			local player_name = clicker:get_player_name()
-			local meta = minetest.get_meta(pos)
-			if minetest.is_protected(pos, player_name) or default.can_interact_with_node(clicker, pos) == false then
-				minetest.record_protection_violation(pos, player_name)
-				meta:set_string("formspec", "")
-				return
-			else
-				meta:set_string("formspec", "field[text;;${text}]")
-			end
-		end,
-		on_receive_fields = function(pos, formname, fields, sender)
-			local player_name = sender:get_player_name()
-														-- Added by team PanqKart
-			if minetest.is_protected(pos, player_name) or default.can_interact_with_node(sender, pos) == false and not material == "wood" then
-				minetest.record_protection_violation(pos, player_name)
-				return
-			end
-			local text = fields.text
-			if not text then
-				return
-			end
-			if string.len(text) > 512 then
-				minetest.chat_send_player(player_name, minetest.get_translator("default")("Text too long"))
-				return
-			end
-			minetest.log("action", player_name .. " wrote \"" .. text ..
-				"\" to the sign at " .. minetest.pos_to_string(pos))
-			local meta = minetest.get_meta(pos)
-			meta:set_string("text", text)
-
-			if #text > 0 then
-				meta:set_string("infotext", minetest.get_translator("default")('"@1"', text))
-			else
-				meta:set_string("infotext", '')
-			end
-		end,
-	})
-end
-
-register_sign("wood", minetest.get_translator("default")("Wooden Sign"), {
-	sounds = default.node_sound_wood_defaults(),
-	groups = {choppy = 2, attached_node = 1, flammable = 2, oddly_breakable_by_hand = 3}
-})
-
-register_sign("steel", minetest.get_translator("default")("Steel Sign"), {
-	sounds = default.node_sound_metal_defaults(),
-	groups = {cracky = 2, attached_node = 1}
-})
-
-----------------
 -- Commands --
 ----------------
+
 minetest.register_chatcommand("change_position", {
 	params = "<x y z>",
 	description = S("Change lobby's position"),
@@ -527,7 +390,7 @@ local function player_count(player)
 	elseif lib_mount.win_count == 12 then
 		core_game.players_that_won[11] = player
 	else
-		minetest.log("error", "[PanqKart] An error has ocurred while saving the player in the players that won array.")
+		minetest.log("error", "[PANQKART] An error has ocurred while saving the player in the players that won array.")
 		return
 	end
 end
@@ -734,7 +597,7 @@ local function race_end()
 				core_game.player_count = 0
 				core_game.players_on_race = {}
 
-				minetest.log("action", "[PANQKART] Sucessfully resetted player count and players on race.")
+				minetest.log("action", "[PANQKART] Successfully resetted player count and players on race.")
 			end)
 		end
 		name:set_physics_override({
@@ -750,25 +613,31 @@ end
 
 minetest.register_on_joinplayer(function(player)
 	minetest.after(0.2, function()
-		if type(core_game.position) == "string" then
-			core_game.position = minetest.string_to_pos(core_game.position)
+		local position
+
+		if not minetest.setting_get_pos("lobby_position") and not core_game.position.x then -- Both setting/variable are nil
+			position = player:get_pos() 													-- To prevent crashes
+		elseif minetest.setting_get_pos("lobby_position") and not core_game.position.x then -- Setting is there, however, variable isn't
+			position = minetest.setting_get_pos("lobby_position")
+		elseif core_game.position.x then													-- Position is set in the variable
+			position = core_game.position
+		else																				-- Fallback
+			position = player:get_pos()
 		end
-		if not core_game.position or not minetest.setting_get_pos("lobby_position") then
-			core_game.position = player:get_pos()
-		end
-		local meta = minetest.get_meta(core_game.position)
+		local meta = minetest.get_meta(position)
 
 		-- Let's use the position of the `spawn_node` node. This is very useful
 		-- when placing the lobby schematic and not the node itself.
 		if meta and minetest.string_to_pos(meta:get_string("lobby_position")) then
 			player:set_pos(minetest.string_to_pos(meta:get_string("lobby_position")))
-			minetest.log("action", "`spawn_node` node position was used for player " .. player:get_player_name() .. ". Successfully teleported.")
+			minetest.log("action", "[PANQKART] `spawn_node` node position was used for player " .. player:get_player_name() .. ". Successfully teleported.")
 		else
 			-- If not found, use the default position defined in settings
-			player:set_pos(core_game.position)
+			player:set_pos(position)
+			minetest.log("action", "[PANQKART] Teleported " .. player:get_player_name() .. " to the settings spawnpoint")
 		end
 	end)
-	minetest.log("action", "[RACING GAME] Player " .. player:get_player_name() .. " joined and was teleported to the lobby successfully.")
+	minetest.log("action", "[PANQKART] Player " .. player:get_player_name() .. " joined and was teleported to the lobby successfully.")
 
 	-- VIP/Premium users
 	if minetest.get_modpath("premium") and minetest.check_player_privs(player, { has_premium = true } ) then
@@ -989,8 +858,8 @@ elseif core_game.player_count == 12 then
 		"," .. "12th 					" .. core_game.players_that_won[11]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[11]] .. " seconds;1]",
     }
 else
-	print("[PanqKart] Failed to show leaderboard")
-	minetest.log("error", "[PanqKart] Failed to show leaderboard")
+	print("[PANQKART] Failed to show leaderboard")
+	minetest.log("error", "[PANQKART] Failed to show leaderboard")
 end
 
     -- table.concat is faster than string concatenation - `..`

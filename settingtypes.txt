@@ -9,3 +9,6 @@ enable_premium_features (Enable premium features in the server) bool true
 
 #     Default lobby position
 lobby_position (Default lobby position) string
+
+#   Default premium house position
+premium_position (Default premium house position) string

@@ -272,10 +272,10 @@ sfinv.register_page("car_shop:upgrade_car", {
 				formspec[#formspec + 1] = S("Gold coins: @1", minetest.formspec_escape(coins.gold_coins)) .. ","
 			end
 			else
-				formspec[#formspec + 1] = S("You currently have no coins.\nWin a race in the top 3 places to get coins!") .. ","
+				formspec[#formspec + 1] = S("You currently have no coins.") .. "\n" .. S("Win a race in the top 3 places to get coins!") .. ","
 			end
 		else
-			formspec[#formspec + 1] = S("You currently have no coins.\nWin a race in the top 3 places to get coins!") .. ","
+			formspec[#formspec + 1] = S("You currently have no coins.") .. "\n" .. S("Win a race in the top 3 places to get coins!") .. ","
 		end
 
 		-- No updates for CAR01, with no Hovercraft
@@ -398,7 +398,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
     end
 end)
 
-
+-- IF MINETEST SHOWS AN ERROR HERE, PLEASE REMOVE THIS PART OF THE CODE.
 --[[ Old/unused code
 
 local function update_speed(player, fields)
