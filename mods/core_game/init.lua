@@ -612,6 +612,9 @@ end
 ------------------------------------------------------
 
 minetest.register_on_joinplayer(function(player)
+	-- Set shadow intensity
+	player:set_lighting({ shadows = { intensity = 0.33 } })
+
 	minetest.after(0.2, function()
 		local position
 
@@ -661,7 +664,7 @@ end)
 
 minetest.register_on_respawnplayer(function(player)
 	player:set_pos(core_game.position)
-	minetest.log("action", "[RACING GAME] Player " .. player:get_player_name() .. " died. Teleported to the lobby successfully.")
+	minetest.log("action", "[PANQKART] Player " .. player:get_player_name() .. " died. Teleported to the lobby successfully.")
 end)
 
 minetest.register_on_newplayer(function(player)
