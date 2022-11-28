@@ -41,8 +41,7 @@ I recommend the following tools/knowledge for the same:
 - [More Blocks](https://github.com/minetest-mods/moreblocks) includes 100+ special blocks with different functionalities that help you make better buildings with more efficiency.
 - [Tree Capitator](https://content.minetest.net/packages/Hybrid%20Dog/treecapitator/), which destroys the whole tree when you destroy the root trunk.
 
-You can also use mods such as Mobs Animal to add animals to your map!\
-We currently use a modified version of it. You can check it out here: <https://github.com/panqkart/mobs_animal>
+To add special modifications, such as animals, special overrides, the in-game builder privilege, etc., you may want to install the [`servermods`](https://github.com/panqkart/servermods) modpack in your server.
 
 **Note: the `maptools:white` and `maptools:black` nodes are used when ending a race.**\
 Hopefully, we will soon make a detailed tutorial on making your own map!
