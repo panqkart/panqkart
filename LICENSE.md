@@ -23,7 +23,7 @@ If not yet specified, all media/textures fall under [CC BY-SA 4.0 International]
 License of `menu/header.png`:
 
 - The green car was taken from <https://forum.minetest.net/viewtopic.php?f=9&t=6512> ([CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/))
-- The smiley face was made by [**Gabri**](https://liberapay.com/Methro), a.k.a. "Methro", "SiLeNT", "chocomint"; licensed under the [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) license.
+- The smiley face was made by [**Gabri**](https://liberapay.com/Methro), a.k.a. "Methro", "SiLeNT", "chocomint"; licensed under the [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/) license.
 
 Copyright (C) 2022 David Leal <halfpacho@gmail.com>\
 The `PanqKart` text is licensed under [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/)
