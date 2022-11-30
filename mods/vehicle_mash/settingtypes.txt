@@ -9,11 +9,6 @@ vehicle_mash.api_mode (Disables all vehicles and only enables API functions) boo
 
 vehicle_mash.player_api_fix (Fix eyeheight when using cars) bool true
 
-# Other cars
-
-vehicle_mash.enable_126r_car (Enables 126r car) bool true
-vehicle_mash.enable_f1_car (Enables F1 car) bool true
-
 # CAR01's cars
 
 vehicle_mash.enable_black_car (Enables black car) bool true

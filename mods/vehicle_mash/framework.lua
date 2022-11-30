@@ -87,14 +87,14 @@ function vehicle_mash.register_vehicle(name, def)
 						lib_mount.detach(self.passenger3, self.offset)
 					-- if clicker is not passenger
 					else
-						-- attach passengers if possible
-						if lib_mount.passengers[self.passenger] == self.passenger and self.number_of_passengers >= 1 then
+						-- attach a passenger if possible
+						if self.passenger==nil and self.number_of_passengers >= 1 then
 							lib_mount.attach(self, clicker, true, 1)
 						end
-						if lib_mount.passengers[self.passenger2] == self.passenger2 and self.number_of_passengers >= 2 then
+						if self.passenger2==nil and self.number_of_passengers >= 2 then
 							lib_mount.attach(self, clicker, true, 2)
 						end
-						if lib_mount.passengers[self.passenger3] == self.passenger3 and self.number_of_passengers >= 3 then
+						if self.passenger3==nil and self.number_of_passengers >= 3  then
 							lib_mount.attach(self, clicker, true, 3)
 						end
 					end

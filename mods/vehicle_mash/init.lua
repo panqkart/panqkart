@@ -1,14 +1,14 @@
 vehicle_mash = {}
 
 -- Fix `player_api` eye height model if desired
-if minetest.settings:get_bool("vehicle_mash.player_api_fix") == true or minetest.settings:get_bool("vehicle_mash.player_api_fix") == nil then
+if minetest.settings:get_bool("player_api_fix") == true or minetest.settings:get_bool("player_api_fix") == nil then
 	player_api.registered_models["character.b3d"].animations.sit.eye_height = 1.47
 end
 
 -- get modpath
 
 local mpath = minetest.get_modpath("vehicle_mash")
-local craft_check = minetest.settings:get_bool("vehicle_mash.enable_crafts")
+local craft_check = minetest.settings:get_bool("vehicles_crafts")
 
 -- Do not change value at settingtypes.txt
 -- Only change value at minetest.conf and Minetest Settings tab

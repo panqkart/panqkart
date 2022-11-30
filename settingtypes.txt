@@ -12,3 +12,12 @@ lobby_position (Default lobby position) string
 
 #   Default premium house position
 premium_position (Default premium house position) string
+
+#   Use mouselook
+use_mouselook (Use mouselook as a driving method) bool true
+
+#   Enable Vehicle Mash crafts
+vehicles_crafts (Enable Vehicle Mash crafts) bool false
+
+#   Vehicle Mash player API fix
+player_api_fix (Fix eyeheight when using cars) bool true

@@ -351,7 +351,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		else
 			is_sneaking[pname] = false
 		end -- End: Code by rubenwardy
-		if minetest.settings:get_bool("lib_mount.use_mouselook") == true or minetest.settings:get_bool("lib_mount.use_mouselook") == nil then
+		if minetest.settings:get_bool("use_mouselook") == true or minetest.settings:get_bool("use_mouselook") == nil then
 
 			if entity.mouselook then
 				if ctrl.left then
