@@ -27,11 +27,11 @@ local S2 = minetest.get_translator("core_game")
 -- Local functions --
 -----------------------
 
-local function start_race_formspec()
+local function start_race_formspec(meta)
 	local text = "Set player positions before starting a race."
 	local formspec = {
 		"formspec_version[4]",
-		"size[12,8]",
+		"size[12,9]",
 		"label[2.5,0.5;", minetest.formspec_escape(text), "]",
 		"field[0.375,1.2;5.25,0.8;player_one;1st player position;${player1}]",
 		"field[0.375,2.13;5.25,0.8;player_two;2nd player position;${player2}]",
@@ -46,6 +46,7 @@ local function start_race_formspec()
 		"field[6,6;5.25,0.8;player_eleventh;11th player position;${player11}]",
 		"field[6,7;5.25,0.8;player_twelveth;12th player position;${player12}]",
 		"button_exit[4,4.05;3,0.8;apply;Apply changes]",
+		"checkbox[0.375,8.5;use_meta;Use metadata values;" .. meta:get_string("use_meta") .. "]",
 	}
 
     -- table.concat is faster than string concatenation - `..`
@@ -56,9 +57,10 @@ end
 --- This is used before starting a race.
 --- @param player string the player that will be teleported to
 --- @param meta string the metadata that will be checked
---- @param strings table the strings table that will be used for the destination
+--- @param table table the table that will be used for the destination
 --- @param position string the destination the player will be teleported to
-local function player_position(player, meta, strings, position)
+--- @param use_meta boolean whether to use metadata values or not
+local function player_position(player, meta, table, position, use_meta)
 	local players = minetest.get_connected_players()
 
 	for i = 1, #players - 1 do
@@ -66,11 +68,17 @@ local function player_position(player, meta, strings, position)
 			-- Check if a player matches the same position as another player
 			-- Thanks to rubenwardy and appgurueu for helping!
 			if players[i]:get_pos() == players[j]:get_pos() then
-				local position2 = strings[math.random(#strings)]
+				local position2 = table[math.random(#table)]
 				if position2 == position then
-					player_position(player, meta, strings, position)
+					player_position(player, meta, table, position, use_meta)
 				end
-				minetest.after(0, function() player:move_to(minetest.string_to_pos(meta:get_string(strings[math.random(#strings)]))) end)
+				minetest.after(0, function()
+					if use_meta == true then
+						player:move_to(minetest.string_to_pos(meta:get_string(position2)))
+					else -- Useful when loading `player_positions.txt` rather than metadata values.
+						player:move_to(minetest.string_to_pos(position2))
+					end
+				end)
 				return
 			end
 		end
@@ -91,6 +99,132 @@ minetest.register_node("special_nodes:junglewood", {
 	groups = {choppy = 2, oddly_breakable_by_hand = 2, flammable = 2, wood = 1, not_in_creative_inventory = 1},
 })
 
+-- We don't want to run the lobby on fire; thus, make it unflammable.
+if minetest.get_modpath("wool") then
+	minetest.override_item("wool:red", {
+		groups = {snappy = 2, choppy = 2, oddly_breakable_by_hand = 3,
+		flammable = 0, wool = 1, ["color_red"] = 1},
+	})
+end
+
+-- NOTES AND TO-DO'S:
+-- 1. If the 1st block is being placed, insert it at the first line and so on with the other blocks.
+-- 2. When deleting a block and adding the same block again, place it in the exact same line it was.
+-- 3. If there's an empty line detected, use all the other positions except that one.
+-- 4. (?) Use a database or another method to store the positions.
+-- FOR MAP BUILDERS/TESTERS:
+-- 1. If you remove one block, you will have to remove all the other ones to have them adjusted properly.
+-- 2. Placing the same block in different positions will add the position to the list, but it may mess up.
+
+for i = 1, 12, 1 do
+	minetest.register_node("special_nodes:player_" .. i .. "_position", {
+		description = S2("Player " .. i .. " position"),
+		tiles = {"streets_asphalt.png"},
+		groups = { unbreakable = 1, not_in_creative_inventory = 1 },
+		drop = "",
+		on_place = function(itemstack, placer, pointed_thing)
+			if minetest.check_player_privs(placer, { core_admin = true }) or minetest.check_player_privs(placer, { builder = true }) then
+				minetest.log("action", "[PANQKART] Player " .. i .. " race position set to " .. minetest.pos_to_string(pointed_thing.above))
+
+				-- Save the positions in a world-exclusive file which won't affect other worlds.
+				local file,err = io.open(minetest.get_worldpath() .. "/player_positions.txt", "a+")
+				if file then
+					-- Check all lines and make sure the position isn't already saved.
+					for line in file:lines() do
+						if line == minetest.pos_to_string(pointed_thing.above) then
+							file:close()
+							return minetest.item_place(itemstack, placer, pointed_thing)
+						end
+					end
+					file:write(minetest.pos_to_string(pointed_thing.above) .. "\n")
+					file:close()
+				else
+					minetest.log("error", "[PANQKART] Error while saving player " .. i .. " positions: " .. err)
+				end
+
+				return minetest.item_place(itemstack, placer, pointed_thing)
+			end
+
+			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to place this node. Missing privileges: core_admin"))
+			return itemstack
+		end,
+		on_construct = function(pos)
+			local meta = minetest.get_meta(pos)
+			meta:set_string("player" .. tostring(i), minetest.pos_to_string(pos))
+		end,
+		can_dig = function(pos, player)
+			if minetest.check_player_privs(player, { core_admin = true }) or minetest.check_player_privs(player, { builder = true }) then
+				return default.can_interact_with_node(player, pos)
+			end
+
+			minetest.chat_send_player(player:get_player_name(), S2("You don't have sufficient permissions to place this node. Missing privileges: core_admin"))
+			return false
+		end,
+		on_dig = function(pos, node, digger)
+			local meta = minetest.get_meta(pos)
+			local file,err = io.open(minetest.get_worldpath() .. "/player_positions.txt", "r")
+
+			if file then
+				-- Check all lines. If position is saved, remove it from the list.
+				local fileContent = {}
+				for line in file:lines() do
+					table.insert(fileContent, line)
+				end
+
+				fileContent[i] = ""
+				file = io.open(minetest.get_worldpath() .. "/player_positions.txt", "w")
+				for _, value in ipairs(fileContent) do
+					if value ~= meta:get_string("player" .. i) then
+						file:write(value .. "\n")
+					end
+				end
+				file:close()
+			else
+				minetest.log("error", "[PANQKART] Error while reading player positions: " .. err)
+			end
+			return minetest.node_dig(pos, node, digger)
+		end,
+	})
+end
+
+minetest.register_lbm({
+	label = "Race positions",
+	name = "special_nodes:race_positions",
+
+	nodenames = {
+		"special_nodes:player_1_position",
+		"special_nodes:player_2_position",
+		"special_nodes:player_3_position",
+		"special_nodes:player_4_position",
+		"special_nodes:player_5_position",
+		"special_nodes:player_6_position",
+		"special_nodes:player_7_position",
+		"special_nodes:player_8_position",
+		"special_nodes:player_9_position",
+		"special_nodes:player_10_position",
+		"special_nodes:player_11_position",
+		"special_nodes:player_12_position"
+	},
+	run_at_every_load = true,
+
+	action = function(pos, node)
+		-- Save the positions in a world-exclusive file which won't affect other worlds.
+		local file,err = io.open(minetest.get_worldpath() .. "/player_positions.txt", "a+")
+		if file then
+			for line in file:lines() do
+				if line == minetest.pos_to_string(pos) then
+					file:close()
+					return
+				end
+			end
+			file:write(minetest.pos_to_string(pos) .. "\n")
+			file:close()
+		else
+			minetest.log("error", "[PANQKART] Error while saving player positions: " .. err)
+		end
+	end,
+})
+
 minetest.register_node("special_nodes:start_race", {
 	description = S2("Start a race!"),
 	tiles = {"default_mossycobble.png"},
@@ -107,16 +241,17 @@ minetest.register_node("special_nodes:start_race", {
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		local meta = minetest.get_meta(pos)
 		if minetest.check_player_privs(clicker, { core_admin = true }) then
-			meta:set_string("formspec", start_race_formspec())
+			meta:set_string("formspec", start_race_formspec(meta))
 		else
 			meta:set_string("formspec", "")
 		end
 	end,
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
-		meta:set_string("formspec", start_race_formspec())
+		meta:set_string("formspec", start_race_formspec(meta))
 	end,
 	on_receive_fields = function(pos, formname, fields, sender)
+		-- TODO: load player positions from `.txt` file
 		local strings = {
 			"player1",
 			"player2",
@@ -148,8 +283,16 @@ minetest.register_node("special_nodes:start_race", {
 		}
 
 		local meta = minetest.get_meta(pos)
+		if fields.use_meta then
+			if meta:get_string("use_meta") == "false" then
+				meta:set_string("use_meta", "true")
+			else
+				meta:set_string("use_meta", "false")
+			end
+		end
 
 		if fields.apply then
+			-- Set `true` or `false` depending on the checkbox status.
 			for _,number in ipairs(field) do
 				if number == "0" then
 					minetest.chat_send_player(sender:get_player_name(), "Please specify a valid value different than zero.")
@@ -178,7 +321,7 @@ minetest.register_node("special_nodes:start_race", {
 				end
 			end
 
-			meta:set_string("formspec", start_race_formspec())
+			meta:set_string("formspec", start_race_formspec(meta))
 		end
 	end,
 	can_dig = function(pos, player)
@@ -230,22 +373,52 @@ minetest.register_globalstep(function(dtime)
 
 		if node.name == "special_nodes:start_race" and not core_game.ran_once[player] == true then
 			local meta = minetest.get_meta({x = pos.x, y = pos.y - 0.5, z = pos.z})
-			for _,string in ipairs(strings) do
+
+			-- Loading positions from `.txt` file
+			local fileContent = {}
+			local file,err = io.open(minetest.get_worldpath() .. "/player_positions.txt", "r")
+
+			if file and meta:get_string("use_meta") ~= "true" then
+				for line in file:lines() do
+					table.insert(fileContent, line)
+				end
+
+				local line_position = fileContent[math.random(#fileContent)]
+				if minetest.string_to_pos(line_position) then
+					player:move_to(minetest.string_to_pos(line_position))
+					player_position(player, meta, strings, line_position, false) -- Make sure positions are not repeated.
+				else
+					minetest.chat_send_player(player:get_player_name(), "One or more positions are invalid. Cannot start race. Aborting.")
+					minetest.chat_send_player(player:get_player_name(), "If you think this is a mistake, please report it on the official's PanqKart Discord server or contact the server administrator.")
+					return
+				end
+
+				-- The player will be teleported inside the node, thus, teleport them a bit higher.
+				player:set_pos({x = player:get_pos().x, y = player:get_pos().y + 1, z = player:get_pos().z})
+			else
+				if not file then
+					minetest.log("error", "[PANQKART] Error while reading player positions: " .. err .. ". Configured/metadata positions will be used instead.")
+				end
+
+				player:move_to(minetest.string_to_pos(meta:get_string(position)))
+				player_position(player, meta, strings, position, true) -- Make sure positions are not repeated.
+			end
+
+			for _,string in ipairs(strings) do -- luacheck: ignore
 				if core_game.ran_once[player] == true then break end
 				if minetest.string_to_pos(meta:get_string(string)) then
-					player_position(player, meta, strings, position)
-					player:move_to(minetest.string_to_pos(meta:get_string(position)))
 
 					core_game.reset_values(player) -- Reset values in case something was stored
 					core_game.start_game(player)
 					core_game.ran_once[player] = true
 					return
 				else
-					minetest.chat_send_player(player:get_player_name(), "Positions haven't been set. Cannot start race. Aborting.")
+					minetest.chat_send_player(player:get_player_name(), "One or more positionss are invalid. Cannot start race. Aborting.")
 					minetest.chat_send_player(player:get_player_name(), "If you think this is a mistake, please report it on the official's PanqKart Discord server or contact the server administrator.")
 
 					core_game.ran_once[player] = true
 					minetest.after(10, function() core_game.ran_once[player] = false end)
+					break
 				end
 			end
 		end

@@ -44,6 +44,7 @@ read_globals = {
 	"farming",
 	"stairsplus",
 	"creative",
+	"worldedit"
 }
 
 -- Don't report on legacy definitions of globals.
@@ -53,12 +54,8 @@ files["mods/lib_mount/init.lua"].ignore = { "eye_offset", "attach_at",
     "set_animation", "new_velo" }
 
 -- These are unused functions/variables that might be used in the future.
-files["mods/vehicle_mash/init.lua"].ignore = { "cars_def", "other_car_names", "mesecar_def", "mesecar_names",
+files["mods/vehicle_mash/init.lua"].ignore = { "cars_def", "mesecar_def", "mesecar_names",
 	"boat_def", "boat_names" }
-
--- We don't wanna mess up Mobs REDO API.
-files["mods/mobs_redo/api.lua"].ignore = { "" }
-files["mods/mobs_animal/locale/po2tr.lua"].ignore = { "" }
 
 -- Code below taken from https://github.com/luk3yx/minetest-formspec_ast/blob/master/.luacheckrc
 

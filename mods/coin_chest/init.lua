@@ -43,6 +43,17 @@ local function show_formspec(meta)
     return table.concat(formspec, "")
 end
 
+--- @brief Verifies if the coins are set or not.
+--- @param meta string the metadata to be used
+--- @return false if one or more coins are not set
+local function no_coins(meta)
+	if meta:get_string("bronze") == "" or meta:get_string("silver") == ""
+		or meta:get_string("gold") == "" then
+			return true
+		end
+	return false
+end
+
 -------------
 -- Nodes --
 -------------
@@ -66,7 +77,7 @@ minetest.register_node("coin_chest:chest", {
 	is_ground_content = false,
 	on_place = function(itemstack, placer, pointed_thing)
         if not minetest.check_player_privs(placer, { core_admin = true }) then
-            return false, S("You don't have the sufficient permissions to place this node. Missing privileges: core_admin")
+            return false, S("You don't have sufficient permissions to place this node. Missing privileges: core_admin")
         end
 		return minetest.item_place(itemstack, placer, pointed_thing)
 	end,
@@ -84,25 +95,10 @@ minetest.register_node("coin_chest:chest", {
 		local playerlist = minetest.deserialize(meta:get_string("playerlist"))
 
 		if not minetest.check_player_privs(clicker, { core_admin = true }) then
-			if not meta:get_string("bronze") or meta:get_string("bronze") ~= "" then
+			if meta:get_string("bronze") == "" or meta:get_string("silver") == "" or meta:get_string("gold") == "" then
 				meta:set_string("formspec", "")
 
-				-- Start: special thanks to neinwhal for building the code!
-				if playerlist then
-					for _, names in ipairs(playerlist) do
-						if clicker:get_player_name() == names then
-							minetest.chat_send_player(clicker:get_player_name(), S("You have already got the coins from this chest."))
-							return
-						end
-					end
-				end
-
-				-- If no name found, store new value
-				playerlist[#playerlist + 1] = clicker:get_player_name()
-				meta:set_string("playerlist", minetest.serialize(playerlist))
-				-- End: special thanks to neinwhal for building the code!
-
-				minetest.chat_send_player(clicker:get_player_name(), S("You don't have the sufficient permissions to open this chest. Missing privileges: core_admin"))
+				minetest.chat_send_player(clicker:get_player_name(), S("You don't have sufficient permission to open this chest. Missing privileges: core_admin"))
 				return
 			else
 				-- Start: special thanks to neinwhal for building the code!
@@ -115,31 +111,42 @@ minetest.register_node("coin_chest:chest", {
 					end
 				end
 
-				-- if no name found, store new value
-				playerlist[#playerlist + 1] = clicker:get_player_name()
-				meta:set_string("playerlist", minetest.serialize(playerlist))
-				-- End: special thanks to neinwhal for building the code!
-
 				meta:set_string("formspec", "")
 				if coins then
-					coins.bronze_coins = coins.bronze_coins + tonumber(meta:get_string("bronze"))
-					coins.silver_coins = coins.silver_coins + tonumber(meta:get_string("silver"))
-					coins.gold_coins = coins.gold_coins + tonumber(meta:get_string("gold"))
+					if no_coins(meta) == true then
+						minetest.chat_send_player(clicker:get_player_name(), S("No coins have been set. You won't receive any coins."))
+						return
+					else
+						coins.bronze_coins = coins.bronze_coins + tonumber(meta:get_string("bronze"))
+						coins.silver_coins = coins.silver_coins + tonumber(meta:get_string("silver"))
+						coins.gold_coins = coins.gold_coins + tonumber(meta:get_string("gold"))
+					end
 
 					player_meta:set_string("player_coins", minetest.serialize(coins))
 				else
-					coins = { bronze_coins = tonumber(meta:get_string("bronze")), silver_coins = tonumber(meta:get_string("silver")), gold_coins = tonumber(meta:get_string("gold")) }
+					coins = {
+						bronze_coins = tonumber(meta:get_string("bronze")) or 0,
+						silver_coins = tonumber(meta:get_string("silver")) or 0,
+						gold_coins = tonumber(meta:get_string("gold")) or 0
+					}
 					player_meta:set_string("player_coins", minetest.serialize(coins))
 				end
-				minetest.chat_send_player(clicker:get_player_name(), S("You got @1 bronze coins, @2 silver coins, and @3 gold coins!", tonumber(meta:get_string("bronze")), tonumber(meta:get_string("silver")), tonumber(meta:get_string("gold"))))
+				minetest.chat_send_player(clicker:get_player_name(), S("You got @1 bronze coin(s), @2 silver coin(s), and @3 gold coin(s)!", tonumber(meta:get_string("bronze")), tonumber(meta:get_string("silver")), tonumber(meta:get_string("gold"))))
 
 				minetest.sound_play("default_chest_open", {gain = 0.3,
-				pos = pos, max_hear_distance = 10}, true)
+					pos = pos, max_hear_distance = 10}, true)
+
+				-- If no name found, store new value
+				if no_coins(meta) ~= true then
+					playerlist[#playerlist + 1] = clicker:get_player_name()
+					meta:set_string("playerlist", minetest.serialize(playerlist))
+				end
+				-- End: special thanks to neinwhal for building the code!
 			end
 		else
 			meta:set_string("formspec", show_formspec(meta))
 			minetest.sound_play("default_chest_open", {gain = 0.3,
-			pos = pos, max_hear_distance = 10}, true)
+				pos = pos, max_hear_distance = 10}, true)
         end
 	end,
 	on_punch = function(pos, node, puncher, pointed_thing)
@@ -147,21 +154,30 @@ minetest.register_node("coin_chest:chest", {
 		local player_meta = puncher:get_meta()
 
 		local coins = minetest.deserialize(player_meta:get_string("player_coins"))
-		minetest.sound_play("default_chest_open", {gain = 0.3,
-		pos = pos, max_hear_distance = 10}, true)
 		if meta and minetest.check_player_privs(puncher, { core_admin = true }) and meta:get_int("staff_coins") == 1 then
 			meta:set_string("formspec", "")
 				if coins then
-					coins.bronze_coins = coins.bronze_coins + tonumber(meta:get_string("bronze"))
-					coins.silver_coins = coins.silver_coins + tonumber(meta:get_string("silver"))
-					coins.gold_coins = coins.gold_coins + tonumber(meta:get_string("gold"))
+					if no_coins(meta) == true then
+						minetest.chat_send_player(puncher:get_player_name(), S("No coins have been set. You won't receive any coins."))
+						return
+					else
+						coins.bronze_coins = coins.bronze_coins + tonumber(meta:get_string("bronze"))
+						coins.silver_coins = coins.silver_coins + tonumber(meta:get_string("silver"))
+						coins.gold_coins = coins.gold_coins + tonumber(meta:get_string("gold"))
+					end
 
 					player_meta:set_string("player_coins", minetest.serialize(coins))
 				else
-					coins = { bronze_coins = tonumber(meta:get_string("bronze")), silver_coins = tonumber(meta:get_string("silver")), gold_coins = tonumber(meta:get_string("gold")) }
+					coins = {
+						bronze_coins = tonumber(meta:get_string("bronze")) or 0,
+						silver_coins = tonumber(meta:get_string("silver")) or 0,
+						gold_coins = tonumber(meta:get_string("gold")) or 0
+					}
 					player_meta:set_string("player_coins", minetest.serialize(coins))
 				end
-				minetest.chat_send_player(puncher:get_player_name(), S("You got @1 bronze coins, @2 silver coins, and @3 gold coins!", tonumber(meta:get_string("bronze")), tonumber(meta:get_string("silver")), tonumber(meta:get_string("gold"))))
+				minetest.chat_send_player(puncher:get_player_name(), S("You got @1 bronze coin(s), @2 silver coin(s), and @3 gold coin(s)!", tonumber(meta:get_string("bronze")), tonumber(meta:get_string("silver")), tonumber(meta:get_string("gold"))))
+				minetest.sound_play("default_chest_open", {gain = 0.3,
+					pos = pos, max_hear_distance = 10}, true)
 		end
 	end,
 	on_construct = function(pos)

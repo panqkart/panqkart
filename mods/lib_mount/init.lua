@@ -574,7 +574,21 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				end
 			end
 		else
-			v = v*0.25
+			if entity.driver then
+				local meta = entity.driver:get_meta()
+
+				local car01_speed = minetest.deserialize(meta:get_string("speed"))
+				local hover_speed = minetest.deserialize(meta:get_string("hover_speed"))
+
+				-- Still WIP; but works.
+				if car01_speed and entity.name == "vehicle_mash:car_black" then
+					v = v * 0.75
+				elseif hover_speed and entity.name == "vehicle_mash:hover_blue" then
+					v = v * 0.5
+				else
+					v = v * 0.25
+				end
+			end
 		end
 --	elseif ni == "walkable" then
 --		v = 0

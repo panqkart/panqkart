@@ -104,10 +104,10 @@ local function update_speed(player, fields)
 			minetest.chat_send_player(player:get_player_name(), S("You don't have the enough silver coins to upgrade"))
 			return
 		elseif coins and coins.silver_coins >= 10 and not already_upgraded == true then
-			minetest.chat_send_player(player:get_player_name(), S("Successfully updated car's forward speed to 10.75!"))
+			minetest.chat_send_player(player:get_player_name(), S("Successfully updated car's forward speed to 10.60!"))
 			minetest.chat_send_player(player:get_player_name(), S("Successfully updated car's reverse speed to 8!"))
 
-			max_speed_forward = 10.75
+			max_speed_forward = 10.60
 			max_speed_reverse = 8
 
 			turn_speed = 3
@@ -164,7 +164,6 @@ local function buy_hovercraft(player, fields)
 	local data = { bought_already = already_bought }
 	meta:set_string("hovercraft_bought", minetest.serialize(data))
 	data = minetest.deserialize(meta:get_string("hovercraft_bought")) -- luacheck: no unused
-	--minetest.chat_send_all(data.forward_speed)
 end
 
 --- @brief Update Hovercraft speed for the specified player
@@ -190,14 +189,14 @@ local function update_hover(player, fields)
 			minetest.chat_send_player(player:get_player_name(), S("You don't have the enough silver coins to upgrade"))
 			return
 		elseif coins and coins.silver_coins >= 10 then
-			minetest.chat_send_player(player:get_player_name(), S("Successfully updated car's forward speed to 11.75!"))
+			minetest.chat_send_player(player:get_player_name(), S("Successfully updated car's forward speed to 11!"))
 			minetest.chat_send_player(player:get_player_name(), S("Successfully updated car's reverse speed to 6!"))
 
 			max_speed_reverse = 6
-			max_speed_forward = 11.75
+			max_speed_forward = 11
 
 			turn_speed = 2.35
-			accel = 1.75
+			accel = 1.25
 
 			coins.silver_coins = coins.silver_coins - 10
 			meta:set_string("player_coins", minetest.serialize(coins))
