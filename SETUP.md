@@ -1,22 +1,34 @@
 # 🏰 Setting up the lobby/game 🏰
 
+_The whole setup for PanqKart will be made automatically and much easier to install soon._
+
 We've made a lobby for players to hang out, have fun, search for prizes, and so much more.\
 You can, later on, join a race from a special part of the lobby if you want to play!
 
-**Before getting started, please download the [Mobs Redo](https://notabug.org/TenPlus1/mobs_redo) mod.
+**Before getting started, please download the [Mobs Redo](https://notabug.org/TenPlus1/mobs_redo) mod or the\
+[Server Mods](https://github.com/panqkart/servermods) modpack which already includes it and other server-special functionalities.**
 
 So now, let's get started to set up the lobby!\
 In this section, we will setup our made lobby.
 
-## Downloading the repository and loading the lobby
+## 🛠 Downloading the repository and loading the lobby 🛠
 
-You need to download this repository. If you are experienced with Git, head to <https://docs.github.com/articles/cloning-a-repository>\
-If you don't know anything about Git, click on the green `Code` button on this repository, then click on `Download ZIP`. For a more detailed guide, see <https://www.itpro.com/software/development/359246/how-to-download-from-github>.
+You need to download this repository. If you are experienced with Git, you will need to clone this and its submodules.
 
-After downloading, see the installation instructions above.\
+```bash
+git clone --recurse-submodules https://github.com/panqkart/panqkart
+```
+
+If you don't know anything about Git, you can download PanqKart via the [ContentDB](https://content.minetest.net/packages/Panquesito7/panqkart/) on the\
+web or directly in Minetest, which results in much easier and clones all submodules automatically.
+
+## 🌎 Installing WorldEdit in Minetest 🌎
+
 You will need to install the [`WorldEdit`](https://github.com/Uberi/Minetest-WorldEdit) mod to add the lobby and the level.
 
 Make a new world, with any name you want, with the mapgen set to `singlenode`, for the game `panqkart`. When joining, you will need to grant yourself all the privileges in order to fly and insert our pre-made lobby. Choose an area where you want to place the lobby by selecting position 1 and position 2. If you're unsure how to do this, check the [WorldEdit tutorial](https://github.com/Uberi/Minetest-WorldEdit/blob/master/Tutorial.md).
+
+## 💻 Adding the schematic to your world 💻
 
 On the `panqkart` folder, you'll see a `schematics` folder. You will see a `lobby.we` file.\
 Now, make a folder in your **world's directory** named `schems`, which can and will be accessed by WorldEdit.
@@ -35,11 +47,13 @@ You will have to do some minor changes in order to make the lobby work properly.
 
 ## Configuring the spawnpoint
 
-There's a spawn node defined by `special_nodes` used to define the spawnpoint when you place it or either when it's loaded.\
+There's a spawn node defined by `special_nodes` used to define the spawnpoint when you place it or either when it's loaded ([LBM](https://github.com/minetest/minetest/blob/master/doc/lua_api.txt#L7937)).\
 **Do not attempt to place two or more of this node, as the system will get confused with two spawnpoints.**
 
-You can either keep the spawnpoint as-is or change it via the Minetest settings.\
-For the 2nd point, he steps are here:
+**When placing the schematic, the spawn position is already defined and it does not require extra setup.**\
+**However, if you want to change the position yourself for any reason, feel free to check the steps below.**
+
+You can either keep the spawnpoint as-is or change it via the Minetest settings:
 
 1. Open Minetest.
 2. Go to the `Settings` tab.
@@ -62,7 +76,7 @@ So below here, we will explain how to add the level to your map!
 If you've already downloaded the repository, look out in the `schematics` folder.\
 There should be a file named `level.we` there. You can follow the steps above for how to load the level.
 
-**WARNING:** The level is very big! We recommend putting it far away from the lobby or other buildings you have around.
+**WARNING:** The level is very big! We recommend putting it far away from the lobby or other buildings you have around. It might take up to 10 minutes for the level to be 100% loaded. If it's not being loaded, try re-joining your world.
 
 Once you've set up the level, well, you're practically done now. You just need to configure the `start_race` node, which can be found\
 on the lobby, on the stonebrick tunnel. Right-click on it, and set positions for 1st player, 2nd player, 3rd player, and all the way to 12.
