@@ -1,6 +1,6 @@
-# 🏰 Setting up the lobby/game 🏰
+# 🏰 Setting up the lobby/game
 
-_The whole setup for PanqKart will be made automatically and much easier to install soon._
+### ❗ This is no longer required as of [v0.2.0](https://github.com/panqkart/panqkart/releases/v0.2.0 if `manual_setup` is disabled in the Minetest settings ❗
 
 We've made a lobby for players to hang out, have fun, search for prizes, and so much more.\
 You can, later on, join a race from a special part of the lobby if you want to play!
@@ -11,7 +11,7 @@ You can, later on, join a race from a special part of the lobby if you want to p
 So now, let's get started to set up the lobby!\
 In this section, we will setup our made lobby.
 
-## 🛠 Downloading the repository and loading the lobby 🛠
+## 🛠 Downloading the repository and loading the lobby
 
 You need to download this repository. If you are experienced with Git, you will need to clone this and its submodules.
 
@@ -22,7 +22,7 @@ git clone --recurse-submodules https://github.com/panqkart/panqkart
 If you don't know anything about Git, you can download PanqKart via the [ContentDB](https://content.minetest.net/packages/Panquesito7/panqkart/) on the\
 web or directly in Minetest, which results in much easier and clones all submodules automatically.
 
-## 🌎 Installing WorldEdit in Minetest 🌎
+## 🌎 Installing WorldEdit in Minetest
 
 You will need to install the [`WorldEdit`](https://github.com/Uberi/Minetest-WorldEdit) mod to add the lobby and the level.
 
@@ -45,7 +45,7 @@ If you already selected the area (we recommend placing position 1 and position 2
 Now that you're on that page, click on `Save/Load`. It will ask you the name of the file you want to load. `lobby.we` is the name we will load. Once you click on `Load`, boom! The lobby will be there now. 🎉<br>
 You will have to do some minor changes in order to make the lobby work properly. We will help you do it in the guide below.
 
-## Configuring the spawnpoint
+## 🗺 Configuring the spawnpoint
 
 There's a spawn node defined by `special_nodes` used to define the spawnpoint when you place it or either when it's loaded ([LBM](https://github.com/minetest/minetest/blob/master/doc/lua_api.txt#L7937)).\
 **Do not attempt to place two or more of this node, as the system will get confused with two spawnpoints.**
@@ -68,7 +68,7 @@ _Please note that once you change the spawnpoint position, the spawnpoint node p
 You're done now! The lobby is now set up 🎉 You can now play on LAN, add new features, or just try it out for yourself!\
 If you have any more questions or need any more help, feel free to reach us at `halfpacho@gmail.com` or in our [Discord community](https://discord.gg/HEweZuF3Vv).
 
-## 🏞 Setting up the level 🏞
+## 🏞 Setting up the level
 
 Once you have the lobby, you will need to setup the level to play, otherwise, it'd be just boring without playing.\
 So below here, we will explain how to add the level to your map!
