@@ -107,6 +107,28 @@ if minetest.get_modpath("wool") then
 	})
 end
 
+-- In case the user doesn't install the `mobs` mod, make an alias for the fence node.
+-- Start: code taken from https://notabug.org/TenPlus1/mobs_redo/src/master/crafts.lua#L157-L171
+if not minetest.get_modpath("mobs") then
+	default.register_fence("special_nodes:fence_wood", {
+		description = S("Mob Fence"),
+		texture = "default_wood.png",
+		material = "default:fence_wood",
+		groups = {choppy = 2, oddly_breakable_by_hand = 2, flammable = 2},
+		sounds = minetest.get_modpath("default") and default.node_sound_wood_defaults(),
+		collision_box = {
+			type = "fixed",
+			fixed = {
+				{-0.5, -0.5, -0.5, 0.5, 1.9, 0.5},
+			}
+		}
+	})
+	-- End: code taken from the `mobs_redo` mod
+	minetest.register_alias("mobs:fence_wood", "special_nodes:fence_wood")
+else
+	minetest.register_alias("special_nodes:fence_wood", "mobs:fence_wood")
+end
+
 -- NOTES AND TO-DO'S:
 -- 1. If the 1st block is being placed, insert it at the first line and so on with the other blocks.
 -- 2. When deleting a block and adding the same block again, place it in the exact same line it was.

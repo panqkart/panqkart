@@ -55,3 +55,6 @@
 [submodule "mods/abripanes"]
 	path = mods/abripanes
 	url = https://github.com/panqkart/abripanes
+[submodule "mods/Minetest-WorldEdit"]
+	path = mods/Minetest-WorldEdit
+	url = https://github.com/Uberi/Minetest-WorldEdit

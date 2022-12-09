@@ -70,3 +70,13 @@ minetest.register_on_newplayer(function(player)
     end
     modstorage:set_string("schematic", "false")
 end)
+
+minetest.register_on_joinplayer(function(_)
+    -- At the point of fixing the lights, it might get bugged if Minetest shows the password field.
+    if modstorage:get_string("schematic") == "false" then
+        local lobby_count = worldedit.fixlight({x = 5, y = 5, z = 105}, {x = 92, y = 37, z = 0})
+        local level_count = worldedit.fixlight({x = 0, y = 325, z = 0}, {x = 187, y = 300, z = 317})
+
+        minetest.log("action", "[PANQKART] " .. level_count .. " nodes were light-fixed in the level, " .. lobby_count .. " nodes were light-fixed in the lobby.")
+    end
+end)
