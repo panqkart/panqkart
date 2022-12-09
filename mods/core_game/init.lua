@@ -22,12 +22,22 @@ USA
 
 core_game = { }
 
-if tonumber(minetest.settings:get("minimum_required_players")) == nil then
-	minetest.settings:set("minimum_required_players", 4) -- SET MINIMUM REQUIRED PLAYERS FOR A RACE
-elseif tonumber(minetest.settings:get("minimum_required_players")) > 12 then
-	error("The minimum required players cannot be over 12 players. Please specify a number between 1-12. Contact us if you need any help.", 1)
+if minetest.settings:get_bool("manual_setup") == true and not minetest.settings:get_bool("manual_setup") == nil then
+	minetest.log("info", "[PANQKART] Manual setup is enabled. Schematics will not be placed on startup.")
+elseif minetest.settings:get_bool("manual_setup") ~= true or minetest.settings:get_bool("manual_setup") == nil then
+	dofile(minetest.get_modpath("core_game") .. "/schematics.lua") -- The schematics will be placed on startup
 end
 
+local minimum_required_players = minetest.settings:get("minimum_required_players")
+if tonumber(minimum_required_players) == nil then
+	minetest.settings:set("minimum_required_players", 4) -- SET MINIMUM REQUIRED PLAYERS FOR A RACE
+end
+
+-- Assertion/security checks
+assert(
+	tonumber(minimum_required_players) < 12,
+	"The minimum required players cannot be over 12 players. Please specify a number between 1-12. Contact us if you need any help."
+)
 assert(
 	minetest.get_mapgen_setting("mg_name") == "singlenode",
 	"In order to play PanqKart, you must set your mapgen to 'singlenode'. If you need any help, don't hesitate to contact us via our Discord."
@@ -47,22 +57,29 @@ if minetest.setting_get_pos("lobby_position") then
     core_game.position = minetest.setting_get_pos("lobby_position")
 end
 
-minetest.register_lbm({
-	label = "Lobby/spawn node position",
-	name = "core_game:lobby_position",
+if minetest.get_modpath("special_nodes") then
+	minetest.register_lbm({
+		label = "Lobby/spawn node position",
+		name = "core_game:lobby_position",
 
-	nodenames = {"special_nodes:spawn_node"},
-	run_at_every_load = true,
+		nodenames = {"special_nodes:spawn_node"},
+		run_at_every_load = true,
 
-	action = function(pos, node)
-		if minetest.setting_get_pos("lobby_position") then return end -- If there's already another position, do not overwrite.
+		action = function(pos, node)
+			core_game.position = pos
+			minetest.settings:set("lobby_position", minetest.pos_to_string(pos)) -- DEPRECATED. Will be removed in future versions.
 
-		core_game.position = pos
-		minetest.settings:set("lobby_position", minetest.pos_to_string(pos))
-	end,
-})
-
--- TODO: load the lobby/level on the first initialization
+			-- Save lobby position to file. World-exclusive which won't affect other worlds.
+			local file,err = io.open(minetest.get_worldpath() .. "/lobby_position.txt", "w+")
+			if file then
+				file:write(tostring(pos))
+				file:close()
+			else
+				minetest.log("error", "[PANQKART] Error while saving lobby position: " .. err)
+			end
+		end,
+	})
+end
 
 ------------------
 -- Privileges --
@@ -139,27 +156,32 @@ core_game.player_count = 0 -- Player count in a race. This is decreased if a pla
 core_game.players_that_won = {} -- An array to save all the players who won, in their respective place.
 core_game.show_leaderboard = false -- Utility boolean to show the leaderboard at the end of the race.
 
+core_game.ran_once = {} -- Utility array to make sure the player hasn't stood on the start race block more than once.
+core_game.pregame_started = false -- The variable's name says it all. :)
+
 local run_once = {} -- An array to ensure a player hasn't run more than one time the select car formspec.
-					-- This comes hin andy to not run this in the globalstep function.
+					-- This comes handy to not run this in the globalstep function.
 local use_hovercraft = {} -- An array to save the players who chose to use the Hovercraft.
 local use_car01 = {} -- An array to save the players who chose to use CAR01.
-core_game.ran_once = {} -- Utility array to make sure the player hasn't stood on the start race block more than once.
-
-core_game.pregame_started = false -- The variable's name says it all. :)
 local pregame_count = 20 -- A variable to save the pregame countdown. This can be customized to any number.
 local already_ran = false -- A variable to make sure if the pregame countdown has been already run.
 local pregame_count_ended = false -- A variable to remove the pregame countdown HUD for those who weren't the first to run the countdown.
 
 local racecount_check = {} -- An array used to store the value if a player's countdown already started.
 local max_racecount = 130 -- Maximum value for the race count (default 130)
+local ended_race = {} -- This array is useful when:
+					  -- 1. A player joins a race. The minimum player count requirement is not satisifed.
+					  -- 2. Another player joins the race. The count is now satisfied.
+					  -- 3. The race lasts less than 90 seconds, which is the limit to teleport a player back to the lobby if they're waiting for more players to join.
+					  -- 4. This variable prevents the player being teleported back to the lobby even if they're not in a race and if it ended.
 
 ----------------
 -- Commands --
 ----------------
 
-minetest.register_chatcommand("change_position", {
+--[[minetest.register_chatcommand("change_position", {
 	params = "<x y z>",
-	description = S("Change lobby's position"),
+	description = S("Change the lobby's position"),
     privs = {
         core_admin = true,
     },
@@ -169,13 +191,13 @@ minetest.register_chatcommand("change_position", {
 		p.x, p.y, p.z = param:match("^([%d.-]+)[, ] *([%d.-]+)[, ] *([%d.-]+)$")
 		p = vector.apply(p, tonumber)
 		if not p.x and not p.y and not p.z then
-			return false, S("Wrong usage of command. Use <x y z>")
+			return false, S("Wrong usage of the command. Use <x y z>")
 		end
 		-- End: code taken from Minetest builtin teleport command
 		core_game.position = {x = p.x, y = p.y, z = p.z}
 		return true, S("Changed lobby's position to: <@1>", param)
     end,
-})
+})--]]
 
 if minetest.get_modpath("car_shop") then
 	-- Reset coins command
@@ -252,9 +274,7 @@ if minetest.get_modpath("car_shop") then
 			local car01_speed = minetest.deserialize(meta:get_string("speed"))
 			local hover_speed = minetest.deserialize(meta:get_string("hover_speed"))
 
-			if not car01_speed and not hover_speed then
-				return false, S("Player @1 doesn't have any updates yet.", param)
-			elseif car01_speed then
+			if car01_speed and hover_speed then
 				car01_speed.reverse_speed = vehicle_mash.car01_def.max_speed_reverse
 				car01_speed.forward_speed = vehicle_mash.car01_def.max_speed_forward
 				car01_speed.turn_speed = vehicle_mash.car01_def.turn_speed
@@ -263,7 +283,7 @@ if minetest.get_modpath("car_shop") then
 				meta:set_string("speed", "")
 
 				minetest.chat_send_player(name, S("Successfully set CAR01 reverse/forward speed to default to @1.", param))
-			elseif hover_speed then
+
 				hover_speed.reverse_speed = vehicle_mash.hover_def.max_speed_reverse
 				hover_speed.forward_speed = vehicle_mash.hover_def.max_speed_forward
 				hover_speed.turn_speed = vehicle_mash.hover_def.turn_speed
@@ -272,6 +292,8 @@ if minetest.get_modpath("car_shop") then
 				meta:set_string("hover_speed", "")
 
 				minetest.chat_send_player(name, S("Successfully set Hovercraft reverse/forward speed to default to @1.", param))
+			else
+				return false, S("Player @1 doesn't have any updates yet.", param)
 			end
 		end,
 	})
@@ -525,7 +547,6 @@ local function start(player)
 	-- End: cleanup race count and ending booleans
 
 	minetest.chat_send_player(player:get_player_name(), S("The race will start in a few seconds. Please wait..."))
-	minetest.chat_send_player(player:get_player_name(), S("You might not be able to move. Meanwhile, wait until " .. tonumber(minetest.settings:get("minimum_required_players")) .. " more players join."))
 
 	-- Remove nametag
 	player:set_nametag_attributes({
@@ -558,7 +579,7 @@ end
 -- No player parameter included; this is ran for all players who are on a race.
 --- @returns void
 local function race_end()
-	for i,name in pairs(core_game.players_on_race) do
+	for _,name in pairs(core_game.players_on_race) do
 		if not core_game.is_end[name] == true then
 			minetest.chat_send_player(name:get_player_name(), S("You lost the race for ending out of time."))
 		end
@@ -585,6 +606,13 @@ local function race_end()
 				color = {r = 255, g = 255, b = 0},
 				bgcolor = false
 			})
+		elseif minetest.check_player_privs(name, { builder = true }) then
+			if not minetest.get_modpath("panqkart_modifications") then return end
+			name:set_nametag_attributes({
+				text = "[BUILDER] " .. name:get_player_name(),
+				color = {r = 0, g = 196, b = 0},
+				bgcolor = false
+			})
 		else
 			name:set_nametag_attributes({
 				text = name:get_player_name(),
@@ -592,8 +620,8 @@ local function race_end()
 				bgcolor = false
 			})
 		end
-		if i == #core_game.players_on_race then -- Reset variables once the code runs for the last player
-			minetest.after(0, function()
+		if next(core_game.players_on_race,_) == nil then
+			minetest.after(0.1, function()
 				core_game.player_count = 0
 				core_game.players_on_race = {}
 
@@ -611,21 +639,46 @@ end
 -- Minetest `on_register` and miscellaneous callbacks
 ------------------------------------------------------
 
-minetest.register_on_joinplayer(function(player)
-	-- Set shadow intensity
-	player:set_lighting({ shadows = { intensity = 0.33 } })
+--- @brief The core function to initialize the spawnpoint
+--- and place the player on the spawnpoint.
+--- @details The function will check for:
+--- 1. A world-exclusive file that saves the lobby position.
+--- 2. A value in the Minetest settings (DEPRECATED)
+--- 3. Global variable that was updated each time the `spawn_node` node was detected (DEPRECATED).
+--- If none of these are found/valid, it will use a fallback position, or the current player's position.
+--- @param player table the player that will be teleported to the lobby
+--- @param time number the time in seconds that the player will be teleported to the lobby
+--- @return void
+function core_game.spawn_initialize(player, time)
+	minetest.after(time, function()
+		local position, value
 
-	minetest.after(0.2, function()
-		local position
+		-- Read spawnpoint from file. World-exclusive which won't affect other worlds.
+		local file,err = io.open(minetest.get_worldpath() .. "/lobby_position.txt", "r")
+		if file then
+			value = tostring(file:read("*a"))
+			file:close()
+		else
+			minetest.log("error", "[PANQKART] Error while loading lobby position: " .. err .. ". Deprecated/fallback settings will be used.")
+		end
 
-		if not minetest.setting_get_pos("lobby_position") and not core_game.position.x then -- Both setting/variable are nil
-			position = player:get_pos() 													-- To prevent crashes
-		elseif minetest.setting_get_pos("lobby_position") and not core_game.position.x then -- Setting is there, however, variable isn't
-			position = minetest.setting_get_pos("lobby_position")
-		elseif core_game.position.x then													-- Position is set in the variable
-			position = core_game.position
-		else																				-- Fallback
+		-- DEPRECATED CALLBACKS. Will be removed in future versions.
+		if not minetest.string_to_pos(value) then
+			if not minetest.setting_get_pos("lobby_position") and not core_game.position.x then -- Both setting/variable are nil
+				position = player:get_pos()														-- To prevent crashes
+			elseif minetest.setting_get_pos("lobby_position") and not core_game.position.x then -- Setting is there, however, variable isn't
+				position = minetest.setting_get_pos("lobby_position")
+			elseif core_game.position.x then													-- Position is set in the variable
+				position = core_game.position
+			else																				-- Fallback
+				position = player:get_pos()
+				minetest.log("warning", "[PANQKART] No spawnpoint found. Using fallback position/settings.")
+			end
+		elseif minetest.string_to_pos(value) then 												-- Position is set in the file
+			position = minetest.string_to_pos(value)
+		else																				    -- Fallback (2nd check)
 			position = player:get_pos()
+			minetest.log("warning", "[PANQKART] No spawnpoint found. Using fallback position/settings.")
 		end
 		local meta = minetest.get_meta(position)
 
@@ -641,6 +694,11 @@ minetest.register_on_joinplayer(function(player)
 		end
 	end)
 	minetest.log("action", "[PANQKART] Player " .. player:get_player_name() .. " joined and was teleported to the lobby successfully.")
+end
+
+minetest.register_on_joinplayer(function(player)
+	player:set_lighting({ shadows = { intensity = 0.33 } })
+	core_game.spawn_initialize(player, 0.2)
 
 	-- VIP/Premium users
 	if minetest.get_modpath("premium") and minetest.check_player_privs(player, { has_premium = true } ) then
@@ -668,7 +726,7 @@ minetest.register_on_respawnplayer(function(player)
 end)
 
 minetest.register_on_newplayer(function(player)
-	minetest.chat_send_all(S("@1 just joined! Give them a warm welcome to our community!", player:get_player_name()))
+	minetest.chat_send_all(S("@1 just joined PanqKart. Give them a warm welcome to our community!", player:get_player_name()))
 end)
 
 minetest.register_on_leaveplayer(function(player)
@@ -861,8 +919,7 @@ elseif core_game.player_count == 12 then
 		"," .. "12th 					" .. core_game.players_that_won[11]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[11]] .. " seconds;1]",
     }
 else
-	print("[PANQKART] Failed to show leaderboard")
-	minetest.log("error", "[PANQKART] Failed to show leaderboard")
+	minetest.log("error", "[PANQKART] Failed to show player leaderboard.")
 end
 
     -- table.concat is faster than string concatenation - `..`
@@ -881,7 +938,7 @@ function core_game.ask_vehicle(name)
         "size[7,3.75]",
         "label[0.5,0.5;", minetest.formspec_escape(text), "]",
         "button_exit[0.3,2.3;3,0.8;use_hovercraft;Hovercraft]",
-		"button_exit[3.8,2.3;3,0.8;use_car;Car01]"
+		"button_exit[3.8,2.3;3,0.8;use_car;CAR01]"
     }
 
     -- table.concat is faster than string concatenation - `..`
@@ -923,6 +980,13 @@ function core_game.player_lost(player)
 		player:set_nametag_attributes({
 			text = "[VIP] " .. player:get_player_name(),
 			color = {r = 255, g = 255, b = 0},
+			bgcolor = false
+		})
+	elseif minetest.check_player_privs(player, { builder = true }) then
+		if not minetest.get_modpath("panqkart_modifications") then return end
+		player:set_nametag_attributes({
+			text = "[BUILDER] " .. player:get_player_name(),
+			color = {r = 0, g = 255, b = 0},
 			bgcolor = false
 		})
 	else
@@ -973,6 +1037,22 @@ function core_game.random_car(player, use_message)
 
 	local pos = player:get_pos()
 
+	local meta = player:get_meta()
+	local data = minetest.deserialize(meta:get_string("hovercraft_bought"))
+
+	if not data then
+		if use_message == true then
+			minetest.chat_send_player(pname, S("You will use CAR01 in the next race."))
+		end
+		minetest.after(0.1, function()
+			local obj = minetest.add_entity(pos, "vehicle_mash:car_black", nil)
+			if obj then
+				lib_mount.attach(obj:get_luaentity(), player, false, 0)
+			end
+		end)
+		return -- Do not run code below
+	end
+
 	if random_value == 1 then
 		if use_message == true then
 			minetest.chat_send_player(pname, S("You will use CAR01 in the next race."))
@@ -991,7 +1071,9 @@ function core_game.random_car(player, use_message)
 
 		minetest.after(0.1, function()
 			local obj = minetest.add_entity(pos, "vehicle_mash:hover_blue", nil)
-			lib_mount.attach(obj:get_luaentity(), player, false, 0)
+			if obj then
+				lib_mount.attach(obj:get_luaentity(), player, false, 0)
+			end
 		end)
 	end
 end
@@ -1031,7 +1113,6 @@ minetest.register_globalstep(function(dtime)
 				jump = 1, -- Set jump back to normal
 			})
 
-			-- Still testing. May contain bugs.
 			local attached_to = name:get_attach()
 			if not attached_to then
 				local pos = name:get_pos()
@@ -1124,7 +1205,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local pos = player:get_pos()
 
 	if fields.use_hovercraft then
-		minetest.chat_send_player(pname, S("You will use Hovercraft in the next race."))
+		minetest.chat_send_player(pname, S("You will use the Hovercraft in the next race."))
 
 		minetest.after(0.1, function()
 			local obj = minetest.add_entity(pos, "vehicle_mash:hover_blue", nil)
@@ -1169,21 +1250,28 @@ function core_game.start_game(player)
 		core_game.player_count = core_game.player_count + 1
 	end
 
-	if core_game.player_count < tonumber(minetest.settings:get("minimum_required_players")) then
+	local required_players = tonumber(minetest.settings:get("minimum_required_players"))
+
+	if core_game.player_count < required_players then
+		if core_game.player_count < required_players and minetest:is_singleplayer() == false then
+			minetest.chat_send_player(player:get_player_name(),
+				S("You might not be able to move. Meanwhile, wait until @1 more player(s) join.", required_players - core_game.player_count))
+		end
+
 		hud_fs.show_hud(player, "core_game:waiting_for_players", {
 			{type = "size", w = 40, h = 0.5},
 			{type = "position", x = 0.9, y = 0.9},
 			{
 				type = "label", x = 0, y = 0,
-				label = S("Waiting for players (@1 required)...", tonumber(minetest.settings:get("minimum_required_players")))
+				label = S("Waiting for players (@1 required)...", required_players)
 			}
 		})
 		core_game.is_waiting[player] = player
 		player:set_physics_override({speed = 0.001, jump = 0.01})
 
-		-- Teleport back to lobby if no players join in the next half and a minute
+		-- Teleport back to lobby if no players join in the next half and a minute (90 seconds)
 		minetest.after(90, function()
-			if core_game.game_started or core_game.pregame_started or already_ran == true then return end
+			if core_game.game_started or core_game.pregame_started or already_ran == true or ended_race[player] ~= false then ended_race[player] = false return end
 
 			player:set_physics_override({speed = 1, jump = 1})
 			core_game.is_waiting[player] = nil
@@ -1194,10 +1282,11 @@ function core_game.start_game(player)
 			core_game.player_count = core_game.player_count - 1
 		end)
 		return
-	elseif core_game.player_count >= tonumber(minetest.settings:get("minimum_required_players")) then
+	elseif core_game.player_count >= required_players then
 		for _,name in pairs(core_game.is_waiting) do
 			start(name)
 			hud_fs.close_hud(name:get_player_name(), "core_game:waiting_for_players")
+			ended_race[name] = true
 		end
 	end
 	-- End: player count checks

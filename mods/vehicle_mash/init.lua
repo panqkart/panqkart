@@ -49,9 +49,9 @@ vehicle_mash.car01_def = {
 	terrain_type = 1,
 	max_speed_forward = 10,
 	max_speed_reverse = 7,
-	accel = 2.5, -- 1.75
+	accel = 3,
 	braking = 3,
-	turn_speed = 4, -- 3
+	turn_speed = 2.75,
 	stepheight = 1.1,
 	-- model specific stuff
 	visual = "mesh",
@@ -104,12 +104,12 @@ end
 -- create hovercraft common def
 vehicle_mash.hover_def = {
 	-- adjust to change how vehicle reacts while driving
-	terrain_type = 3,
-	max_speed_forward = 11.10,
-	max_speed_reverse = 5,
-	accel = 3, -- 2
+	terrain_type = 1,
+	max_speed_forward = 10.50,
+	max_speed_reverse = 4.5,
+	accel = 1.90,
 	braking = 2,
-	turn_speed = 3, -- 2.35
+	turn_speed = 2,
 	stepheight = 1.1,
 	-- model specific stuff
 	visual = "mesh",
