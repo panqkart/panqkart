@@ -271,7 +271,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		entity.passenger3 = nil
 	end
 
-    -- Add kilometres per-hour HUD.
+	-- Add kilometres per-hour HUD.
 	-- This HUD is removed on `lib_mount.detach`
 	if entity.driver then
 		hud_fs.show_hud(entity.driver, "lib_mount:speed", {
@@ -360,7 +360,25 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 					entity.object:set_yaw(entity.object:get_yaw()-get_sign(entity.v)*math.rad(1+dtime)*entity.turn_spd)
 				end
 			else
-				entity.object:set_yaw(entity.driver:get_look_horizontal() + math.rad(90))
+				-- Still WIP/testing. Contains a few bugs.
+				local yaw = entity.object:get_yaw()
+				local yaw_delta = entity.driver:get_look_horizontal() - yaw + math.rad(90)
+				if yaw_delta > math.pi then
+					yaw_delta = yaw_delta - math.pi *2
+				elseif yaw_delta < - math.pi then
+					yaw_delta = yaw_delta + math.pi* 2
+				end
+				local yaw_sign = get_sign(yaw_delta)
+				if yaw_sign == 0 then
+					yaw_sign = 1
+				end
+				yaw_delta = math.abs(yaw_delta)
+				if yaw_delta > math.pi / 2 then
+					yaw_delta = math.pi / 2
+				end
+				local yaw_speed = yaw_delta * entity.turn_spd
+				yaw_speed = yaw_speed * dtime
+				entity.object:set_yaw(yaw + yaw_sign*yaw_speed)
 			end
 		else
 			if ctrl.left then
