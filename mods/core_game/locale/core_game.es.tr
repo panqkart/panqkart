@@ -39,3 +39,6 @@ Successfully set Hovercraft reverse/forward speed to default to @1.=Las actualiz
 Resets all car upgrades (including Hovercraft) to the given player.=Quita todas las actualizaciones de carro possibles al dado jugador.
 Race count: @1=Tiempo actual: @1
 You might not be able to move. Meanwhile, wait until @1 more player(s) join.=En este momento, no te puedes mover. Mientras, espera a que @1 jugador(es) entre(n).
+Please wait while the schematics are being placed. It could take up to 15 minutes.=Por favor espere a que el nivel/lobby se pongan. Puede tardar hasta 15 minutos
+Do not pause if you're in singleplayer mode, otherwise, the schematics won't be placed.=No hagas pausa si estás en modo un jugador, de lo contrario, no se inicializara correctamente.
+Thank you for downloading PanqKart. Join our Discord server while you wait: https://discord.gg/HEweZuF3Vv=Gracias por descargar PanqKart. Únete a nuestro servidor de Discord mientras esperas: https://discord.gg/HEweZuF3Vv

@@ -21,15 +21,16 @@ USA
 --]]
 
 local modstorage = minetest.get_mod_storage()
+local S = minetest.get_translator(minetest.get_current_modname())
 
 minetest.register_on_newplayer(function(player)
     if modstorage:get_string("schematic") ~= "false" then
         -- In case the player isn't in {0,0,0}, teleport them there.
         player:set_pos({x = 0, y = 0, z = 0})
 
-        minetest.chat_send_player(player:get_player_name(), "Please wait while the schematics are being placed. It could take up to 15 minutes.")
-        minetest.chat_send_player(player:get_player_name(), "Do not pause if you're in singleplayer mode, otherwise, the schematics won't be placed.")
-        minetest.chat_send_player(player:get_player_name(), "\nThank you for downloading PanqKart. Join our Discord server while you wait: https://discord.gg/HEweZuF3Vv")
+        minetest.chat_send_player(player:get_player_name(), S("Please wait while the schematics are being placed. It could take up to 15 minutes."))
+        minetest.chat_send_player(player:get_player_name(), S("Do not pause if you're in singleplayer mode, otherwise, the schematics won't be placed."))
+        minetest.chat_send_player(player:get_player_name(), "\n" .. S("Thank you for downloading PanqKart. Join our Discord server while you wait: https://discord.gg/HEweZuF3Vv"))
 
         local value
         local pos = player:get_pos()
