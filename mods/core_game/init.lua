@@ -88,7 +88,7 @@ end
 --- @brief Give customized nametags for those
 --- who have the premium or core administrator role on grant/revoke.
 --- @param name string the player to update the nametag to
---- @returns void
+--- @returns nil
 function core_game.grant_revoke(name)
 	local player = minetest.get_player_by_name(name)
 	if not player then return end
@@ -168,7 +168,7 @@ local already_ran = false -- A variable to make sure if the pregame countdown ha
 local pregame_count_ended = false -- A variable to remove the pregame countdown HUD for those who weren't the first to run the countdown.
 
 local racecount_check = {} -- An array used to store the value if a player's countdown already started.
-local max_racecount = 130 -- Maximum value for the race count (default 130)
+local max_racecount = tonumber(minetest.settings:get("max_racecount")) or 130 -- Maximum value for the race count (default 130)
 local ended_race = {} -- This array is useful when:
 					  -- 1. A player joins a race. The minimum player count requirement is not satisifed.
 					  -- 2. Another player joins the race. The count is now satisfied.
@@ -195,7 +195,7 @@ local ended_race = {} -- This array is useful when:
 		end
 		-- End: code taken from Minetest builtin teleport command
 		core_game.position = {x = p.x, y = p.y, z = p.z}
-		return true, S("Changed lobby's position to: <@1>", param)
+		return true, S("Changed the lobby's position to: <@1>", param)
     end,
 })--]]
 
@@ -274,7 +274,9 @@ if minetest.get_modpath("car_shop") then
 			local car01_speed = minetest.deserialize(meta:get_string("speed"))
 			local hover_speed = minetest.deserialize(meta:get_string("hover_speed"))
 
-			if car01_speed and hover_speed then
+			if not car01_speed and not hover_speed then
+				return false, S("Player @1 doesn't have any updates yet.", param)
+			elseif car01_speed then
 				car01_speed.reverse_speed = vehicle_mash.car01_def.max_speed_reverse
 				car01_speed.forward_speed = vehicle_mash.car01_def.max_speed_forward
 				car01_speed.turn_speed = vehicle_mash.car01_def.turn_speed
@@ -283,7 +285,7 @@ if minetest.get_modpath("car_shop") then
 				meta:set_string("speed", "")
 
 				minetest.chat_send_player(name, S("Successfully set CAR01 reverse/forward speed to default to @1.", param))
-
+			elseif hover_speed then
 				hover_speed.reverse_speed = vehicle_mash.hover_def.max_speed_reverse
 				hover_speed.forward_speed = vehicle_mash.hover_def.max_speed_forward
 				hover_speed.turn_speed = vehicle_mash.hover_def.turn_speed
@@ -292,8 +294,6 @@ if minetest.get_modpath("car_shop") then
 				meta:set_string("hover_speed", "")
 
 				minetest.chat_send_player(name, S("Successfully set Hovercraft reverse/forward speed to default to @1.", param))
-			else
-				return false, S("Player @1 doesn't have any updates yet.", param)
 			end
 		end,
 	})
@@ -354,7 +354,7 @@ minetest.register_chatcommand("donate", {
 --- @brief Reset counters, variables, and savings
 --- from the current/previous race. This can prevent crashes/bugs.
 --- @param player string the player to reset the values to
---- @returns void
+--- @returns nil
 function core_game.reset_values(player)
 	if core_game.players_on_race[player] == player then
 		core_game.player_count = core_game.player_count - 1
@@ -374,7 +374,7 @@ end
 --- @brief Save the player in the players that won the race.
 --- This is used when the player ends out of the default time.
 --- @param player string the player that will be saved in the array
---- @returns void
+--- @returns nil
 local function player_count(player)
 	if lib_mount.win_count == 1 then
 		core_game.players_that_won[0] = player
@@ -421,7 +421,7 @@ end
 --- Start up race count and toggle `core_game.game_started` value to `true`.
 --- This function will also reproduce a sound on each number.
 --- @param player string the player that will receive the HUD
---- @returns void
+--- @returns nil
 local function hud_321(player)
 	if core_game.game_started == true or core_game.pregame_started == true then
 		minetest.chat_send_player(player:get_player_name(), S("There's a current race running. Please wait until it finishes."))
@@ -458,7 +458,8 @@ local function hud_321(player)
    end)
    -- 5
    minetest.after(3, function() player:hud_change(hud, "text", "core_game_go.png") for _,name in pairs(core_game.players_on_race) do minetest.sound_play("core_game.race_go", {to_player = name:get_player_name(), gain = 1.0})
-   end core_game.game_started = true end)
+end core_game.game_started = true
+	end)
    -- 7
    minetest.after(5, function() player:hud_remove(hud) end)
 end
@@ -466,13 +467,13 @@ end
 --- @brief Start pregame countdown to the given player(s)
 --- @details This will start a countdown from 30 to 0. When it reaches 3,
 --- it will run the HUD function above for all the players that are waiting.
--- When it reaches 0, it will remove the HUD and will stop the countdown.
+--- When it reaches 0, it will remove the HUD and will stop the countdown.
 --- The countdown variable will decrease only when it is run once. This is to prevent more than 1 decrease per second.
 ---
 --- For all those who weren't the first player, it will just show the HUD when will the race start.
 --- After that, the HUD will be removed and the race will start for the waiting players.
 --- @param player string the player that will be used to start the countdown
---- @returns void
+--- @returns nil
 local function countDown(player)
     pregame_count = pregame_count - 1
 	for _,name in pairs(core_game.players_on_race) do
@@ -484,9 +485,9 @@ local function countDown(player)
 			pregame_count_ended = true
 		end
 	end
-    if pregame_count == 0 then
-        hud_fs.close_hud(player, "core_game:pregame_count")
-    else
+	if pregame_count == 0 then
+		hud_fs.close_hud(player, "core_game:pregame_count")
+	else
 		hud_fs.show_hud(player, "core_game:pregame_count", {
 			{type = "size", w = 40, h = 0.5},
 			{type = "position", x = 0.9, y = 0.9},
@@ -501,7 +502,7 @@ end
 
 --- @brief Run the countdown function above each second.
 --- @param player string the player that will be used to start the countdown
---- @returns void
+--- @returns nil
 local function startCountdown(player)
 	already_ran = true
     minetest.after(1, function() countDown(player) end)
@@ -512,9 +513,9 @@ end
 --- there's not a current racing running, otherwise, it will make a mess with the current race.
 --- @details We'll start up the pregame countdown as well before starting the race.
 --- If the pregame countdown has been run before, it will just show the HUD for the 2nd, 3rd, etc. players, to make sure
--- the variable isn't decreased more than one time per second. We'll remove the HUD if the current countdown has stopped, as we're using a loop.
+--- the variable isn't decreased more than one time per second. We'll remove the HUD if the current countdown has stopped, as we're using a loop.
 --- @param player string the player to be added into the race
---- @returns void
+--- @returns nil
 local function start(player)
 	core_game.players_on_race[player] = player
 	if core_game.game_started == true or core_game.pregame_started == true then
@@ -575,9 +576,9 @@ local function start(player)
 end
 
 --- @brief Function that contains the
--- code to successfully end a race at the given time.
--- No player parameter included; this is ran for all players who are on a race.
---- @returns void
+--- code to successfully end a race at the given time.
+--- No player parameter included; this is ran for all players who are on a race.
+--- @returns nil
 local function race_end()
 	for _,name in pairs(core_game.players_on_race) do
 		if not core_game.is_end[name] == true then
@@ -648,7 +649,7 @@ end
 --- If none of these are found/valid, it will use a fallback position, or the current player's position.
 --- @param player table the player that will be teleported to the lobby
 --- @param time number the time in seconds that the player will be teleported to the lobby
---- @return void
+--- @return nil
 function core_game.spawn_initialize(player, time)
 	minetest.after(time, function()
 		local position, value
@@ -919,7 +920,7 @@ elseif core_game.player_count == 12 then
 		"," .. "12th 					" .. core_game.players_that_won[11]:get_player_name() .. "												" .. core_game.count[core_game.players_that_won[11]] .. " seconds;1]",
     }
 else
-	minetest.log("error", "[PANQKART] Failed to show player leaderboard.")
+	minetest.log("error", "[PANQKART] Failed to show leaderboard. Contact the server administrator or report it on PanqKart's Discord server.")
 end
 
     -- table.concat is faster than string concatenation - `..`
@@ -929,7 +930,7 @@ end
 --- @brief Ask the user which vehicle they wanna use.
 --- This only applies when they have bought the Hovercraft.
 --- @param name string the player variable to use (in this case not being used)
---- @returns void
+--- @returns nil
 function core_game.ask_vehicle(name)
     local text = S("Which car/vehicle do you want to use?")
 
@@ -948,7 +949,7 @@ end
 --- @brief Show a HUD to the specified player
 --- that there's a current race running.
 --- @param player string the player to show the HUD to
---- @returns void
+--- @returns nil
 function core_game.waiting_to_end(player)
 	hud_fs.show_hud(player, "core_game:pending_race", {
 		{type = "size", w = 40, h = 0.5},
@@ -967,7 +968,7 @@ end
 --- teleport the user to the lobby after 3.5 seconds.
 --- NOTE: this is and should be used only when the user's the last player to win.
 --- @param player string the player that will be sent to the lobby
---- @returns void
+--- @returns nil
 function core_game.player_lost(player)
 	-- Set nametags once the race ends
 	if minetest.check_player_privs(player, { core_admin = true }) then
@@ -980,13 +981,6 @@ function core_game.player_lost(player)
 		player:set_nametag_attributes({
 			text = "[VIP] " .. player:get_player_name(),
 			color = {r = 255, g = 255, b = 0},
-			bgcolor = false
-		})
-	elseif minetest.check_player_privs(player, { builder = true }) then
-		if not minetest.get_modpath("panqkart_modifications") then return end
-		player:set_nametag_attributes({
-			text = "[BUILDER] " .. player:get_player_name(),
-			color = {r = 0, g = 255, b = 0},
 			bgcolor = false
 		})
 	else
@@ -1009,8 +1003,10 @@ function core_game.player_lost(player)
 		local entity = attached_to:get_luaentity()
 
 		if entity then
-			lib_mount.detach(player, {x=0, y=0, z=0})
-			entity.object:remove()
+			minetest.after(0.1, function()
+				lib_mount.detach(player, {x=0, y=0, z=0})
+				entity.object:remove()
+			end)
 		end
 	end
 	minetest.after(3.5, function()
@@ -1030,7 +1026,7 @@ end
 --- any car while the formspec was up and the game started.
 --- @param player string the player that will be attached to the random vehicle
 --- @param use_message boolean whether to notify the player or not
---- @returns void
+--- @returns nil
 function core_game.random_car(player, use_message)
 	local pname = player:get_player_name()
 	local random_value = math.random(1, 2)
@@ -1085,13 +1081,7 @@ minetest.register_globalstep(function(dtime)
 
 		if minetest.get_modpath("special_nodes") then
 			if node.name == "special_nodes:tp_lobby" then
-				local meta = minetest.get_meta(core_game.position)
-
-				if minetest.string_to_pos(meta:get_string("lobby_position")) then
-					player:set_pos(minetest.string_to_pos(meta:get_string("lobby_position")))
-				else
-					player:set_pos(core_game.position)
-				end
+				core_game.spawn_initialize(player, 0.1)
 			end
 		end
 	end
@@ -1114,7 +1104,7 @@ minetest.register_globalstep(function(dtime)
 			})
 
 			local attached_to = name:get_attach()
-			if not attached_to then
+			if not attached_to and not core_game.is_end[name] == true then
 				local pos = name:get_pos()
 
 				if use_hovercraft[name] == true then
@@ -1141,7 +1131,7 @@ minetest.register_globalstep(function(dtime)
 				race_end() -- Run function to end a race
 			end
 
-			if minetest.get_player_by_name(name:get_player_name()) and not core_game.is_end[name] == true then
+			if minetest.get_player_by_name(name) and not core_game.is_end[name] == true then
 				core_game.count[name] = core_game.count[name] + dtime
 			end
 
@@ -1205,7 +1195,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local pos = player:get_pos()
 
 	if fields.use_hovercraft then
-		minetest.chat_send_player(pname, S("You will use the Hovercraft in the next race."))
+		minetest.chat_send_player(pname, S("You will use Hovercraft in the next race."))
 
 		minetest.after(0.1, function()
 			local obj = minetest.add_entity(pos, "vehicle_mash:hover_blue", nil)
@@ -1239,7 +1229,7 @@ end)
 --- the minimum required players to join a race.
 --- Similar to the `start` local function above.
 --- @param player string the player that will be used to start the race
---- @returns void
+--- @returns nil
 function core_game.start_game(player)
 	-- Start: reset values in case something was stored
 	core_game.reset_values(player)
@@ -1254,8 +1244,7 @@ function core_game.start_game(player)
 
 	if core_game.player_count < required_players then
 		if core_game.player_count < required_players and minetest:is_singleplayer() == false then
-			minetest.chat_send_player(player:get_player_name(),
-				S("You might not be able to move. Meanwhile, wait until @1 more player(s) join.", required_players - core_game.player_count))
+			minetest.chat_send_player(player:get_player_name(), S("You might not be able to move. Meanwhile, wait until " .. required_players - core_game.player_count .. " more player(s) join."))
 		end
 
 		hud_fs.show_hud(player, "core_game:waiting_for_players", {
@@ -1271,7 +1260,7 @@ function core_game.start_game(player)
 
 		-- Teleport back to lobby if no players join in the next half and a minute (90 seconds)
 		minetest.after(90, function()
-			if core_game.game_started or core_game.pregame_started or already_ran == true or ended_race[player] ~= false then ended_race[player] = false return end
+			if core_game.game_started or core_game.pregame_started or already_ran == true or ended_race[player] == true then ended_race[player] = false return end
 
 			player:set_physics_override({speed = 1, jump = 1})
 			core_game.is_waiting[player] = nil
