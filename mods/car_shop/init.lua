@@ -83,7 +83,7 @@ end
 --- @brief Update CAR01's speed for the specified player
 --- @param player string the player that will receive the update
 --- @param fields table the provided formspec fields
---- @returns void
+--- @returns nil
 local function update_speed(player, fields)
 	local already_upgraded = false
 	local max_speed_forward, max_speed_reverse
@@ -132,7 +132,7 @@ end
 --- The player requires 5 gold coins for that. To obtain coins, you need to win a race.
 --- @param player string the player that will receive the Hovercraft
 --- @param fields table the provided formspec fields
---- @returns void
+--- @returns nil
 local function buy_hovercraft(player, fields)
 	local already_bought = false
 
@@ -169,7 +169,7 @@ end
 --- @brief Update Hovercraft speed for the specified player
 --- @param player string the player that will receive the update
 --- @param fields table the provided formspec fields
---- @returns void
+--- @returns nil
 local function update_hover(player, fields)
 	local max_speed_forward, max_speed_reverse
 
