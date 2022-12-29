@@ -58,3 +58,6 @@
 [submodule "mods/Minetest-WorldEdit"]
 	path = mods/Minetest-WorldEdit
 	url = https://github.com/Uberi/Minetest-WorldEdit
+[submodule "mods/streets"]
+	path = mods/streets
+	url = https://github.com/minetest-mods/streets
