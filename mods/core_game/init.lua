@@ -1131,7 +1131,7 @@ minetest.register_globalstep(function(dtime)
 				race_end() -- Run function to end a race
 			end
 
-			if minetest.get_player_by_name(name) and not core_game.is_end[name] == true then
+			if minetest.get_player_by_name(name:get_player_name()) and not core_game.is_end[name] == true then
 				core_game.count[name] = core_game.count[name] + dtime
 			end
 
