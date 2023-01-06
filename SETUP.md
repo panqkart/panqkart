@@ -1,6 +1,6 @@
 # 🏰 Setting up the lobby/game
 
-### ❗ This is no longer required as of [v0.2.0](https://github.com/panqkart/panqkart/releases/v0.2.0 if `manual_setup` is disabled in the Minetest settings ❗
+### ❗ This is no longer required as of [v0.2.0](https://github.com/panqkart/panqkart/releases/v0.2.0) if `manual_setup` is disabled in the Minetest settings ❗
 
 We've made a lobby for players to hang out, have fun, search for prizes, and so much more.\
 You can, later on, join a race from a special part of the lobby if you want to play!
