@@ -25,9 +25,11 @@ You can download the Git software on this website: <https://git-scm.com>
 git clone --recurse-submodules https://github.com/panqkart/panqkart
 ```
 
-**Please check [`SETUP.md`](https://github.com/panqkart/panqkart/blob/main/SETUP.md) for how to setup the lobby/game.**
+**If you're downloading through ContentDB, there's no need for this command.¨¨
 
 ## 🏁 Making your own maps 🏁
+
+### ❕ A new guide will be created soon as well as a multiple-map system.
 
 If you want to make a new level/map for our game (or just for yourself), that's amazing! We have basic tools list below to get you started.\
 In the future, we will add multiple maps which will playable! Thank you for your interest in adding back to our community.
