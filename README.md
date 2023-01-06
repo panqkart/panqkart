@@ -25,7 +25,7 @@ You can download the Git software on this website: <https://git-scm.com>
 git clone --recurse-submodules https://github.com/panqkart/panqkart
 ```
 
-**If you're downloading through ContentDB, there's no need for this command.¨¨
+**If you're downloading through ContentDB, there's no need for this command.**
 
 ## 🏁 Making your own maps 🏁
 
