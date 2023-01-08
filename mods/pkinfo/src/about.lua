@@ -1,5 +1,5 @@
 local S = pkinfo.S
-local _about = { }
+local _about = { } -- luacheck: ignore
 
 local about = {
 	S("Anything that makes you feel uncomfortable, any changes you want to be made,") .. S("bugs, etc., just report it to us, and we will help you ASAP."),

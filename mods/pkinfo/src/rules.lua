@@ -1,5 +1,5 @@
 local S = pkinfo.S
-local _rules = { }
+local _rules = { } -- luacheck: ignore
 
 local rules = {
     S("1. No swearing and dating. We do not allow any kind of bad") .. S("words or stuff like pretending to be 'best friends'."),
