@@ -1,12 +1,15 @@
-local init = minetest.get_us_time()
-local lane = minetest.get_modpath('pkinfo')
+pkinfo = {
+    S = minetest.get_translator(minetest.get_current_modname()),
+}
+
+local time_init = minetest.get_us_time()
+local modpath = minetest.get_modpath("pkinfo")
 
 -- Rules --
-dofile(lane.."/src/rules.lua")
+dofile(modpath .. "/src/rules.lua")
 
 -- About --
-dofile(lane.."/src/about.lua")
+dofile(modpath .. "/src/about.lua")
 
-local done = (minetest.get_us_time() - init) / 1000000
-
-print('[PK Information Mod] loaded.. [' .. done .. 's]')
+local done = (minetest.get_us_time() - time_init) / 1000000
+minetest.log("info", "[PK Information Mod] loaded [" .. done .. "s]")

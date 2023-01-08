@@ -21,4 +21,4 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 DEALINGS IN THE SOFTWARE.
 
 For more details:
-https://opensource.org/licenses/MIT
+<https://opensource.org/licenses/MIT>
