@@ -1040,12 +1040,10 @@ function core_game.random_car(player, use_message)
 		if use_message == true then
 			minetest.chat_send_player(pname, S("You will use CAR01 in the next race."))
 		end
-		minetest.after(0.1, function()
-			local obj = minetest.add_entity(pos, "vehicle_mash:car_black", nil)
-			if obj then
-				lib_mount.attach(obj:get_luaentity(), player, false, 0)
-			end
-		end)
+		local obj = minetest.add_entity(pos, "vehicle_mash:car_black", nil)
+		if obj then
+			lib_mount.attach(obj:get_luaentity(), player, false, 0)
+		end
 		return -- Do not run code below
 	end
 
@@ -1054,23 +1052,19 @@ function core_game.random_car(player, use_message)
 			minetest.chat_send_player(pname, S("You will use CAR01 in the next race."))
 		end
 
-		minetest.after(0.1, function()
-			local obj = minetest.add_entity(pos, "vehicle_mash:car_black", nil)
-			if obj then
-				lib_mount.attach(obj:get_luaentity(), player, false, 0)
-			end
-		end)
+		local obj = minetest.add_entity(pos, "vehicle_mash:car_black", nil)
+		if obj then
+			lib_mount.attach(obj:get_luaentity(), player, false, 0)
+		end
 	elseif random_value == 2 then
 		if use_message == true then
 			minetest.chat_send_player(pname, S("You will use the Hovercraft in the next race."))
 		end
 
-		minetest.after(0.1, function()
-			local obj = minetest.add_entity(pos, "vehicle_mash:hover_blue", nil)
-			if obj then
-				lib_mount.attach(obj:get_luaentity(), player, false, 0)
-			end
-		end)
+		local obj = minetest.add_entity(pos, "vehicle_mash:hover_blue", nil)
+		if obj then
+			lib_mount.attach(obj:get_luaentity(), player, false, 0)
+		end
 	end
 end
 
