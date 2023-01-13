@@ -2,13 +2,13 @@ local S = pkinfo.S
 local _about = { } -- luacheck: ignore
 
 local about = {
-	S("Anything that makes you feel uncomfortable, any changes you want to be made,") .. S("bugs, etc., just report it to us, and we will help you ASAP."),
-	S("This game was developed by David Leal (Panquesito7), Crystal741,") .. S("Pixel852, among other Minetest contributors/developers."),
-	S("Thanks to everyone else who has") .. S("contributed to this game! It's very appreciated."),
-	S("These rules might change in the future, without any later notice or")  .. S("announcement. We suggest you stay up-to-date with the rules being changed."),
-    S("Big changes in the rules will be announced in our") .. S("Discord server. Stay tuned for any new updates."),
-	S("Like our game? Donate so we can keep the doing more for") .. S("you and this game! https://github.com/sponsors/Panquesito7"),
-	S("Join our Discord community to stay tuned about new updates, chat with our community,") .. S("share your maps, races, and so much more."),
+	S("Anything that makes you feel uncomfortable, any changes you want to be made,") .. " " .. S("bugs, etc., just report it to us, and we will help you ASAP."),
+	S("This game was developed by David Leal (Panquesito7), Crystal741,") .. " " .. S("Pixel852, among other Minetest contributors/developers."),
+	S("Thanks to everyone else who has") .. " " .. S("contributed to this game! It's very appreciated."),
+	S("These rules might change in the future, without any later notice or")  .. " " .. S("announcement. We suggest you stay up-to-date with the rules being changed."),
+    S("Big changes in the rules will be announced in our") .. " " .. S("Discord server. Stay tuned for any new updates."),
+	S("Like our game? Donate so we can keep doing more for") .. " " .. S("you and this game! https://github.com/sponsors/Panquesito7"),
+	S("Join our Discord community to stay tuned about new updates, chat with our community,") .. " " .. S("share your maps, races, and so much more."),
     S("We hope to see you there! https://discord.gg/HEweZuF3Vv")
 }
 
