@@ -1,0 +1,17 @@
+# textdomain: pk_premium
+
+The user has premium features. See /donate for more information.=
+Teleport (the given player) to the premium/VIP house.=
+You don't have sufficient permissions to run this command. Missing privileges: has_premium=
+Successfully teleported to the premium/VIP house.=
+You don't have sufficient permissions to run this command. Missing privileges: core_admin=
+Successfully teleported @1 to the premium/VIP house.=
+Player @1 does not exist or is not online.=
+Give VIP nametag to the given player.=
+Invalid player name. See /help vip_nametag=
+Successfully set VIP nametag for player @1.=
+Change the premium's house location.=
+Successfully set the premium house location to your current position.=
+Successfully changed premium's house location to <@1>=
+Wrong usage of command. Use <x y z>=
+Player @1 does not exist, not online, or the specified position is invalid.=

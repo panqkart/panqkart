@@ -1,0 +1,9 @@
+{
+    "Lua.diagnostics.globals": [
+        "minetest",
+        "hud_fs",
+        "vector",
+        "core_game",
+        "core"
+    ]
+}

@@ -1,0 +1,51 @@
+# Normal settings
+
+vehicle_mash.enable_crafts (Allows crafting vehicles) bool true
+
+#	When enabled, all vehicles are disabled and this mod will be only
+#	used for API functions/purpose. Because this mod has very good API functions
+#	for registering vehicles, somebody may use this option in their server.
+vehicle_mash.api_mode (Disables all vehicles and only enables API functions) bool false
+
+vehicle_mash.player_api_fix (Fix eyeheight when using cars) bool true
+
+# CAR01's cars
+
+vehicle_mash.enable_black_car (Enables black car) bool true
+vehicle_mash.enable_blue_car (Enables blue car) bool true
+vehicle_mash.enable_brown_car (Enables brown car) bool true
+vehicle_mash.enable_cyan_car (Enables cyan car) bool true
+vehicle_mash.enable_dark_green_car (Enables dark green car) bool true
+vehicle_mash.enable_dark_grey_car (Enables dark grey car) bool true
+vehicle_mash.enable_green_car (Enables green car) bool true
+vehicle_mash.enable_grey_car (Enables grey car) bool true
+vehicle_mash.enable_magenta_car (Enables magenta car) bool true
+vehicle_mash.enable_orange_car (Enables orange car) bool true
+vehicle_mash.enable_pink_car (Enables pink car) bool true
+vehicle_mash.enable_red_car (Enables red car) bool true
+vehicle_mash.enable_violet_car (Enables violet car) bool true
+vehicle_mash.enable_white_car (Enables white car) bool true
+vehicle_mash.enable_yellow_car (Enables yellow car) bool true
+vehicle_mash.enable_hot_rod_car (Enables hot rod car) bool true
+vehicle_mash.enable_nyan_ride_car (Enables nyan ride car) bool true
+vehicle_mash.enable_oerkki_bliss_car (Enables oerkki bliss car) bool true
+vehicle_mash.enable_road_master_car (Enables road master car) bool true
+
+# Mese cars
+
+vehicle_mash.enable_mese_blue_car (Enables Mese Blue car) bool true
+vehicle_mash.enable_mese_pink_car (Enables Mese Pink car) bool true
+vehicle_mash.enable_mese_purple_car (Enables Mese Purple car) bool true
+vehicle_mash.enable_mese_yellow_car (Enables Mese Yellow car) bool true
+
+# Boats
+
+vehicle_mash.enable_boat (Enables Vehicle Mash's boat) bool true
+vehicle_mash.enable_rowboat (Enables rowboat) bool true
+
+# Hovercraft
+
+vehicle_mash.enable_hover_blue (Enables blue hover) bool true
+vehicle_mash.enable_hover_green (Enables green hover) bool true
+vehicle_mash.enable_hover_red (Enables red hover) bool true
+vehicle_mash.enable_hover_yellow (Enables yellow hover) bool true
