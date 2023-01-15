@@ -27,7 +27,7 @@ minetest.register_on_joinplayer(function(player)
 	core_game.spawn_initialize(player, 0.2)
 
 	-- VIP/Premium users
-	if minetest.get_modpath("premium") and minetest.check_player_privs(player, { has_premium = true } ) then
+	if minetest.get_modpath("pk_premium") and minetest.check_player_privs(player, { has_premium = true } ) then
 		player:set_nametag_attributes({
 			text = "[VIP] " .. player:get_player_name(),
 			color = {r = 255, g = 255, b = 0},

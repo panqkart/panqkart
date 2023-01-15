@@ -18,16 +18,16 @@ end
 _about = table.concat(about, "\n")
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
-	if formname == "pkinfo:rules" then
+	if formname == "pk_info:rules" then
         if fields.about then
             local name = player:get_player_name()
-            minetest.show_formspec(name, "pkinfo:about",
+            minetest.show_formspec(name, "pk_info:about",
                 "size[16,6.3]" ..
                 "label[0,0;" .. minetest.colorize("#02a2f7", S("About")).."]"..
-                "background[0,0;16,0.6;pk_dark_bg.png]"..
+                "background[0,0;16,0.6;pk_info_dark_bg.png]"..
                 "label[0,0.8;" .. _about .. "]"..
-                "background[0,0.8;16,5;pk_background.png]"..
-                "image_button_exit[7,5.9;2,0.7;pk_dark_bg.png;close;" .. minetest.colorize("#02a2f7", S("Close")).."]"
+                "background[0,0.8;16,5;pk_info_background.png]"..
+                "image_button_exit[7,5.9;2,0.7;pk_info_dark_bg.png;close;" .. minetest.colorize("#02a2f7", S("Close")).."]"
             )
         end
     end

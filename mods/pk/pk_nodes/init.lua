@@ -471,6 +471,7 @@ minetest.register_node("pk_nodes:spawn_node", {
 	after_place_node = function(pos, placer, itemstack, pointed_thing)
 		local meta = minetest.get_meta(pos)
 
+		-- DEPRECATED. Will be removed in future versions.
 		minetest.settings:set("lobby_position", minetest.pos_to_string(pos)) -- Changed so we can access this value later.
 		meta:set_string("lobby_position", minetest.pos_to_string(pos))
 	end,

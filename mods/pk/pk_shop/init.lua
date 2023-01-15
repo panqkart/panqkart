@@ -34,7 +34,7 @@ local S = minetest.get_translator(modname)
 if minetest.settings:get_bool("enable_car_shop") == nil then
 	minetest.settings:set_bool("enable_car_shop", true) -- Enable car shop by default if no value initialized
 elseif minetest.settings:get_bool("enable_car_shop") == false then
-	minetest.log("action", "[RACING GAME] Car shop is disabled. Not initializing.")
+	minetest.log("action", "[PANQKART] Car shop is disabled. Not initializing.")
 	return
 end
 
@@ -52,8 +52,8 @@ local function confirm_upgrade(name, is_hover)
 			"size[7,4.5]",
 			"label[1.25,0.5;", minetest.formspec_escape(text), "]",
 			"label[1.25,2;", minetest.formspec_escape(text2), "]",
-			"button_exit[0.3,3.13;3,0.8;yes;Yes]",
-			"button_exit[3.8,3.13;3,0.8;no;No]"
+			"button_exit[0.3,3.13;3,0.8;yes;" .. S("Yes") .. "]",
+			"button_exit[3.8,3.13;3,0.8;no;" .. S("No") .. "]"
 		}
 	elseif is_hover == true then
 		text = S("Are you sure you want to\nupgrade your Hovercraft?")
@@ -214,7 +214,7 @@ local function update_hover(player, fields)
 end
 
 -- Create upgrade car form
-sfinv.register_page("car_shop:upgrade_car", {
+sfinv.register_page("pk_shop:upgrade_car", {
     title = "Buy/upgrade car",
     get = function(self, player, context)
 		local meta = player:get_meta()
@@ -337,7 +337,7 @@ sfinv.register_page("car_shop:upgrade_car", {
 			local coins = minetest.deserialize(meta:get_string("player_coins"))
 
 			if coins and coins.silver_coins >= 10 then--inv:contains_item("main", "maptools:silver_coin 10") then
-				minetest.show_formspec(player:get_player_name(), "car_shop:confirm_upgrade", confirm_upgrade(player, false))
+				minetest.show_formspec(player:get_player_name(), "pk_shop:confirm_upgrade", confirm_upgrade(player, false))
 			elseif coins and coins.silver_coins < 10 then
 				update_speed(player, fields)
 			end
@@ -347,11 +347,11 @@ sfinv.register_page("car_shop:upgrade_car", {
 			local coins = minetest.deserialize(meta:get_string("player_coins"))
 
 			if coins and coins.gold_coins >= 5 then--inv:contains_item("main", "maptools:gold_coin 5") then
-				minetest.show_formspec(player:get_player_name(), "car_shop:confirm_upgrade", confirm_upgrade(player, "buy"))
+				minetest.show_formspec(player:get_player_name(), "pk_shop:confirm_upgrade", confirm_upgrade(player, "buy"))
 			elseif coins and coins.gold_coins < 5 then
 				buy_hovercraft(player, fields)
 			end
-			minetest.log("action", "[CAR SHOP] Successfully bought Hovercraft car for player " .. player:get_player_name() .. "!")
+			minetest.log("action", "[PANQKART] Successfully bought Hovercraft car for player " .. player:get_player_name() .. "!")
 		elseif fields.hover_speed then
 			use_hover[player] = true
 
@@ -360,19 +360,19 @@ sfinv.register_page("car_shop:upgrade_car", {
 			local coins = minetest.deserialize(meta:get_string("player_coins"))
 
 			if coins and coins.silver_coins >= 10 then--inv:contains_item("main", "maptools:silver_coin 10") then
-				minetest.show_formspec(player:get_player_name(), "car_shop:confirm_upgrade", confirm_upgrade(player, true))
+				minetest.show_formspec(player:get_player_name(), "pk_shop:confirm_upgrade", confirm_upgrade(player, true))
 			elseif coins and coins.silver_coins < 10 then
 				update_hover(player, fields)
 			end
 
-			minetest.log("action", "[CAR SHOP] Successfully updated maximum speed forward (Hovercraft) for player " .. player:get_player_name() .. "!")
-			minetest.log("action", "[CAR SHOP] Successfully updated maximum speed reverse (Hovercraft) for player " .. player:get_player_name() .. "!")
+			minetest.log("action", "[PANQKART] Successfully updated maximum speed forward (Hovercraft) for player " .. player:get_player_name() .. "!")
+			minetest.log("action", "[PANQKART] Successfully updated maximum speed reverse (Hovercraft) for player " .. player:get_player_name() .. "!")
 		end
 	end,
 })
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
-    if formname ~= "car_shop:confirm_upgrade" then
+    if formname ~= "pk_shop:confirm_upgrade" then
         return
     end
 
@@ -380,19 +380,19 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		if use_hover[player] == true then
 			update_hover(player, fields)
 
-			minetest.log("action", "[CAR SHOP] Successfully updated maximum speed forward (Hovercraft) for player " .. player:get_player_name() .. "!")
-			minetest.log("action", "[CAR SHOP] Successfully updated maximum speed reverse (Hovercraft) for player " .. player:get_player_name() .. "!")
+			minetest.log("action", "[PANQKART] Successfully updated maximum speed forward (Hovercraft) for player " .. player:get_player_name() .. "!")
+			minetest.log("action", "[PANQKART] Successfully updated maximum speed reverse (Hovercraft) for player " .. player:get_player_name() .. "!")
 		else
 			update_speed(player, fields)
 
-			minetest.log("action", "[CAR SHOP] Successfully updated maximum speed forward (CAR01) for player " .. player:get_player_name() .. "!")
-			minetest.log("action", "[CAR SHOP] Successfully updated maximum speed reverse (CAR01) for player " .. player:get_player_name() .. "!")
+			minetest.log("action", "[PANQKART] Successfully updated maximum speed forward (CAR01) for player " .. player:get_player_name() .. "!")
+			minetest.log("action", "[PANQKART] Successfully updated maximum speed reverse (CAR01) for player " .. player:get_player_name() .. "!")
 		end
 	elseif fields.yes_buy then
 		buy_hovercraft(player, fields)
-		minetest.log("action", "[CAR SHOP] Successfully bought Hovercraft car for player " .. player:get_player_name() .. "!")
+		minetest.log("action", "[PANQKART] Successfully bought Hovercraft car for player " .. player:get_player_name() .. "!")
 	elseif fields.no or fields.no_hover or fields.no_buy then
-		sfinv.set_page(player, "car_shop:upgrade_car")
+		sfinv.set_page(player, "pk_shop:upgrade_car")
 		return true
     end
 end)
@@ -458,7 +458,7 @@ function car_shop.get_formspec(name)
 end
 
 function car_shop.show_to(name)
-    minetest.show_formspec(name, "car_shop:game", car_shop.get_formspec(name))
+    minetest.show_formspec(name, "pk_shop:game", car_shop.get_formspec(name))
 end
 
 minetest.register_chatcommand("upgrade_speed", {
@@ -477,7 +477,7 @@ minetest.register_on_joinplayer(function(player)
 end)
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
-    if formname ~= "car_shop:game" then
+    if formname ~= "pk_shop:game" then
         return
     end
 

@@ -26,7 +26,7 @@ local S = minetest.get_translator(modname)
 if minetest.settings:get_bool("enable_premium_features") == nil then
 	minetest.settings:set_bool("enable_premium_features", true) -- Enable premium features by default if no value initialized
 elseif minetest.settings:get_bool("enable_premium_features") == false then
-	minetest.log("action", "[RACING GAME] Premium features are disabled. Not initializing.")
+	minetest.log("action", "[PANQKART] Premium features are disabled. Not initializing.")
 	return
 end
 

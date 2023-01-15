@@ -149,6 +149,9 @@ function vehicle_mash.register_vehicle(name, def)
 			if def.enable_crash == nil then
 				def.enable_crash = true
 			end
+
+			-- When a vehicle collides with another one, make a crash-like physic.
+			-- TODO: improve the physics and make them more realistic.
 			if moveresult.collides then
 				for index, _ in pairs(moveresult.collisions) do
 					if moveresult.collisions[index].type == "object" and not moveresult.collisions[2] == "y" then

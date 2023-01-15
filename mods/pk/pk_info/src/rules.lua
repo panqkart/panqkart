@@ -21,30 +21,31 @@ for i = 1, #rules do
 end
 _rules = table.concat(rules, "\n")
 
+--- @brief Shows the rules formspec.
+--- @param name userdata the player that will receive the formspec
+--- @return string formspec the rules formspec
+local function rules_formspec(name)
+    local formspec = {
+        "size[16,6.3]" ..
+        "label[0,0;" .. minetest.colorize("#02a2f7", S("Server Rules")) .. " | " .. S("Not following these rules will result in a kick, ban, or permanent ban, depending on the situation.") .. "]"..
+        "background[0,0;16,0.6;pk_info_dark_bg.png]"..
+        "label[0,0.8;".. _rules .."]"..
+        "background[0,0.8;16,5;pk_info_background.png]"..
+        "image_button_exit[6,5.9;2,0.7;pk_info_dark_bg.png;done;" .. minetest.colorize("#FF0000", S("Close")) .. "]"..
+        "image_button[8,5.9;2,0.7;pk_info_dark_bg.png;about;" .. minetest.colorize("#02a2f7", S("About")) .."]"
+    }
+
+    return table.concat(formspec, "")
+end
+
 minetest.register_chatcommand("rules", {
 	description = S("Full server rules."),
 	privs = { interact = true },
 	func = function(name)
-        minetest.show_formspec(name, "pkinfo:rules",
-            "size[16,6.3]" ..
-            "label[0,0;" .. minetest.colorize("#02a2f7", S("Server Rules")) .. " | " .. S("Not following these rules will result in a kick, ban, or permanent ban, depending on the situation.") .. "]"..
-            "background[0,0;16,0.6;pk_dark_bg.png]"..
-            "label[0,0.8;".. _rules .."]"..
-            "background[0,0.8;16,5;pk_background.png]"..
-            "image_button_exit[6,5.9;2,0.7;pk_dark_bg.png;done;" .. minetest.colorize("#FF0000", S("Close")) .. "]"..
-            "image_button[8,5.9;2,0.7;pk_dark_bg.png;about;" .. minetest.colorize("#02a2f7", S("About")) .."]"
-        )
+        minetest.show_formspec(name, "pk_info:rules", rules_formspec(name))
     end
 })
 
 minetest.register_on_joinplayer(function(player)
-	minetest.show_formspec(player:get_player_name(), "pkinfo:rules",
-        "size[16,6.3]" ..
-        "label[0,0;" .. minetest.colorize("#02a2f7", S("Server Rules")) .." | " .. S("Not following these rules will result in a kick, ban, or permanent ban, depending on the situation.") .. "]"..
-        "background[0,0;16,0.6;pk_dark_bg.png]"..
-        "label[0,0.8;" .. _rules .."]"..
-        "background[0,0.8;16,5;pk_background.png]"..
-        "image_button_exit[6,5.9;2,0.7;pk_dark_bg.png;done;" .. minetest.colorize("#FF0000", "Close").."]"..
-        "image_button[8,5.9;2,0.7;pk_dark_bg.png;about;" .. minetest.colorize("#02a2f7", "About us").."]"
-    )
+	minetest.show_formspec(player:get_player_name(), "pkinfo:rules", minetest.show_formspec(name, "pk_info:rules", rules_formspec(player)))
 end)
