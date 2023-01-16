@@ -48,13 +48,13 @@ read_globals = {
 }
 
 -- Don't report on legacy definitions of globals.
-files["mods/default/legacy.lua"].global = false
+files["mods/mtg/default/legacy.lua"].global = false
 
-files["mods/lib_mount/init.lua"].ignore = { "eye_offset", "attach_at",
+files["mods/pk/lib_mount/init.lua"].ignore = { "eye_offset", "attach_at",
     "set_animation", "new_velo" }
 
 -- These are unused functions/variables that might be used in the future.
-files["mods/vehicle_mash/init.lua"].ignore = { "cars_def", "mesecar_def", "mesecar_names",
+files["mods/pk/vehicle_mash/init.lua"].ignore = { "cars_def", "mesecar_def", "mesecar_names",
 	"boat_def", "boat_names" }
 
 -- Code below taken from https://github.com/luk3yx/minetest-formspec_ast/blob/master/.luacheckrc

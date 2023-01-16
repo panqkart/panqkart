@@ -369,7 +369,7 @@ function core_game.show_scoreboard(name)
         "label[0.5,0.5;", minetest.formspec_escape(S("Final scoreboard, places, and race count.")), "]"
     }
 
-    local text = ""
+    local text
 
     -- NEEDS TESTING.
     for i = 1, 12 do
