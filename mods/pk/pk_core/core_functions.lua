@@ -563,7 +563,7 @@ minetest.register_globalstep(function(dtime)
 		if not core_game.game_started == true and not core_game.is_end[name] == true then
 			-- Do not let users move before the race starts
 			minetest.after(0.13, function() name:set_velocity({x = 0, y = 0, z = 0}) end)
-			minetest.after(0.1, function() name:set_physics_override({speed = 0.001, jump = 0.01}) end)
+			minetest.after(0.1, function() name:set_physics_override({speed = 0, jump = 0}) end)
 		end
 
 		if core_game.game_started == true then

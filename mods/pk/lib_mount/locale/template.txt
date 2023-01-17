@@ -1,17 +1,12 @@
 # textdomain: lib_mount
-You are in 1st place! Congratulations!=
-You won 3 gold coins, 6 silver coins, and 10 bronze coins.=
+
+You're in 1st place! Congratulations!=
+You're in 2nd place!=
+You're in 3rd place!=
+You're in @1 place!=
+th=
+You won @1 gold coins, @2 silver coins, and @3 bronze coins.=
 You won double coins for having premium!=
 Race ended! Heading back to the lobby...=
-You are in the last place! You lost.=
-You are in 2nd place! You won 5 silver coins and 8 bronze coins.=
-You are in 3rd place! You won 5 bronze coins.=
-You are in 4th place!=
-You are in 5th place!=
-You are in 6th place!=
-You are in 7th place!=
-You are in 8th place!=
-You are in 9th place!=
-You are in 10th place!=
-You are in 11th place!=
+You are in last place! You lost.=
 Game's up! You finished the race in @1 seconds.=

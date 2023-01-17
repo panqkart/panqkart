@@ -1,17 +1,12 @@
 # textdomain: lib_mount
-You are in 1st place! Congratulations!=¡Estas en primer lugar! ¡Felicidades!
-You won 3 gold coins, 6 silver coins, and 10 bronze coins.=Has ganado 3 monedas de oro, 6 de plata, y 10 de broncé.
-You won double coins for having premium!=¡Has ganado doble monedas por tener premium!
-Race ended! Heading back to the lobby...=¡La carrera ha acabado! Mandando al lobby...
-You are in the last place! You lost.=¡Estás en el último lugar! Has perdido.
-You are in 2nd place! You won 5 silver coins and 8 bronze coins.=¡Estás en segundo lugar! Has ganado 5 monedas de plata y 8 de broncé.
-You are in 3rd place! You won 5 bronze coins.=¡Estás en tercer lugar! Has ganado 5 monedas de broncé.
-You are in 4th place!=¡Estás en cuarto lugar!
-You are in 5th place!=¡Estás en quinto lugar!
-You are in 6th place!=¡Estás en sexto lugar!
-You are in 7th place!=¡Estás en septimo lugar!
-You are in 8th place!=¡Estás en octavo lugar!
-You are in 9th place!=¡Estás en noveno lugar!
-You are in 10th place!=¡Estás en decimo lugar!
-You are in 11th place!=¡Estás en onceavo lugar!
+
+You're in 1st place! Congratulations!=¡Estás en primer lugar! ¡Felicidades!
+You're in 2nd place!=¡Estás en segundo lugar!
+You're in 3rd place!=¡Estás en tercer lugar!
+You're in @1 place!=¡Estás en el lugar @1!
+th=o
+You won @1 gold coins, @2 silver coins, and @3 bronze coins.=Has ganado @1 monedas de oro, @2 monedas de plata, y @3 monedas de bronce.
+You won double coins for having premium!=¡Has ganado monedas doble por tener premium!
+Race ended! Heading back to the lobby...=¡La carrera ha acabado! Mandando de vuelta al lobby...
+You are in last place! You lost.=¡Estás en el último lugar! Has perdido.
 Game's up! You finished the race in @1 seconds.=¡El juego ha acabado! Acabaste la carrera en @1 segundos.

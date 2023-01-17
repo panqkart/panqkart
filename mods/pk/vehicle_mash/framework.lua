@@ -1,5 +1,3 @@
-local drive = lib_mount.drive
-
 function vehicle_mash.register_vehicle(name, def)
 	minetest.register_entity(name, {
 		terrain_type = def.terrain_type,
@@ -12,6 +10,7 @@ function vehicle_mash.register_vehicle(name, def)
 		driver_eye_offset = def.driver_eye_offset,
 		driver_detach_pos_offset = def.driver_detach_pos_offset,
 		number_of_passengers = def.number_of_passengers,
+
 		passenger_attach_at = def.passenger_attach_at,
 		passenger_eye_offset = def.passenger_eye_offset,
 		passenger_detach_pos_offset = def.passenger_detach_pos_offset,
@@ -60,42 +59,29 @@ function vehicle_mash.register_vehicle(name, def)
 			if self.driver then
 				-- if clicker is driver detach passengers and driver
 				if clicker == self.driver then
-					if self.passenger then
-						lib_mount.detach(self.passenger, self.offset)
-					end
-
-					if self.passenger2 then
-						lib_mount.detach(self.passenger2, self.offset)
-					end
-
-					if self.passenger3 then
-						lib_mount.detach(self.passenger3, self.offset)
+					for i = 1, self.number_of_passengers do -- Detaches all passengers with the new Library Mount API.
+						local passenger = self.passengers[i]
+						if passenger.player then
+							lib_mount.detach(passenger.player, passenger.eye_offset)
+						end
 					end
 					-- detach driver
 					lib_mount.detach(self.driver, self.offset)
-				-- if clicker is not the driver
+					-- if clicker is not the driver
 				else
 					-- if clicker is passenger
-					-- detach passengers
-					if clicker == self.passenger then
-						lib_mount.detach(self.passenger, self.offset)
-
-					elseif clicker == self.passenger2 then
-						lib_mount.detach(self.passenger2, self.offset)
-
-					elseif clicker == self.passenger3 then
-						lib_mount.detach(self.passenger3, self.offset)
-					-- if clicker is not passenger
-					else
-						-- attach a passenger if possible
-						if self.passenger==nil and self.number_of_passengers >= 1 then
-							lib_mount.attach(self, clicker, true, 1)
-						end
-						if self.passenger2==nil and self.number_of_passengers >= 2 then
-							lib_mount.attach(self, clicker, true, 2)
-						end
-						if self.passenger3==nil and self.number_of_passengers >= 3  then
-							lib_mount.attach(self, clicker, true, 3)
+					-- detach passengers with the new Library Mount API
+					for i = 1, self.number_of_passengers do
+						local passenger = self.passengers[i]
+						if clicker == passenger.player then
+							lib_mount.detach(passenger.player, passenger.eye_offset)
+							break
+						else
+							-- Attach passengers with the new Library Mount API
+							if not passenger.player then -- If there's no current passenger, attach if possible.
+								lib_mount.attach(self, clicker, true, i)
+								break -- We've already attached the player, no need to continue.
+							end
 						end
 					end
 				end
@@ -108,7 +94,26 @@ function vehicle_mash.register_vehicle(name, def)
 			end
 		end,
 		on_activate = function(self, staticdata, dtime_s)
-			self.object:set_armor_groups({immortal = 1})
+			if def.armor then
+				self.object:set_armor_groups({fleshy = def.armor}) -- Set armor groups to vehicle
+			else
+				self.object:set_armor_groups({fleshy = 0, immortal = 1}) -- Else, make vehicle immortal
+			end
+			if def.hp_min and def.hp_max then
+				self.object:set_hp(math.random(def.hp_min, def.hp_max), "Set HP to vehicle")
+			end
+
+			if self.driver then
+				self.driver:set_armor_groups({immortal = 0, fleshy = self.driver:get_armor_groups()})
+			end
+			-- Support for passengers
+			for i = 1, self.number_of_passengers do
+				local passenger = self.passengers[i]
+				if passenger.player then
+					passenger.player:set_armor_groups({immortal = 0, fleshy = passenger.player:get_armor_groups()})
+				end
+			end
+
 			local tmp = minetest.deserialize(staticdata)
 			if tmp then
 				for _,stat in pairs(tmp) do
@@ -160,23 +165,18 @@ function vehicle_mash.register_vehicle(name, def)
 					end
 				end
 			end
-			drive(self, dtime, false, nil, nil, 0, def.can_fly, def.can_go_down, def.can_go_up, def.enable_crash, moveresult)
+			lib_mount.drive(self, dtime, false, nil, nil, 0, def.can_fly, def.can_go_down, def.can_go_up, def.enable_crash, moveresult)
 		end,
 		on_death = function(self, killer)
 			if self.driver then
 				lib_mount.detach(self.driver, self.offset)
 			end
-			if self.passenger then
-				lib_mount.detach(self.passenger, self.offset)
-				self.passenger:set_eye_offset({x=0, y=0, z=0}, {x=0, y=0, z=0})
-			end
-			if self.passenger2 then
-				lib_mount.detach(self.passenger2, self.offset)
-				self.passenger2:set_eye_offset({x=0, y=0, z=0}, {x=0, y=0, z=0})
-			end
-			if self.passenger3 then
-				lib_mount.detach(self.passenger3, self.offset)
-				self.passenger3:set_eye_offset({x=0, y=0, z=0}, {x=0, y=0, z=0})
+			for i = 1, self.number_of_passengers do -- Detaches all passengers with the new Library Mount API.
+				local passenger = self.passengers[i]
+				if passenger.player then
+					lib_mount.detach(passenger.player, passenger.eye_offset)
+					passenger.player:set_eye_offset({x = 0, y = 0, z = 0} ,{ x = 0, y = 0, z = 0 })
+				end
 			end
 		end
 	})

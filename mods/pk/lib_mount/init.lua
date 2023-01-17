@@ -102,6 +102,87 @@ local function get_v(v)
 	return math.sqrt(v.x ^ 2 + v.z ^ 2)
 end
 
+
+local function ensure_passengers_exists(entity)
+	if entity.passengers ~= nil then
+		return
+	end
+	entity.passengers = {}
+	if entity.passenger ~= nil or
+		entity.passenger_attach_at ~= nil or
+		entity.passenger_eye_offset ~= nil then
+		table.insert(entity.passengers,{
+			player=entity.passenger,
+			attach_at=entity.passenger_attach_at,
+			eye_offset=entity.passenger_eye_offset
+		})
+	else
+		return
+	end
+	if entity.passenger2 ~= nil or
+		entity.passenger2_attach_at ~= nil or
+		entity.passenger2_eye_offset ~= nil then
+		table.insert(entity.passengers,{
+			player=entity.passenger2,
+			attach_at=entity.passenger2_attach_at,
+			eye_offset=entity.passenger2_eye_offset
+		})
+	else
+		return
+	end
+	if entity.passenger3 ~= nil or
+		entity.passenger3_attach_at ~= nil or
+		entity.passenger3_eye_offset ~= nil then
+		table.insert(entity.passengers,{
+			player=entity.passenger3,
+			attach_at=entity.passenger3_attach_at,
+			eye_offset=entity.passenger3_eye_offset
+		})
+	end
+end
+-- Copies the specified passenger to the older api. Note that this is one-directional.
+-- If something changed in the old api before this is called it is lost.
+-- In code you control be sure to always use the newer API and to call this function on every change.
+-- If you would like to improove preformance (memory & CPU) by not updating the old API, set
+--  entity.new_api to true. This will return from the funciton instead of doing anything.
+local function old_copy_passenger(entity,index,player,attach,eye)
+	if entity.new_api then
+		return
+	end
+	ensure_passengers_exists(entity)
+	if index==1 then  -- Don't forget! Lua indexes start at 1
+		if player then
+			entity.passenger = entity.passengers[index].player
+		end
+		if attach then
+			entity.passenger_attach_at = entity.passengers[index].attach_at
+		end
+		if eye then
+			entity.passenger_eye_offset = entity.passengers[index].eye_offset
+		end
+	elseif index==2 then
+		if player then
+			entity.passenger2 = entity.passengers[index].player
+		end
+		if attach then
+			entity.passenger2_attach_at = entity.passengers[index].attach_at
+		end
+		if eye then
+			entity.passenger2_eye_offset = entity.passengers[index].eye_offset
+		end
+	elseif index==3 then
+		if player then
+			entity.passenger3 = entity.passengers[index].player
+		end
+		if attach then
+			entity.passenger3_attach_at = entity.passengers[index].attach_at
+		end
+		if eye then
+			entity.passenger3_eye_offset = entity.passengers[index].eye_offset
+		end
+	end
+end
+
 local function force_detach(player)
 	local attached_to = player:get_attach()
 	if attached_to then
@@ -109,15 +190,18 @@ local function force_detach(player)
 		if entity.driver and entity.driver == player then
 			entity.driver = nil
 			lib_mount.passengers[player] = nil
-		elseif entity.passenger and entity.passenger == player then
-			entity.passenger = nil
-			lib_mount.passengers[player] = nil
-		elseif entity.passenger2 and entity.passenger2 == player then
-			entity.passenger2 = nil
-			lib_mount.passengers[player] = nil
-		elseif entity.passenger3 and entity.passenger3 == player then
-			entity.passenger3 = nil
-			lib_mount.passengers[player] = nil
+		else
+			ensure_passengers_exists(entity)
+			for i,passenger in ipairs(entity.passengers) do
+				if passenger.player == player then -- If it's nil it won't match
+					entity.passengers[i].player = nil -- This maintains the behavior where you could have passenger 1 leave but passenger 2 is still there, and they don't move
+					lib_mount.passengers[player] = nil
+
+					-- Legacy support
+					old_copy_passenger(entity,i,true,false,false)
+					break -- No need to continue looping. We found them.
+				end
+			end
 		end
 		player:set_detach()
 		player_api.player_attached[player:get_player_name()] = false
@@ -170,47 +254,29 @@ function lib_mount.attach(entity, player, is_passenger, passenger_number)
 		entity.player_rotation = {x=0, y=0, z=0}
 	end
 
-	if is_passenger == true and passenger_number == 1 then
-		if not entity.passenger_attach_at then
-			entity.passenger_attach_at = {x=0, y=0, z=0}
-		end
-		if not entity.passenger_eye_offset then
-			entity.passenger_eye_offset = {x=0, y=0, z=0}
-		end
+	if is_passenger == true then
+		-- Legacy support
+		ensure_passengers_exists(entity)
 
-		attach_at = entity.passenger_attach_at
-		eye_offset = entity.passenger_eye_offset
-
-		entity.passenger = player
-		lib_mount.passengers[entity.passenger] = player
-
-	elseif is_passenger == true and passenger_number == 2 then
-		if not entity.passenger2_attach_at then
-			entity.passenger2_attach_at = {x=0, y=0, z=0}
+		local attach_updated=false
+		if not entity.passengers[passenger_number].attach_at then
+			entity.passengers[passenger_number].attach_at = {x=0, y=0, z=0}
+			attach_updated=true
 		end
-		if not entity.passenger2_eye_offset then
-			entity.passenger2_eye_offset = {x=0, y=0, z=0}
+		local eye_updated=false
+		if not entity.passengers[passenger_number].eye_offset then
+			entity.passengers[passenger_number].eye_offset = {x=0, y=0, z=0}
+			eye_updated=true
 		end
 
-		attach_at = entity.passenger2_attach_at
-		eye_offset = entity.passenger2_eye_offset
+		attach_at = entity.passengers[passenger_number].attach_at
+		eye_offset = entity.passengers[passenger_number].eye_offset
 
-		entity.passenger2 = player
-		lib_mount.passengers[entity.passenger2] = player
+		entity.passengers[passenger_number].player = player
+		lib_mount.passengers[player] = player
 
-	elseif is_passenger == true and passenger_number == 3 then
-		if not entity.passenger3_attach_at then
-			entity.passenger3_attach_at = {x=0, y=0, z=0}
-		end
-		if not entity.passenger3_eye_offset then
-			entity.passenger3_eye_offset = {x=0, y=0, z=0}
-		end
-
-		attach_at = entity.passenger3_attach_at
-		eye_offset = entity.passenger3_eye_offset
-
-		entity.passenger3 = player
-		lib_mount.passengers[entity.passenger3] = player
+		-- Legacy support
+		old_copy_passenger(entity,passenger_number,true,attach_updated,eye_updated)
 	else
 		if not entity.driver_attach_at then
 			entity.driver_attach_at = {x=0, y=0, z=0}
@@ -220,7 +286,6 @@ function lib_mount.attach(entity, player, is_passenger, passenger_number)
 		end
 		attach_at = entity.driver_attach_at
 		eye_offset = entity.driver_eye_offset
-
 		entity.driver = player
 	end
 
@@ -261,14 +326,14 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	-- Sanity checks
 	if entity.driver and not entity.driver:get_attach() then entity.driver = nil end
 
-	if entity.passenger and not entity.passenger:get_attach() then
-		entity.passenger = nil
-	end
-	if entity.passenger2 and not entity.passenger2:get_attach() then
-		entity.passenger2 = nil
-	end
-	if entity.passenger3 and not entity.passenger3:get_attach() then
-		entity.passenger3 = nil
+	-- Legacy support
+	ensure_passengers_exists(entity)
+	for i,passenger in ipairs(entity.passengers) do
+		if passenger.player and not passenger.player:get_attach() then
+			entity.passengers[i].player = nil
+			-- Legacy support
+			old_copy_passenger(entity,i,true,false,false)
+		end
 	end
 
 	-- Add kilometres per-hour HUD.
@@ -284,19 +349,6 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 			}
 		})
     end
-
-	-- Detach passengers automatically in case driver gets killed
-	if not entity.driver then
-		if entity.passenger then
-			lib_mount.detach(entity.passenger, entity.offset)
-		end
-		if entity.passenger2 then
-			lib_mount.detach(entity.passenger2, entity.offset)
-		end
-		if entity.passenger3 then
-			lib_mount.detach(entity.passenger3, entity.offset)
-		end
-	end
 
 	aux_timer = aux_timer + dtime
 
@@ -641,389 +693,209 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		local data = minetest.deserialize(meta:get_string("player_coins"))
 		core_game.is_end[entity.driver] = true
 
-		-- Maximum 12 players per race, so let's do this twelve times
-		if lib_mount.win_count == 1 then
-			minetest.chat_send_player(entity.driver:get_player_name(), S("You are in 1st place! Congratulations!"))
-			minetest.chat_send_player(entity.driver:get_player_name(), S("You won 3 gold coins, 6 silver coins, and 10 bronze coins."))
-			core_game.players_that_won[0] = entity.driver
+		local text
+		local coin_amount = {}
 
-			if data then
-				if minetest.get_modpath("premium") and minetest.check_player_privs(entity.driver, { has_premium = true }) then
-					data.gold_coins = data.gold_coins + 6
-					data.silver_coins = data.silver_coins + 12
-					data.bronze_coins = data.bronze_coins + 20
-					minetest.chat_send_player(entity.driver:get_player_name(), S("You won double coins for having premium!"))
+		-- Maximum 12 players per race, so let's do this twelve times in a loop.
+		-- UNTESTED. May contains bugs or not work properly.
+		for i = 1, 12 do
+			if i == 1 then
+				text = S("You're in 1st place! Congratulations!")
+
+				if data then
+					-- Premium support.
+					if minetest.get_modpath("pk_premium") and minetest.check_player_privs(entity.driver, { has_premium = true }) then
+						data.gold_coins = data.gold_coins + 6
+						data.silver_coins = data.silver_coins + 12
+						data.bronze_coins = data.bronze_coins + 20
+
+						coin_amount = {
+							6,
+							12,
+							20
+						}
+					else
+						data.gold_coins = data.gold_coins + 3
+						data.silver_coins = data.silver_coins + 6
+						data.bronze_coins = data.bronze_coins + 10
+
+						coin_amount = {
+							3,
+							6,
+							10
+						}
+					end
+					meta:set_string("player_coins", minetest.serialize(data))
+				-- No data was found previously. New data needs to be serialized.
 				else
-					data.gold_coins = data.gold_coins + 3
-					data.silver_coins = data.silver_coins + 6
-					data.bronze_coins = data.bronze_coins + 10
+					if minetest.get_modpath("pk_premium") and minetest.check_player_privs(entity.driver, { has_premium = true }) then
+						data = { gold_coins = 6, silver_coins = 12, bronze_coins = 20 }
+						minetest.chat_send_player(entity.driver:get_player_name(), S("You won double coins for having premium!"))
+
+						coin_amount = {
+							6,
+							12,
+							20
+						}
+					else
+						data = { gold_coins = 3, silver_coins = 6, bronze_coins = 10 }
+
+						coin_amount = {
+							3,
+							6,
+							10
+						}
+					end
+					meta:set_string("player_coins", minetest.serialize(data))
 				end
-				meta:set_string("player_coins", minetest.serialize(data))
+			elseif i == 2 then
+				text = S("You're in 2nd place!")
+
+				-- Premium support.
+				if data then
+					if minetest.get_modpath("pk_premium") and minetest.check_player_privs(entity.driver, { has_premium = true }) then
+						data.silver_coins = data.silver_coins + 10
+						data.bronze_coins = data.bronze_coins + 16
+						minetest.chat_send_player(entity.driver:get_player_name(), S("You won double coins for having premium!"))
+
+						coin_amount = {
+							0,
+							10,
+							16
+						}
+					else
+						data.silver_coins = data.silver_coins + 5
+						data.bronze_coins = data.bronze_coins + 8
+
+						coin_amount = {
+							0,
+							5,
+							8
+						}
+					end
+					meta:set_string("player_coins", minetest.serialize(data))
+				-- No data was found previously. New data needs to be serialized.
+				else
+					if minetest.get_modpath("pk_premium") and minetest.check_player_privs(entity.driver, { has_premium = true }) then
+						data = { gold_coins = 0, silver_coins = 10, bronze_coins = 16 }
+						minetest.chat_send_player(entity.driver:get_player_name(), S("You won double coins for having premium!"))
+
+						coin_amount = {
+							0,
+							10,
+							16
+						}
+					else
+						data = { gold_coins = 0, silver_coins = 5, bronze_coins = 8 }
+
+						coin_amount = {
+							0,
+							5,
+							8
+						}
+					end
+					meta:set_string("player_coins", minetest.serialize(data))
+				end
+			elseif i == 3 then
+				text = S("You're in 3rd place!")
+
+				-- Premium support.
+				if data then
+					if minetest.get_modpath("pk_premium") and minetest.check_player_privs(entity.driver, { has_premium = true }) then
+						data.bronze_coins = data.bronze_coins + 10
+						minetest.chat_send_player(entity.driver:get_player_name(), S("You won double coins for having premium!"))
+
+						coin_amount = {
+							0,
+							0,
+							10
+						}
+					else
+						data.bronze_coins = data.bronze_coins + 5
+
+						coin_amount = {
+							0,
+							0,
+							5
+						}
+					end
+					meta:set_string("player_coins", minetest.serialize(data))
+				-- No data was found previously. New data needs to be serialized.
+				else
+					if minetest.get_modpath("pk_premium") and minetest.check_player_privs(entity.driver, { has_premium = true }) then
+						data = { gold_coins = 0, silver_coins = 0, bronze_coins = 10 }
+						minetest.chat_send_player(entity.driver:get_player_name(), S("You won double coins for having premium!"))
+
+						coin_amount = {
+							0,
+							0,
+							10
+						}
+					else
+						data = { gold_coins = 0, silver_coins = 0, bronze_coins = 5 }
+
+						coin_amount = {
+							0,
+							0,
+							5
+						}
+					end
+					meta:set_string("player_coins", minetest.serialize(data))
+				end
 			else
-				if minetest.get_modpath("premium") and minetest.check_player_privs(entity.driver, { has_premium = true }) then
-					data = { gold_coins = 6, silver_coins = 12, bronze_coins = 20 }
-					minetest.chat_send_player(entity.driver:get_player_name(), S("You won double coins for having premium!"))
-				else
-					data = { gold_coins = 3, silver_coins = 6, bronze_coins = 10 }
-				end
-				meta:set_string("player_coins", minetest.serialize(data))
+				text = S("You're in @1 place!", i .. S("th"))
 			end
-			lib_mount.win_count = lib_mount.win_count + 1
-			if core_game.player_count == 1 then
-				core_game.players_that_won[0] = entity.driver
 
-				hud_fs.close_hud(entity.driver, "pk_core:pending_race")
-				for _,player in ipairs(minetest.get_connected_players()) do
-					core_game.is_waiting_end[player] = false
-					hud_fs.close_hud(player, "pk_core:pending_race")
-				end
+			if lib_mount.win_count == i then
+				minetest.chat_send_player(entity.driver:get_player_name(), text)
+				minetest.chat_send_player(entity.driver:get_player_name(),
+					S("You won @1 gold coins, @2 silver coins, and @3 bronze coins.", coin_amount[1], coin_amount[2], coin_amount[3]))
 
-				for _,name in pairs(core_game.players_on_race) do
-					minetest.show_formspec(name:get_player_name(), "pk_core:scoreboard", core_game.show_scoreboard(name))
-				end
+				core_game.players_that_won[i] = entity.driver
+				lib_mount.win_count = lib_mount.win_count + 1
 
-				minetest.after(0.1, function() -- Let's prevent small bugs :')
-					core_game.player_count = 0
-					for _,name in pairs(core_game.players_on_race) do
-						minetest.chat_send_player(name:get_player_name(), S("Race ended! Heading back to the lobby..."))
-						core_game.player_lost(name)
-
-						core_game.players_on_race = {}
+				-- Remove car from the driver. We do not want them to mess up with the remaining players (if any).
+				if entity and entity.object then
+					local attached_to = entity.driver:get_attach()
+					if attached_to then
+						minetest.after(0.1, function()
+							lib_mount.detach(entity.driver, {x=0, y=0, z=0})
+							entity.object:remove()
+						end)
 					end
-				end)
-				return
-			end
-		elseif lib_mount.win_count == 2 then
-			if core_game.player_count == 2 then
-				core_game.players_that_won[1] = entity.driver
-				minetest.chat_send_player(entity.driver:get_player_name(), S("You are in the last place! You lost."))
-
-				hud_fs.close_hud(entity.driver, "pk_core:pending_race")
-				for _,player in ipairs(minetest.get_connected_players()) do
-					core_game.is_waiting_end[player] = false
-					hud_fs.close_hud(player, "pk_core:pending_race")
 				end
 
-				for _,name in pairs(core_game.players_on_race) do
-					minetest.show_formspec(name:get_player_name(), "pk_core:scoreboard", core_game.show_scoreboard(name))
-				end
+				if core_game.player_count == i then
+					core_game.players_that_won[i] = entity.driver
 
-				minetest.after(0.1, function() -- Let's prevent small bugs :')
-					core_game.player_count = 0
-					for _,name in pairs(core_game.players_on_race) do
-						minetest.chat_send_player(name:get_player_name(), S("Race ended! Heading back to the lobby..."))
-						core_game.player_lost(name)
-
-						core_game.players_on_race = {}
+					hud_fs.close_hud(entity.driver, "pk_core:pending_race")
+					for _,player in ipairs(minetest.get_connected_players()) do
+						core_game.is_waiting_end[player] = false
+						hud_fs.close_hud(player, "pk_core:pending_race")
 					end
-				end)
-				return
-			end
-			minetest.chat_send_player(entity.driver:get_player_name(), S("You are in 2nd place! You won 5 silver coins and 8 bronze coins."))
-			core_game.players_that_won[1] = entity.driver
 
-			if data then
-				if minetest.get_modpath("premium") and minetest.check_player_privs(entity.driver, { has_premium = true }) then
-					data.silver_coins = data.silver_coins + 10
-					data.bronze_coins = data.bronze_coins + 16
-					minetest.chat_send_player(entity.driver:get_player_name(), S("You won double coins for having premium!"))
-				else
-					data.silver_coins = data.silver_coins + 5
-					data.bronze_coins = data.bronze_coins + 8
-				end
-				meta:set_string("player_coins", minetest.serialize(data))
-			else
-				if minetest.get_modpath("premium") and minetest.check_player_privs(entity.driver, { has_premium = true }) then
-					data = { gold_coins = 0, silver_coins = 10, bronze_coins = 16 }
-					minetest.chat_send_player(entity.driver:get_player_name(), S("You won double coins for having premium!"))
-				else
-					data = { gold_coins = 0, silver_coins = 5, bronze_coins = 8 }
-				end
-				meta:set_string("player_coins", minetest.serialize(data))
-			end
-			lib_mount.win_count = lib_mount.win_count + 1
-		elseif lib_mount.win_count == 3 then
-			if core_game.player_count == 3 then
-				core_game.players_that_won[2] = entity.driver
-				minetest.chat_send_player(entity.driver:get_player_name(), S("You are in the last place! You lost."))
-
-				hud_fs.close_hud(entity.driver, "pk_core:pending_race")
-				for _,player in ipairs(minetest.get_connected_players()) do
-					core_game.is_waiting_end[player] = false
-					hud_fs.close_hud(player, "pk_core:pending_race")
-				end
-
-				for _,name in pairs(core_game.players_on_race) do
-					minetest.show_formspec(name:get_player_name(), "pk_core:scoreboard", core_game.show_scoreboard(name))
-				end
-
-				minetest.after(0.1, function() -- Let's prevent small bugs :')
-					core_game.player_count = 0
 					for _,name in pairs(core_game.players_on_race) do
-						minetest.chat_send_player(name:get_player_name(), S("Race ended! Heading back to the lobby..."))
-						core_game.player_lost(name)
-
-						core_game.players_on_race = {}
+						minetest.show_formspec(name:get_player_name(), "pk_core:scoreboard", core_game.show_scoreboard(name))
 					end
-				end)
-				return
+
+					minetest.after(0.1, function() -- Let's prevent small bugs :')
+						core_game.player_count = 0
+						for _,name in pairs(core_game.players_on_race) do
+							minetest.chat_send_player(name:get_player_name(), S("Race ended! Heading back to the lobby..."))
+							core_game.player_lost(name)
+
+							core_game.players_on_race = {}
+						end
+					end)
+					return
+				end
+
+				break -- No more looping.
 			end
-			minetest.chat_send_player(entity.driver:get_player_name(), S("You are in 3rd place! You won 5 bronze coins."))
-			core_game.players_that_won[2] = entity.driver
-			lib_mount.win_count = lib_mount.win_count + 1
+		end
 
-			if data then
-				if minetest.get_modpath("premium") and minetest.check_player_privs(entity.driver, { has_premium = true }) then
-					data.bronze_coins = data.bronze_coins + 10
-					minetest.chat_send_player(entity.driver:get_player_name(), S("You won double coins for having premium!"))
-				else
-					data.bronze_coins = data.bronze_coins + 5
-				end
-				meta:set_string("player_coins", minetest.serialize(data))
-			else
-				if minetest.get_modpath("premium") and minetest.check_player_privs(entity.driver, { has_premium = true }) then
-					data = { gold_coins = 0, silver_coins = 0, bronze_coins = 10 }
-					minetest.chat_send_player(entity.driver:get_player_name(), S("You won double coins for having premium!"))
-				else
-					data = { gold_coins = 0, silver_coins = 0, bronze_coins = 5 }
-				end
-				meta:set_string("player_coins", minetest.serialize(data))
-			end
-		elseif lib_mount.win_count == 4 then
-			if core_game.player_count == 4 then
-				core_game.players_that_won[3] = entity.driver
-				minetest.chat_send_player(entity.driver:get_player_name(), S("You are in the last place! You lost."))
-
-				hud_fs.close_hud(entity.driver, "pk_core:pending_race")
-				for _,player in ipairs(minetest.get_connected_players()) do
-					core_game.is_waiting_end[player] = false
-					hud_fs.close_hud(player, "pk_core:pending_race")
-				end
-
-				for _,name in pairs(core_game.players_on_race) do
-					minetest.show_formspec(name:get_player_name(), "pk_core:scoreboard", core_game.show_scoreboard(name))
-				end
-
-				minetest.after(0.1, function() -- Let's prevent small bugs :')
-					core_game.player_count = 0
-					for _,name in pairs(core_game.players_on_race) do
-						minetest.chat_send_player(name:get_player_name(), S("Race ended! Heading back to the lobby..."))
-						core_game.player_lost(name)
-
-						core_game.players_on_race = {}
-					end
-				end)
-				return
-			end
-			minetest.chat_send_player(entity.driver:get_player_name(), S("You are in 4th place!"))
-			core_game.players_that_won[3] = entity.driver
-			lib_mount.win_count = lib_mount.win_count + 1
-		elseif lib_mount.win_count == 5 then
-			if core_game.player_count == 5 then
-				core_game.players_that_won[4] = entity.driver
-				minetest.chat_send_player(entity.driver:get_player_name(), S("You are in the last place! You lost."))
-
-				--core_game.game_started = false
-				hud_fs.close_hud(entity.driver, "pk_core:pending_race")
-				for _,player in ipairs(minetest.get_connected_players()) do
-					core_game.is_waiting_end[player] = false
-					hud_fs.close_hud(player, "pk_core:pending_race")
-				end
-
-				for _,name in pairs(core_game.players_on_race) do
-					minetest.show_formspec(name:get_player_name(), "pk_core:scoreboard", core_game.show_scoreboard(name))
-				end
-
-				minetest.after(0.1, function() -- Let's prevent small bugs :')
-					core_game.player_count = 0
-					for _,name in pairs(core_game.players_on_race) do
-						minetest.chat_send_player(name:get_player_name(), S("Race ended! Heading back to the lobby..."))
-						core_game.player_lost(name)
-
-						core_game.players_on_race = {}
-					end
-				end)
-				return
-			end
-			minetest.chat_send_player(entity.driver:get_player_name(), S("You are in 5th place!"))
-			core_game.players_that_won[4] = entity.driver
-			lib_mount.win_count = lib_mount.win_count + 1
-		elseif lib_mount.win_count == 6 then
-			if core_game.player_count == 6 then
-				core_game.players_that_won[5] = entity.driver
-				minetest.chat_send_player(entity.driver:get_player_name(), S("You are in the last place! You lost."))
-
-				hud_fs.close_hud(entity.driver, "pk_core:pending_race")
-				for _,player in ipairs(minetest.get_connected_players()) do
-					core_game.is_waiting_end[player] = false
-					hud_fs.close_hud(player, "pk_core:pending_race")
-				end
-
-				for _,name in pairs(core_game.players_on_race) do
-					minetest.show_formspec(name:get_player_name(), "pk_core:scoreboard", core_game.show_scoreboard(name))
-				end
-
-				minetest.after(0.1, function() -- Let's prevent small bugs :')
-					core_game.player_count = 0
-					for _,name in pairs(core_game.players_on_race) do
-						minetest.chat_send_player(name:get_player_name(), S("Race ended! Heading back to the lobby..."))
-						core_game.player_lost(name)
-
-						core_game.players_on_race = {}
-					end
-				end)
-				return
-			end
-			minetest.chat_send_player(entity.driver:get_player_name(), S("You are in 6th place!"))
-			core_game.players_that_won[5] = entity.driver
-			lib_mount.win_count = lib_mount.win_count + 1
-		elseif lib_mount.win_count == 7 then
-			if core_game.player_count == 7 then
-				core_game.players_that_won[6] = entity.driver
-				minetest.chat_send_player(entity.driver:get_player_name(), S("You are in the last place! You lost."))
-
-				hud_fs.close_hud(entity.driver, "pk_core:pending_race")
-				for _,player in ipairs(minetest.get_connected_players()) do
-					core_game.is_waiting_end[player] = false
-					hud_fs.close_hud(player, "pk_core:pending_race")
-				end
-
-				for _,name in pairs(core_game.players_on_race) do
-					minetest.show_formspec(name:get_player_name(), "pk_core:scoreboard", core_game.show_scoreboard(name))
-				end
-
-				minetest.after(0.1, function() -- Let's prevent small bugs :')
-					core_game.player_count = 0
-					for _,name in pairs(core_game.players_on_race) do
-						minetest.chat_send_player(name:get_player_name(), S("Race ended! Heading back to the lobby..."))
-						core_game.player_lost(name)
-
-						core_game.players_on_race = {}
-					end
-				end)
-				return
-			end
-			minetest.chat_send_player(entity.driver:get_player_name(), S("You are in 7th place!"))
-			core_game.players_that_won[6] = entity.driver
-			lib_mount.win_count = lib_mount.win_count + 1
-		elseif lib_mount.win_count == 8 then
-			if core_game.player_count == 8 then
-				core_game.players_that_won[7] = entity.driver
-				minetest.chat_send_player(entity.driver:get_player_name(), S("You are in the last place! You lost."))
-
-				hud_fs.close_hud(entity.driver, "pk_core:pending_race")
-				for _,player in ipairs(minetest.get_connected_players()) do
-					core_game.is_waiting_end[player] = false
-					hud_fs.close_hud(player, "pk_core:pending_race")
-				end
-
-				for _,name in pairs(core_game.players_on_race) do
-					minetest.show_formspec(name:get_player_name(), "pk_core:scoreboard", core_game.show_scoreboard(name))
-				end
-
-				minetest.after(0.1, function() -- Let's prevent small bugs :')
-					core_game.player_count = 0
-					for _,name in pairs(core_game.players_on_race) do
-						minetest.chat_send_player(name:get_player_name(), S("Race ended! Heading back to the lobby..."))
-						core_game.player_lost(name)
-
-						core_game.players_on_race = {}
-					end
-				end)
-				return
-			end
-			minetest.chat_send_player(entity.driver:get_player_name(), S("You are in 8th place!"))
-			core_game.players_that_won[7] = entity.driver
-			lib_mount.win_count = lib_mount.win_count + 1
-		elseif lib_mount.win_count == 9 then
-			if core_game.player_count == 9 then
-				core_game.players_that_won[8] = entity.driver
-				minetest.chat_send_player(entity.driver:get_player_name(), S("You are in the last place! You lost."))
-
-				hud_fs.close_hud(entity.driver, "pk_core:pending_race")
-				for _,player in ipairs(minetest.get_connected_players()) do
-					core_game.is_waiting_end[player] = false
-					hud_fs.close_hud(player, "pk_core:pending_race")
-				end
-
-				for _,name in pairs(core_game.players_on_race) do
-					minetest.show_formspec(name:get_player_name(), "pk_core:scoreboard", core_game.show_scoreboard(name))
-				end
-
-				minetest.after(0.1, function() -- Let's prevent small bugs :')
-					core_game.player_count = 0
-					for _,name in pairs(core_game.players_on_race) do
-						minetest.chat_send_player(name:get_player_name(), S("Race ended! Heading back to the lobby..."))
-						core_game.player_lost(name)
-
-						core_game.players_on_race = {}
-					end
-				end)
-				return
-			end
-			minetest.chat_send_player(entity.driver:get_player_name(), S("You are in 9th place!"))
-			core_game.players_that_won[8] = entity.driver
-			lib_mount.win_count = lib_mount.win_count + 1
-		elseif lib_mount.win_count == 10 then
-			if core_game.player_count == 10 then
-				core_game.players_that_won[9] = entity.driver
-				minetest.chat_send_player(entity.driver:get_player_name(), S("You are in the last place! You lost."))
-
-				hud_fs.close_hud(entity.driver, "pk_core:pending_race")
-				for _,player in ipairs(minetest.get_connected_players()) do
-					core_game.is_waiting_end[player] = false
-					hud_fs.close_hud(player, "pk_core:pending_race")
-				end
-
-				for _,name in pairs(core_game.players_on_race) do
-					minetest.show_formspec(name:get_player_name(), "pk_core:scoreboard", core_game.show_scoreboard(name))
-				end
-
-				minetest.after(0.1, function() -- Let's prevent small bugs :')
-					core_game.player_count = 0
-					for _,name in pairs(core_game.players_on_race) do
-						minetest.chat_send_player(name:get_player_name(), S("Race ended! Heading back to the lobby..."))
-						core_game.player_lost(name)
-
-						core_game.players_on_race = {}
-					end
-				end)
-				return
-			end
-			minetest.chat_send_player(entity.driver:get_player_name(), S("You are in 10th place!"))
-			core_game.players_that_won[9] = entity.driver
-			lib_mount.win_count = lib_mount.win_count + 1
-		elseif lib_mount.win_count == 11 then
-			if core_game.player_count == 11 then
-				core_game.players_that_won[10] = entity.driver
-				minetest.chat_send_player(entity.driver:get_player_name(), S("You are in the last place! You lost."))
-
-				--core_game.game_started = false
-				hud_fs.close_hud(entity.driver, "pk_core:pending_race")
-				for _,player in ipairs(minetest.get_connected_players()) do
-					core_game.is_waiting_end[player] = false
-					hud_fs.close_hud(player, "pk_core:pending_race")
-				end
-
-				for _,name in pairs(core_game.players_on_race) do
-					minetest.show_formspec(name:get_player_name(), "pk_core:scoreboard", core_game.show_scoreboard(name))
-				end
-
-				minetest.after(0.1, function() -- Let's prevent small bugs :')
-					core_game.player_count = 0
-					for _,name in pairs(core_game.players_on_race) do
-						minetest.chat_send_player(name:get_player_name(), S("Race ended! Heading back to the lobby..."))
-						core_game.player_lost(name)
-
-						core_game.players_on_race = {}
-					end
-				end)
-				return
-			end
-			minetest.chat_send_player(entity.driver:get_player_name(), S("You are in 11th place!"))
-			core_game.players_that_won[10] = entity.driver
-			lib_mount.win_count = lib_mount.win_count + 1
-		elseif lib_mount.win_count == 12 then -- Here races end. Run end race code
+		-- Here the race ends. Run end race code.
+		if lib_mount.win_count == 12 then
 			minetest.chat_send_player(entity.driver:get_player_name(), S("You are in the last place! You lost."))
 			core_game.players_that_won[11] = entity.driver
 
@@ -1073,25 +945,14 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 					drvr:set_hp(drvr:get_hp() - intensity)
 				end
 
-				if entity.passenger then
-					local pass = entity.passenger
-					lib_mount.detach(pass, {x=0, y=0, z=0})
-					pass:set_velocity(new_velo)
-					pass:set_hp(pass:get_hp() - intensity)
-				end
-
-				if entity.passenger2 then
-					local pass = entity.passenger2
-					lib_mount.detach(pass, {x=0, y=0, z=0})
-					pass:set_velocity(new_velo)
-					pass:set_hp(pass:get_hp() - intensity)
-				end
-
-				if entity.passenger3 then
-					local pass = entity.passenger3
-					lib_mount.detach(pass, {x=0, y=0, z=0})
-					pass:set_velocity(new_velo)
-					pass:set_hp(pass:get_hp() - intensity)
+				ensure_passengers_exists(entity)-- Legacy support
+				for _,passenger in ipairs(entity.passengers) do
+					if passenger.player then
+						local pass = passenger.player
+						lib_mount.detach(pass, {x=0, y=0, z=0})  -- This function already copies to old API
+						pass:set_velocity(new_velo)
+						pass:set_hp(pass:get_hp() - intensity)
+					end
 				end
 				local pos = entity.object:get_pos()
 
