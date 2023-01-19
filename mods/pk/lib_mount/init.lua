@@ -897,7 +897,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		-- Here the race ends. Run end race code.
 		if lib_mount.win_count == 12 then
 			minetest.chat_send_player(entity.driver:get_player_name(), S("You are in the last place! You lost."))
-			core_game.players_that_won[11] = entity.driver
+			core_game.players_that_won[12] = entity.driver
 
 			hud_fs.close_hud(entity.driver, "pk_core:pending_race")
 			for _,player in ipairs(minetest.get_connected_players()) do

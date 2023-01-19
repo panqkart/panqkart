@@ -47,5 +47,5 @@ minetest.register_chatcommand("rules", {
 })
 
 minetest.register_on_joinplayer(function(player)
-	minetest.show_formspec(player:get_player_name(), "pkinfo:rules", minetest.show_formspec(player, "pk_info:rules", rules_formspec(player)))
+	minetest.show_formspec(player:get_player_name(), "pk_info:rules", rules_formspec(player))
 end)

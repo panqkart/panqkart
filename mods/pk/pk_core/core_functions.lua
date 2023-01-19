@@ -46,13 +46,8 @@ local ended_race = {} -- This array is useful when:
 --- @param player string the player that will be saved in the array
 --- @returns nil
 local function player_count(player)
-    for i = 1, 12 do
-        if lib_mount.win_count == 1 then
-            core_game.players_that_won[i - 1] = player
-        else
-            minetest.log("error", "[PANQKART] An error has ocurred while saving the player in the players that won array.")
-            return
-        end
+    for i = 1, core_game.player_count do
+        core_game.players_that_won[i] = player
     end
 end
 
@@ -315,7 +310,7 @@ function core_game.spawn_initialize(player, time)
 	minetest.after(time, function()
 		local position, value
 
-		-- Read spawnpoint from file. World-exclusive which won't affect other worlds.
+		-- Read spawnpoint from world-exclusive file which won't affect other worlds.
 		local file,err = io.open(minetest.get_worldpath() .. "/lobby_position.txt", "r")
 		if file then
 			value = tostring(file:read("*a"))
@@ -366,32 +361,30 @@ function core_game.show_scoreboard(name)
 	local formspec = {
         "formspec_version[4]",
         "size[12,6]",
-        "label[0.5,0.5;", minetest.formspec_escape(S("Final scoreboard, places, and race count.")), "]"
+        "label[0.5,0.5;", minetest.formspec_escape(S("Final scoreboard, places, and race count.")), "]",
+		"table[0.3,1.25;10,3;scoreboard;" .. minetest.formspec_escape(S("Place					Player name					Race count")) .. ",,"
     }
 
     local text
 
-    -- NEEDS TESTING.
-    for i = 1, 12 do
-        if core_game.player_count == i then
-            if i == 1 then
-                text = "1st"
-            elseif i == 2 then
-                text = "2nd"
-            elseif i == 3 then
-                text = "3rd"
-            else
-                text = tostring(i) .. "th"
-            end
-
-            table.insert(formspec,
-                "table[0.3,1.25;10,3;scoreboard;" .. S("Place					Player name					Race count") .. ",," .. text .. " 					" .. core_game.players_that_won[i - 1]:get_player_name() ..
-                    "												" .. core_game.count[core_game.players_that_won[i - 1]] .. " seconds;1]")
+	-- Show from the very first place to the last place, depending on the player's count.
+	for i = 1, #core_game.players_that_won do
+        if i == 1 then
+            text = "1st"
+        elseif i == 2 then
+            text = "2nd"
+        elseif i == 3 then
+            text = "3rd"
         else
-            minetest.log("error", "[PANQKART] Failed to show leaderboard. Contact the server administrator or report it on PanqKart's Discord server.")
-        end
+			text = tostring(i) .. "th"
+		end
+
+        table.insert(formspec,
+            text .. " 					" .. core_game.players_that_won[i]:get_player_name() ..
+                "												" .. core_game.count[core_game.players_that_won[i]] .. " " ..  S("seconds") .. ",")
     end
 
+	table.insert(formspec, ";1]")
     return table.concat(formspec, "")
 end
 
@@ -634,10 +627,12 @@ minetest.register_globalstep(function(dtime)
 			local data = minetest.deserialize(meta:get_string("hovercraft_bought"))
 
 			local player_pos = name:get_pos()
-
 			run_once[name] = true
 
-			if not data then
+			-- We do not want to have two or more vehicles.
+			local is_attached = name:get_attach()
+
+			if not data and not is_attached then
 				minetest.chat_send_player(name:get_player_name(), S("You will use CAR01 in the next race."))
 				minetest.after(0.1, function()
 					local obj = minetest.add_entity(player_pos, "vehicle_mash:car_black", nil)
@@ -646,7 +641,7 @@ minetest.register_globalstep(function(dtime)
 					end
 				end)
 				return
-			else
+			elseif data and not is_attached then
 				core_game.random_car(name, true)
 				minetest.close_formspec(name:get_player_name(), "pk_core:choose_car")
 			end
