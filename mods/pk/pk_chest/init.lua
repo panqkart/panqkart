@@ -238,3 +238,6 @@ minetest.register_node("pk_chest:chest", {
 		end
 	end
 })
+
+-- Backward compatibility aliases
+minetest.register_alias("coin_chest:chest", "pk_chest:chest")

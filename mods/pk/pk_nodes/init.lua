@@ -127,7 +127,7 @@ if not minetest.get_modpath("mobs") then
 	-- End: code taken from the `mobs_redo` mod
 	minetest.register_alias("mobs:fence_wood", "pk_nodes:fence_wood")
 else
-	minetest.register_alias("pk_nodes:fence_wood", "special_nodes:fence_wood") 	-- Backwards compatibility
+	minetest.register_alias("special_nodes:fence_wood", "pk_nodes:fence_wood") 	-- Backwards compatibility
 	minetest.register_alias("pk_nodes:fence_wood", "mobs:fence_wood")
 end
 
@@ -210,7 +210,7 @@ for i = 1, 12, 1 do
 		end,
 	})
 	-- Backwards compatibility
-	minetest.register_alias("pk_nodes:player_" .. i .. "_position", "special_nodes:player_" .. i .. "_position")
+	minetest.register_alias("special_nodes:player_" .. i .. "_position", "pk_nodes:player_" .. i .. "_position")
 end
 
 minetest.register_lbm({
@@ -526,9 +526,11 @@ minetest.register_node("pk_nodes:lava_node", {
 	end,
 })
 
-minetest.register_alias("pk_nodes:start_race", "special_nodes:start_race")
-minetest.register_alias("pk_nodes:spawn_node", "special_nodes:spawn_node")
-minetest.register_alias("pk_nodes:tp_lobby", "special_nodes:tp_lobby")
-minetest.register_alias("pk_nodes:asphalt", "special_nodes:asphalt")
-minetest.register_alias("pk_nodes:lava_node", "special_nodes:lava_node")
-minetest.register_alias("pk_nodes:junglewood", "special_nodes:junglewood")
+-- Backward compatibility aliases
+minetest.register_alias("special_nodes:start_race", "pk_nodes:start_race")
+minetest.register_alias("special_nodes:spawn_node", "pk_nodes:spawn_node")
+minetest.register_alias("special_nodes:tp_lobby", "pk_nodes:tp_lobby")
+minetest.register_alias("special_nodes:asphalt", "pk_nodes:asphalt")
+minetest.register_alias("special_nodes:lava_node", "pk_nodes:lava_node")
+minetest.register_alias("special_nodes:junglewood", "pk_nodes:junglewood")
+minetest.register_alias("special_nodes:asphalt", "pk_nodes:asphalt")
