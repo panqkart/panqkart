@@ -1,0 +1,25 @@
+# textdomain: pk_nodes
+
+Set player positions before starting a race.=Configurar posiciones antes de una carrera.
+1st player position=Posición 1a del jugador
+2nd player position=Posición 2a del jugador
+3rd player position=Posición 3a del jugador
+4th player position=Posición 4a del jugador
+5th player position=Posición 5a del jugador
+6th player position=Posición 6a del jugador
+7th player position=Posición 7a del jugador
+8th player position=Posición 8va del jugador
+9th player position=Posición 9va del jugador
+10th player position=Posición 10a del jugador
+11th player position=Posición 11va del jugador
+12th player position=Posición 12va del jugador
+Apply changes=
+Use metadata values=
+Player @1 position=Posición @1 del jugador
+Start a race!=¡Empezar una carrera!
+Please specify a valid value different than zero.=Por favor, use un valor diferente de ceró.
+Certain fields are not a valid Minetest position. These will not be updated. Use: <x,y,z>=Varios campos no son una posición valida de Minetest. No se actualizaran. Use : <x,y,z>
+Spawn node. Do not place multiple nodes.=Nodo de aparición. NO ponga multiples nodos.
+Teleport back to lobby node.=Nodo para teletransportar de vuelta al lobby.
+Asphalt node. Used for ending blocks.=Nodo de asfalto. Usado para terminar una carrera.
+Teleport back to a few nodes when an entity touches it.=Teletransportar varios bloques atras cuando un entity lo toca.

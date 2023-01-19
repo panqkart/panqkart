@@ -5,15 +5,15 @@ The following media/textures are licensed under [CC BY-SA 4.0 International](htt
 
 _Textures_
 
-- `core_game_1.png`
-- `core_game_2.png`
-- `core_game_3.png`
-- `core_game_go.png`
+- `pk_core_1.png`
+- `pk_core_2.png`
+- `pk_core_3.png`
+- `pk_core_go.png`
 
 _Sounds_
 
-- `core_game.race_go.ogg`
-- `core_game.race_start.ogg`
+- `pk_core.race_go.ogg`
+- `pk_core.race_start.ogg`
 
 All the other media and textures fall under their respective licenses.\
 See their license or readme file for information about it.

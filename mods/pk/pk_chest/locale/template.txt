@@ -1,0 +1,16 @@
+# textdomain: pk_chest
+
+Customize the coin chest=
+Bronze coins=
+Silver coins=
+Gold coins=
+Apply changes=
+Give coins to staff (left-click to take coins)=
+Coin chest=
+You don't have sufficient permissions to place this node. Missing privileges: core_admin=
+You have already got the coins from this chest.=
+You don't have sufficient permission to open this chest. Missing privileges: core_admin=
+You got @1 bronze coin(s), @2 silver coin(s), and @3 gold coin(s)!=
+Please specify a valid value different than zero.=
+Successfully updated/set coin chest!=
+No coins have been set. You won't receive any coins.=

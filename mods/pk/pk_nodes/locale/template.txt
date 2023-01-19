@@ -1,0 +1,25 @@
+# textdomain: pk_nodes
+
+Set player positions before starting a race.=
+1st player position=
+2nd player position=
+3rd player position=
+4th player position=
+5th player position=
+6th player position=
+7th player position=
+8th player position=
+9th player position=
+10th player position=
+11th player position=
+12th player position=
+Apply changes=
+Use metadata values=
+Player @1 position=
+Start a race!=
+Please specify a valid value different than zero.=
+Certain fields are not a valid Minetest position. These will not be updated. Use: <x,y,z>=
+Spawn node. Do not place multiple nodes.=
+Teleport back to lobby node.=
+Asphalt node. Used for ending blocks.=
+Teleport back to a few nodes when an entity touches it.=

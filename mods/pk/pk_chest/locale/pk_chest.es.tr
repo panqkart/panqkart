@@ -1,0 +1,16 @@
+# textdomain: pk_chest
+
+Customize the coin chest=Personalizar el cofre
+Bronze coins=Monedas de bronce
+Silver coins=Monedas de plata
+Gold coins=Monedas de oro
+Apply changes=Aplicar cambios
+Give coins to staff (left-click to take coins)=Dar monedas a los moderadores (clic izquierdo para tomar monedas)
+Coin chest=Cofre de monedas
+You don't have sufficient permissions to place this node. Missing privileges: core_admin=No tienes los suficientes permisos para poner este nodo. Privilegios necesarios: core_admin
+You have already got the coins from this chest.=Ya has obtenido las monedas de este cofre.
+You don't have sufficient permission to open this chest. Missing privileges: core_admin=No tienes los suficientes permisos para abrir este cofre. Privilegios necesarios: core_admin
+You got @1 bronze coin(s), @2 silver coin(s), and @3 gold coin(s)!=¡Has obtenido @1 moneda(s) de bronce, @2 moneda(s) de plata, y @3 moneda(s) de oro!
+Please specify a valid value different than zero.=Por favor especifique otro valor diferente de cero.
+Successfully updated/set coin chest!=¡Cofre de monedas exitosamente actualizado!
+No coins have been set. You won't receive any coins.=No hay monedas en el cofre. No recibiras monedas.

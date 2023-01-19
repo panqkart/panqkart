@@ -1,0 +1,17 @@
+# textdomain: pk_premium
+
+The user has premium features. See /donate for more information.=El usuario tiene caracteristicas premium. Vea /donate para más información.
+Teleport (the given player) to the premium/VIP house.=Teletransportar (el dado jugador) a la casa premium/VIP.
+You don't have sufficient permissions to run this command. Missing privileges: has_premium=No tienes los suficientes permisos para correr este comando. Privilegios necesarios: has_premium
+Successfully teleported to the premium/VIP house.=Teletransportado a la casa premium/VIP exitosamente.
+You don't have sufficient permissions to run this command. Missing privileges: core_admin=No tienes los suficientes permisos para correr este comando. Privilegios necesarios: core_admin
+Successfully teleported @1 to the premium/VIP house.=@1 ha sido teletransportado a la casa premium/VIP exitosamente.
+Player @1 does not exist or is not online.=El jugador @1 no existe o no esta en línea.
+Give VIP nametag to the given player.=Darle nametag VIP al dado jugador.
+Invalid player name. See /help vip_nametag=Nombre de jugador invalido. Vea /help vip_nametag
+Successfully set VIP nametag for player @1.=@1 ahora tiene nametag VIP.
+Change the premium's house location.=Cambiar la posición de la casa premium.
+Successfully set the premium house location to your current position.=La posición de la casa premium ha sido exitosamente actualizado a tu pocisión actual.
+Successfully changed premium's house location to <@1>=La pocisión de la casa premium ha sido exitosamente actualizado a <@1>
+Wrong usage of command. Use <x y z>=Mal uso del comando. Use <x y z>
+Player @1 does not exist, not online, or the specified position is invalid.=El jugador @1 no existe, no esta en línea, o la posición es invalida.

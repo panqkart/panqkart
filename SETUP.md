@@ -47,7 +47,7 @@ You will have to do some minor changes in order to make the lobby work properly.
 
 ## 🗺 Configuring the spawnpoint
 
-There's a spawn node defined by `special_nodes` used to define the spawnpoint when you place it or either when it's loaded ([LBM](https://github.com/minetest/minetest/blob/master/doc/lua_api.txt#L7937)).\
+There's a spawn node defined by `pk_nodes` used to define the spawnpoint when you place it or either when it's loaded ([LBM](https://github.com/minetest/minetest/blob/master/doc/lua_api.txt#L7937)).\
 **Do not attempt to place two or more of this node, as the system will get confused with two spawnpoints.**
 
 **When placing the schematic, the spawn position is already defined and it does not require extra setup.**\

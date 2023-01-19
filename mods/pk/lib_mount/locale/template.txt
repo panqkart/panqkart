@@ -1,0 +1,12 @@
+# textdomain: lib_mount
+
+You're in 1st place! Congratulations!=
+You're in 2nd place!=
+You're in 3rd place!=
+You're in @1 place!=
+th=
+You won @1 gold coins, @2 silver coins, and @3 bronze coins.=
+You won double coins for having premium!=
+Race ended! Heading back to the lobby...=
+You are in last place! You lost.=
+Game's up! You finished the race in @1 seconds.=
