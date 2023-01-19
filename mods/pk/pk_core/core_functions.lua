@@ -195,19 +195,19 @@ local function start(player)
 		startCountdown(player)
 	else
 		for i=1,pregame_count,1 do
-		minetest.after(i, function()
-			if pregame_count_ended == true then hud_fs.close_hud(player, "pk_core:pregame_count") return end
-		hud_fs.show_hud(player, "pk_core:pregame_count", {
-			{type = "size", w = 40, h = 0.5},
-			{type = "position", x = 0.9, y = 0.9},
-			{
-				type = "label", x = 0, y = 0,
-				label = S("The race will start in: @1", pregame_count)
-			}
-		})
-	end)
-	end
-	end
+			minetest.after(i, function()
+				if pregame_count_ended == true then hud_fs.close_hud(player, "pk_core:pregame_count") return end
+					hud_fs.show_hud(player, "pk_core:pregame_count", {
+						{type = "size", w = 40, h = 0.5},
+						{type = "position", x = 0.9, y = 0.9},
+						{
+							type = "label", x = 0, y = 0,
+							label = S("The race will start in: @1", pregame_count)
+						}
+					})
+				end)
+			end
+		end
 	-- End: HUD/count stuff
 end
 
@@ -230,33 +230,10 @@ local function race_end()
 			core_game.is_waiting_end[player_name] = false
 			hud_fs.close_hud(player_name, "pk_core:pending_race")
 		end
+
 		-- Set nametags once the race ends
-		if minetest.check_player_privs(name, { core_admin = true }) then
-			name:set_nametag_attributes({
-				text = "[STAFF] " .. name:get_player_name(),
-				color = {r = 255, g = 0, b = 0},
-				bgcolor = false
-			})
-		elseif minetest.check_player_privs(name, { has_premium = true }) then
-			name:set_nametag_attributes({
-				text = "[VIP] " .. name:get_player_name(),
-				color = {r = 255, g = 255, b = 0},
-				bgcolor = false
-			})
-		elseif minetest.check_player_privs(name, { builder = true }) then
-			if not minetest.get_modpath("panqkart_modifications") then return end
-			name:set_nametag_attributes({
-				text = "[BUILDER] " .. name:get_player_name(),
-				color = {r = 0, g = 196, b = 0},
-				bgcolor = false
-			})
-		else
-			name:set_nametag_attributes({
-				text = name:get_player_name(),
-				color = {r = 255, g = 255, b = 255},
-				bgcolor = false
-			})
-		end
+		core_game.nametags(name)
+
 		if next(core_game.players_on_race,_) == nil then
 			minetest.after(0.1, function()
 				core_game.player_count = 0
@@ -294,63 +271,6 @@ function core_game.reset_values(player)
 
 	core_game.ran_once[player] = nil
 	racecount_check[player] = false
-end
-
---- @brief The core function to initialize the spawnpoint
---- and place the player on the spawnpoint.
---- @details The function will check for:
---- 1. A world-exclusive file that saves the lobby position.
---- 2. A value in the Minetest settings (DEPRECATED)
---- 3. Global variable that was updated each time the `spawn_node` node was detected (DEPRECATED).
---- If none of these are found/valid, it will use a fallback position, or the current player's position.
---- @param player table the player that will be teleported to the lobby
---- @param time number the time in seconds that the player will be teleported to the lobby
---- @return nil
-function core_game.spawn_initialize(player, time)
-	minetest.after(time, function()
-		local position, value
-
-		-- Read spawnpoint from world-exclusive file which won't affect other worlds.
-		local file,err = io.open(minetest.get_worldpath() .. "/lobby_position.txt", "r")
-		if file then
-			value = tostring(file:read("*a"))
-			file:close()
-		else
-			minetest.log("error", "[PANQKART] Error while loading lobby position: " .. err .. ". Deprecated/fallback settings will be used.")
-		end
-
-		-- DEPRECATED CALLBACKS. Will be removed in future versions.
-		if not minetest.string_to_pos(value) then
-			if not minetest.setting_get_pos("lobby_position") and not core_game.position.x then -- Both setting/variable are nil
-				position = player:get_pos()														-- To prevent crashes
-			elseif minetest.setting_get_pos("lobby_position") and not core_game.position.x then -- Setting is there, however, variable isn't
-				position = minetest.setting_get_pos("lobby_position")
-			elseif core_game.position.x then													-- Position is set in the variable
-				position = core_game.position
-			else																				-- Fallback
-				position = player:get_pos()
-				minetest.log("warning", "[PANQKART] No spawnpoint found. Using fallback position/settings.")
-			end
-		elseif minetest.string_to_pos(value) then 												-- Position is set in the file
-			position = minetest.string_to_pos(value)
-		else																				    -- Fallback (2nd check)
-			position = player:get_pos()
-			minetest.log("warning", "[PANQKART] No spawnpoint found. Using fallback position/settings.")
-		end
-		local meta = minetest.get_meta(position)
-
-		-- Let's use the position of the `spawn_node` node. This is very useful
-		-- when placing the lobby schematic and not the node itself.
-		if meta and minetest.string_to_pos(meta:get_string("lobby_position")) then
-			player:set_pos(minetest.string_to_pos(meta:get_string("lobby_position")))
-			minetest.log("action", "[PANQKART] `spawn_node` node position was used for player " .. player:get_player_name() .. ". Successfully teleported.")
-		else
-			-- If not found, use the default position defined in settings
-			player:set_pos(position)
-			minetest.log("action", "[PANQKART] Teleported " .. player:get_player_name() .. " to the settings spawnpoint")
-		end
-	end)
-	minetest.log("action", "[PANQKART] Player " .. player:get_player_name() .. " joined and was teleported to the lobby successfully.")
 end
 
 --- @brief Utility function to show the scoreboard
@@ -432,32 +352,7 @@ end
 --- @returns nil
 function core_game.player_lost(player)
 	-- Set nametags once the race ends
-	if minetest.check_player_privs(player, { core_admin = true }) then
-		player:set_nametag_attributes({
-			text = "[STAFF] " .. player:get_player_name(),
-			color = {r = 255, g = 0, b = 0},
-			bgcolor = false
-		})
-	elseif minetest.check_player_privs(player, { builder = true }) then
-		if not minetest.get_modpath("panqkart_modifications") then return end
-		player:set_nametag_attributes({
-			text = "[BUILDER] " .. player:get_player_name(),
-			color = {r = 0, g = 196, b = 0},
-			bgcolor = false
-		})
-	elseif minetest.check_player_privs(player, { has_premium = true }) then
-		player:set_nametag_attributes({
-			text = "[VIP] " .. player:get_player_name(),
-			color = {r = 255, g = 255, b = 0},
-			bgcolor = false
-		})
-	else
-		player:set_nametag_attributes({
-			text = player:get_player_name(),
-			color = {r = 255, g = 255, b = 255},
-			bgcolor = false
-		})
-	end
+	core_game.nametags(player)
 
 	lib_mount.win_count = lib_mount.win_count + 1
 

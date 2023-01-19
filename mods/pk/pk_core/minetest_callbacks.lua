@@ -26,24 +26,7 @@ minetest.register_on_joinplayer(function(player)
 	player:set_lighting({ shadows = { intensity = 0.33 } })
 	core_game.spawn_initialize(player, 0.2)
 
-	-- VIP/Premium users
-	if minetest.get_modpath("pk_premium") and minetest.check_player_privs(player, { has_premium = true } ) then
-		player:set_nametag_attributes({
-			text = "[VIP] " .. player:get_player_name(),
-			color = {r = 255, g = 255, b = 0},
-			bgcolor = false
-		})
-	end
-
-	-- Administrators
-	if minetest.check_player_privs(player, { core_admin = true } ) then
-		player:set_nametag_attributes({
-			text = "[STAFF] " .. player:get_player_name(),
-			color = {r = 255, g = 0, b = 0},
-			bgcolor = false
-		})
-		player:set_properties({zoom_fov = 15}) -- Let administrators zoom
-	end
+	core_game.nametags(player)
 end)
 
 minetest.register_on_respawnplayer(function(player)

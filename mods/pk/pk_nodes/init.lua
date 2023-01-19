@@ -142,7 +142,7 @@ end
 
 for i = 1, 12, 1 do
 	minetest.register_node("pk_nodes:player_" .. i .. "_position", {
-		description = S_nodes("Player " .. i .. " position"),
+		description = S_nodes("Player @1 position", i),
 		tiles = {"streets_asphalt.png"},
 		groups = { unbreakable = 1, not_in_creative_inventory = 1 },
 		drop = "",
@@ -169,7 +169,7 @@ for i = 1, 12, 1 do
 				return minetest.item_place(itemstack, placer, pointed_thing)
 			end
 
-			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to place this node. Missing privileges: core_admin"))
+			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
 			return itemstack
 		end,
 		on_construct = function(pos)
@@ -181,7 +181,7 @@ for i = 1, 12, 1 do
 				return default.can_interact_with_node(player, pos)
 			end
 
-			minetest.chat_send_player(player:get_player_name(), S2("You don't have sufficient permissions to place this node. Missing privileges: core_admin"))
+			minetest.chat_send_player(player:get_player_name(), S2("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
 			return false
 		end,
 		on_dig = function(pos, node, digger)
@@ -259,7 +259,7 @@ minetest.register_node("pk_nodes:start_race", {
 	groups = {not_in_creative_inventory = 1, unbreakable = 1},
 	on_place = function(itemstack, placer, pointed_thing)
 		if not minetest.check_player_privs(placer, { core_admin = true }) then
-			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to place this node. Missing privileges: core_admin"))
+			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
 			return itemstack
 		end
 		return minetest.item_place(itemstack, placer, pointed_thing)
@@ -463,7 +463,7 @@ minetest.register_node("pk_nodes:spawn_node", {
 	walkable = false,
 	on_place = function(itemstack, placer, pointed_thing)
 		if not minetest.check_player_privs(placer, { core_admin = true }) then
-			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to place this node. Missing privileges: core_admin"))
+			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
 			return itemstack
 		end
 		return minetest.item_place(itemstack, placer, pointed_thing)
@@ -487,7 +487,7 @@ minetest.register_node("pk_nodes:tp_lobby", {
 	legacy_facedir_simple = true,
 	on_place = function(itemstack, placer, pointed_thing)
 		if not minetest.check_player_privs(placer, { core_admin = true }) then
-			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to place this node. Missing privileges: core_admin"))
+			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
 			return itemstack
 		end
 		return minetest.item_place(itemstack, placer, pointed_thing)
@@ -502,7 +502,7 @@ minetest.register_node("pk_nodes:asphalt", {
 	paramtype = "light",
 	on_place = function(itemstack, placer, pointed_thing)
 		if not minetest.check_player_privs(placer, { core_admin = true }) then
-			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to place this node. Missing privileges: core_admin"))
+			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
 			return itemstack
 		end
 		return minetest.item_place(itemstack, placer, pointed_thing)
@@ -519,7 +519,7 @@ minetest.register_node("pk_nodes:lava_node", {
 	legacy_facedir_simple = true,
 	on_place = function(itemstack, placer, pointed_thing)
 		if not minetest.check_player_privs(placer, { core_admin = true }) then
-			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to place this node. Missing privileges: core_admin"))
+			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
 			return itemstack
 		end
 		return minetest.item_place(itemstack, placer, pointed_thing)

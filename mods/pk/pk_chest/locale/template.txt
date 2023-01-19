@@ -1,6 +1,6 @@
 # textdomain: pk_chest
 
-Choose the options here.=
+Customize the coin chest=
 Bronze coins=
 Silver coins=
 Gold coins=

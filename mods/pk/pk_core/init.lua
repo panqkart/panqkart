@@ -78,17 +78,17 @@ elseif minetest.settings:get_bool("manual_setup") ~= true or minetest.settings:g
 	dofile(minetest.get_modpath(modname) .. "/schematics.lua") -- The schematics will be placed on startup
 end
 
----------------------
--- Core functions --
----------------------
-
-dofile(minetest.get_modpath(modname) .. "/core_functions.lua")
-
 ------------------
 -- Privileges --
 ------------------
 
 dofile(minetest.get_modpath(modname) .. "/privileges.lua")
+
+---------------------
+-- Core functions --
+---------------------
+
+dofile(minetest.get_modpath(modname) .. "/core_functions.lua")
 
 ----------------
 -- Commands --

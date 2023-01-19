@@ -30,7 +30,7 @@ local function show_formspec(meta)
 	local formspec = {
 		"formspec_version[4]",
 		"size[7,5]",
-		"label[1.25,0.5;", minetest.formspec_escape("Customize the coin chest.."), "]",
+		"label[1.25,0.5;", minetest.formspec_escape(S("Customize the coin chest")), "]",
 		"field[0.375,1.2;5.25,0.8;bronze;" .. S("Bronze coins") .. ";${bronze}]",
 		"field[0.375,2.13;5.25,0.8;silver;" .. S("Silver coins") .. ";${silver}]",
 		"field[0.375,3;5.25,0.8;gold;" .. S("Gold coins") .. ";${gold}]",

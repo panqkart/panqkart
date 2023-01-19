@@ -26,7 +26,7 @@ local S = core_game.S
 --- who have the premium or core administrator role on grant/revoke.
 --- @param name string the player to update the nametag to
 --- @returns nil
-function core_game.grant_revoke(name)
+function core_game.nametags(name)
 	local player = minetest.get_player_by_name(name)
 	if not player then return end
 
@@ -72,6 +72,6 @@ minetest.register_privilege("core_admin", {
     give_to_singleplayer = true,
 	give_to_admin = true,
 
-	on_grant = core_game.grant_revoke,
-	on_revoke = core_game.grant_revoke,
+	on_grant = core_game.nametags,
+	on_revoke = core_game.nametags,
 })
