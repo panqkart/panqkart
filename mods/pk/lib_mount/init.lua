@@ -21,7 +21,7 @@
 --]]
 
 lib_mount = {
-	passengers = {},
+	passengers = { },
 	win_count = 1
 }
 

@@ -9,19 +9,9 @@ function vehicle_mash.register_vehicle(name, def)
 		driver_attach_at = def.driver_attach_at,
 		driver_eye_offset = def.driver_eye_offset,
 		driver_detach_pos_offset = def.driver_detach_pos_offset,
+
 		number_of_passengers = def.number_of_passengers,
-
-		passenger_attach_at = def.passenger_attach_at,
-		passenger_eye_offset = def.passenger_eye_offset,
-		passenger_detach_pos_offset = def.passenger_detach_pos_offset,
-
-		passenger2_attach_at = def.passenger2_attach_at,
-		passenger2_eye_offset = def.passenger2_eye_offset,
-		passenger2_detach_pos_offset = def.passenger2_detach_pos_offset,
-
-		passenger3_attach_at = def.passenger3_attach_at,
-		passenger3_eye_offset = def.passenger3_eye_offset,
-		passenger3_detach_pos_offset = def.passenger3_detach_pos_offset,
+		passengers = def.passengers,
 
 		enable_crash = def.enable_crash,
 		visual = def.visual,
@@ -99,19 +89,9 @@ function vehicle_mash.register_vehicle(name, def)
 			else
 				self.object:set_armor_groups({fleshy = 0, immortal = 1}) -- Else, make vehicle immortal
 			end
+
 			if def.hp_min and def.hp_max then
 				self.object:set_hp(math.random(def.hp_min, def.hp_max), "Set HP to vehicle")
-			end
-
-			if self.driver then
-				self.driver:set_armor_groups({immortal = 0, fleshy = self.driver:get_armor_groups()})
-			end
-			-- Support for passengers
-			for i = 1, self.number_of_passengers do
-				local passenger = self.passengers[i]
-				if passenger.player then
-					passenger.player:set_armor_groups({immortal = 0, fleshy = passenger.player:get_armor_groups()})
-				end
 			end
 
 			local tmp = minetest.deserialize(staticdata)
@@ -175,7 +155,7 @@ function vehicle_mash.register_vehicle(name, def)
 				local passenger = self.passengers[i]
 				if passenger.player then
 					lib_mount.detach(passenger.player, passenger.eye_offset)
-					passenger.player:set_eye_offset({x = 0, y = 0, z = 0} ,{ x = 0, y = 0, z = 0 })
+					passenger.player:set_eye_offset({ x = 0, y = 0, z = 0 } ,{ x = 0, y = 0, z = 0 })
 				end
 			end
 		end

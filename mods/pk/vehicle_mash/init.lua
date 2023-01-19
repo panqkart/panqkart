@@ -64,15 +64,22 @@ vehicle_mash.car01_def = {
 	player_rotation = {x=0,y=90,z=0},
 	driver_attach_at = {x=3.5,y=3.7,z=3.5},
 	driver_eye_offset = {x=-4, y=0, z=0},
+
 	number_of_passengers = 0,
-	passenger_attach_at = {x=3.5,y=3.7,z=-3.5},
-	passenger_eye_offset = {x=4, y=0, z=0},
-
-	passenger2_attach_at = {x=-4,y=3.7,z=3.5},
-	passenger2_eye_offset = {x=-4, y=3, z=0},
-
-	passenger3_attach_at = {x=-4,y=3.7,z=-3.5},
-	passenger3_eye_offset = {x=4, y=3, z=0},
+	passengers = {
+		{
+			attach_at = {x=3.5,y=3.7,z=-3.5},
+			eye_offset = {x=4, y=0, z=0},
+		},
+		{
+			attach_at = {x=-4,y=3.7,z=3.5},
+			eye_offset = {x=-4, y=3, z=0},
+		},
+		{
+			attach_at = {x=-4,y=3.7,z=-3.5},
+			eye_offset = {x=4, y=3, z=0},
+		},
+	},
 
 	enable_crash = false,
 
@@ -116,21 +123,20 @@ vehicle_mash.hover_def = {
 	mesh = "hovercraft.x",
 	visual_size = {x=1, y=1},
 	wield_scale = {x=1, y=1, z=1},
-	collisionbox = {-0.8, -0.25, -0.8, 0.8, 1.2, 0.8},
+	collisionbox = {-0.8, -0.25, -0.8, 0.8, 1.2, 0.8}, -- TODO: fix collisionbox
 	onplace_position_adj = -0.25,
 	-- player specific stuff
 	player_rotation = {x=0,y=90,z=0},
 	driver_attach_at = {x=-2,y=6.3,z=0},
 	driver_eye_offset = {x=0, y=0, z=0},
+
 	number_of_passengers = 0,
-	passenger_attach_at = {x=0,y=0,z=0},
-	passenger_eye_offset = {x=0, y=0, z=0},
-
-	passenger2_attach_at = {x=0,y=0,z=0},
-	passenger2_eye_offset = {x=0, y=0, z=0},
-
-	passenger3_attach_at = {x=0,y=0,z=0},
-	passenger3_eye_offset = {x=0, y=0, z=0},
+	passengers = {
+		{
+			attach_at = {x=0,y=0,z=0},
+			eye_offset = {x=0, y=0, z=0},
+		},
+	},
 
 	enable_crash = false,
 
@@ -185,15 +191,14 @@ local mesecar_def = {
 	player_rotation = {x=0,y=0,z=0},
 	driver_attach_at = {x=0,y=0,z=-2.0},
 	driver_eye_offset = {x=0, y=0, z=0},
+
 	number_of_passengers = 0,
-	passenger_attach_at = {x=0,y=0,z=0},
-	passenger_eye_offset = {x=0, y=0, z=0},
-
-	passenger2_attach_at = {x=0,y=0,z=0},
-	passenger2_eye_offset = {x=0, y=0, z=0},
-
-	passenger3_attach_at = {x=0,y=0,z=0},
-	passenger3_eye_offset = {x=0, y=0, z=0},
+	passengers = {
+		{
+			attach_at = {x=0,y=0,z=0},
+			eye_offset = {x=0, y=0, z=0},
+		},
+	},
 
 	-- drop and recipe
 	drop_on_destroy = {"vehicle_mash:motor", "vehicle_mash:battery"},
@@ -238,15 +243,14 @@ local boat_def = {
 	player_rotation = {x=0, y=0, z=0},
 	driver_attach_at = {x=0.5,y=1,z=-3},
 	driver_eye_offset = {x=0, y=0, z=0},
+
 	number_of_passengers = 0,
-	passenger_attach_at = {x=0,y=0,z=0},
-	passenger_eye_offset = {x=0, y=0, z=0},
-
-	passenger2_attach_at = {x=0,y=0,z=0},
-	passenger2_eye_offset = {x=0, y=0, z=0},
-
-	passenger3_attach_at = {x=0,y=0,z=0},
-	passenger3_eye_offset = {x=0, y=0, z=0}
+	passengers = {
+		{
+			attach_at = {x=0,y=0,z=0},
+			eye_offset = {x=0, y=0, z=0},
+		},
+	},
 }
 
 local boat_names = {
