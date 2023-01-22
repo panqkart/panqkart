@@ -59,4 +59,4 @@ Coming soon!
 
 ## 📜 Legal/Licensing 📜
 
-Refer to [`LICENSE.md`](https://github.com/panqkart/panqkart/blob/LICENSE.md) for more information.
+Refer to [`LICENSE.md`](https://github.com/panqkart/panqkart/blob/main/LICENSE.md) for more information.
