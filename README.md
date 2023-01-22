@@ -1,4 +1,6 @@
-# 🚗 PanqKart 🚗
+# 🏎 PanqKart 🏎
+
+![screenshot](https://raw.githubusercontent.com/panqkart/panqkart/main/screenshot.png)
 
 [![build](https://github.com/panqkart/panqkart/actions/workflows/build.yml/badge.svg)](https://github.com/panqkart/panqkart/actions/)
 [![ContentDB](https://content.minetest.net/packages/Panquesito7/panqkart/shields/downloads/)](https://content.minetest.net/packages/Panquesito7/panqkart/)
