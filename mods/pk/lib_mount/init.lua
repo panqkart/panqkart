@@ -22,7 +22,7 @@
 
 lib_mount = {
 	passengers = { },
-	win_count = 1
+	win_count = 0
 }
 
 local modname = minetest.get_current_modname()
