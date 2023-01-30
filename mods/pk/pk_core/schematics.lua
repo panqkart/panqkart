@@ -20,11 +20,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
 USA
 --]]
 
-local modstorage = minetest.get_mod_storage()
+local modstorage = core_game.modstorage
 local S = minetest.get_translator(minetest.get_current_modname())
 
 minetest.register_on_newplayer(function(player)
-    if modstorage:get_string("schematic") ~= "false" then
+    if modstorage:get_string("schematic") ~= "false" and minetest.settings:get_bool("modgen_generation") == false then
         -- In case the player isn't in {0,0,0}, teleport them there.
         player:set_pos({x = 0, y = 0, z = 0})
 
