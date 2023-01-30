@@ -38,7 +38,7 @@ minetest.register_on_newplayer(function(player)
         local filenames = {"lobby.we", "level.we"}
         for _,name in pairs(filenames) do
 
-            local file, err = io.open(minetest.get_modpath("core_game") .. "/schems/" .. name, "rb")
+            local file, err = io.open(minetest.get_modpath("pk_core") .. "/schems/" .. name, "rb")
             -- The level's very big. We don't want it to collapse with the lobby.
             if name == "level.we" then
                 pos.y = pos.y + 300
