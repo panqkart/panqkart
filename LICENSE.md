@@ -1,6 +1,6 @@
 # License of media (textures and sounds)
 
-Copyright (C) 2022 David Leal <halfpacho@gmail.com>\
+Copyright (C) 2022 David Leal (<halfpacho@gmail.com>)\
 The following media/textures are licensed under [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/):
 
 _Textures_
@@ -26,14 +26,14 @@ License of `menu/header.png`:
   - The version's not specified. I'm going to assume they used CC BY-SA 3.0 (it was the last version when the last commit was made, July 2013. CC BY-SA 4.0 was released in November 2013).
 - The smiley face was made by [**Gabri**](https://liberapay.com/Methro), a.k.a. "Methro", "SiLeNT", "chocomint"; licensed under the [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/) license.
 
-Copyright (C) 2022 David Leal <halfpacho@gmail.com>\
+Copyright (C) 2022 David Leal (<halfpacho@gmail.com>)\
 The `PanqKart` text is licensed under [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/)
 
 `menu/icon.png` was taken from <https://github.com/minetest-mods/vehicle_mash/blob/master/textures/inv_car_red.png>
 
 ## License of source code
 
-Copyright (C) 2022 David Leal <halfpacho@gmail.com>
+Copyright (C) 2022 David Leal (<halfpacho@gmail.com>)
 
 All the mods fall under their respective licenses.\
 See their license/readme file for more information about that.

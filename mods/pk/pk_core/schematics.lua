@@ -23,6 +23,11 @@ USA
 local modstorage = core_game.modstorage
 local S = minetest.get_translator(minetest.get_current_modname())
 
+if minetest.settings:get_bool("manual_setup") == true and not minetest.settings:get_bool("manual_setup") == nil then
+	minetest.log("info", "[PANQKART] Manual setup is enabled. Schematics will not be placed on startup.")
+    return
+end
+
 minetest.register_on_newplayer(function(player)
     if modstorage:get_string("schematic") ~= "false" and minetest.settings:get_bool("modgen_generation") == false then
         -- In case the player isn't in {0,0,0}, teleport them there.
@@ -38,7 +43,7 @@ minetest.register_on_newplayer(function(player)
         local filenames = {"lobby.we", "level.we"}
         for _,name in pairs(filenames) do
 
-            local file, err = io.open(minetest.get_modpath("core_game") .. "/schems/" .. name, "rb")
+            local file, err = io.open(minetest.get_modpath("pk_core") .. "/schems/" .. name, "rb")
             -- The level's very big. We don't want it to collapse with the lobby.
             if name == "level.we" then
                 pos.y = pos.y + 300

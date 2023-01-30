@@ -52,19 +52,19 @@ assert(
 
 core_game.players_on_race = { } -- Save players on the current race in a vector
 core_game.game_started = false -- Variable to verify if a race has started or not
-core_game.is_end = {} -- Array for multiple players to verify if they have ended the race or not
-core_game.count = {} -- Array for the players' countdown
+core_game.is_end = { } -- Array for multiple players to verify if they have ended the race or not
+core_game.count = { } -- Array for the players' countdown
 
-core_game.is_waiting_end = {} -- Array to show the players' a HUD to wait for the current race to finish.
+core_game.is_waiting_end = { } -- Array to show the players' a HUD to wait for the current race to finish.
 							  -- This comes in handy when you wanna let know all the players there's a current race running.
-core_game.is_waiting = {} -- Array to show the players' a HUD to wait for more players to join.
+core_game.is_waiting = { } -- Array to show the players' a HUD to wait for more players to join.
 						  -- The minimum default value is 4 players.
 core_game.player_count = 0 -- Player count in a race. This is decreased if a player leaves and they were in a race.
 						   -- Used to check who was in the 1st place, 2nd place, 3rd place, etc..
-core_game.players_that_won = {} -- An array to save all the players who won, in their respective place.
+core_game.players_that_won = { } -- An array to save all the players who won, in their respective place.
 core_game.show_leaderboard = false -- Utility boolean to show the leaderboard at the end of the race.
 
-core_game.ran_once = {} -- Utility array to make sure the player hasn't stood on the start race block more than once.
+core_game.ran_once = { } -- Utility array to make sure the player hasn't stood on the start race block more than once.
 core_game.pregame_started = false -- The variable's name says it all. :)
 
 -------------------
@@ -72,12 +72,7 @@ core_game.pregame_started = false -- The variable's name says it all. :)
 -------------------
 
 dofile(minetest.get_modpath(modname) .. "/mapgen.lua")
-
-if minetest.settings:get_bool("manual_setup") == true and not minetest.settings:get_bool("manual_setup") == nil then
-	minetest.log("info", "[PANQKART] Manual setup is enabled. Schematics will not be placed on startup.")
-elseif minetest.settings:get_bool("manual_setup") ~= true or minetest.settings:get_bool("manual_setup") == nil then
-	dofile(minetest.get_modpath(modname) .. "/schematics.lua") -- The schematics will be placed on startup
-end
+dofile(minetest.get_modpath(modname) .. "/schematics.lua")
 
 ------------------
 -- Privileges --
