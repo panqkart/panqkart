@@ -126,6 +126,7 @@ if not minetest.get_modpath("mobs") then
 	})
 	-- End: code taken from the `mobs_redo` mod
 	minetest.register_alias("mobs:fence_wood", "pk_nodes:fence_wood")
+	minetest.register_alias("special_nodes:fence_wood", "pk_nodes:fence_wood") 	-- Backwards compatibility
 else
 	minetest.register_alias("special_nodes:fence_wood", "pk_nodes:fence_wood") 	-- Backwards compatibility
 	minetest.register_alias("pk_nodes:fence_wood", "mobs:fence_wood")
