@@ -23,6 +23,11 @@ USA
 local modstorage = minetest.get_mod_storage()
 local S = minetest.get_translator(minetest.get_current_modname())
 
+if minetest.settings:get_bool("manual_setup") == true and not minetest.settings:get_bool("manual_setup") == nil then
+	minetest.log("info", "[PANQKART] Manual setup is enabled. Schematics will not be placed on startup.")
+    return
+end
+
 minetest.register_on_newplayer(function(player)
     if modstorage:get_string("schematic") ~= "false" then
         -- In case the player isn't in {0,0,0}, teleport them there.
