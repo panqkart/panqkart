@@ -87,9 +87,7 @@ minetest.register_on_newplayer(function(player)
             player:set_pos({x = 55, y = 19, z = 65})
 
             minetest.after(1, function() player:set_pos({x = -48, y = 232.5, z = -285}) end)
-            minetest.after(3.5, function() core_game.spawn_initialize(player, 0) end)
-
-            minetest.chat_send_all("test")
+            minetest.after(3, function() core_game.spawn_initialize(player, 0) end)
         end
 
         -- Prevents WorldEdit schematics from being placed if
