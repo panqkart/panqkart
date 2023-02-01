@@ -606,14 +606,6 @@ function core_game.start_game(player)
 			minetest.chat_send_player(player:get_player_name(), S("You might not be able to move. Meanwhile, wait until " .. required_players - core_game.player_count .. " more player(s) join."))
 		end
 
-		hud_fs.show_hud(player, "pk_core:waiting_for_players", {
-			{type = "size", w = 40, h = 0.5},
-			{type = "position", x = 0.9, y = 0.9},
-			{
-				type = "label", x = 0, y = 0,
-				label = S("Waiting for players (@1 required)...", required_players)
-			}
-		})
 		core_game.is_waiting[player] = player
 		player:set_physics_override({speed = 0.001, jump = 0.01})
 
@@ -638,6 +630,17 @@ function core_game.start_game(player)
 		end
 	end
 	-- End: player count checks
+
+	for _,name in pairs(core_game.is_waiting) do
+		hud_fs.show_hud(name, "pk_core:waiting_for_players", {
+			{type = "size", w = 40, h = 0.5},
+			{type = "position", x = 0.9, y = 0.9},
+			{
+				type = "label", x = 0, y = 0,
+				label = S("Waiting for players (@1 players / @2 missing)", core_game.player_count, required_players - core_game.player_count)
+			}
+		})
+	end
 
 	-- Start: start race for non-waiting players, or recently joined ones
 	start(player)
