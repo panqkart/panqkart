@@ -25,5 +25,5 @@ player_api_fix (Fix eye-height when using cars) bool true
 #   Manual setup
 manual_setup (Whether to setup the game/schematics manually or not) bool false
 
-#   Modgen-based generation
-modgen_generation (Use `modgen` generation or WorldEdit schematic placement) bool true
+#   Modgen-based generation (fast and recommended)
+modgen_generation (Uses `modgen` generation, otherwise, WorldEdit schematic placement) bool true
