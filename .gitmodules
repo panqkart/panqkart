@@ -64,3 +64,6 @@
 [submodule "mods/mtg/beds"]
 	path = mods/mtg/beds
 	url = https://github.com/minetest-game/beds
+[submodule "mods/other/modgen"]
+	path = mods/other/modgen
+	url = https://github.com/BuckarooBanzay/modgen

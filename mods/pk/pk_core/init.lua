@@ -24,7 +24,8 @@ local modname = minetest.get_current_modname()
 local S = minetest.get_translator(modname)
 
 core_game = {
-	S = S
+	S = S,
+	modstorage = minetest.get_mod_storage()
 }
 
 --------------------------------

@@ -3,11 +3,11 @@ allow_defined_top = true
 max_line_length = false
 
 globals = {
-    "default", "minetest", "core", "core_game",
+	"default", "minetest", "core", "core_game", "modgen",
 	"lib_mount", "vehicle_mash", "mobs", "formspec_ast", "player_api",
 
 	string = {fields = {"split", "trim"}},
-	table = {fields = {"copy", "getn"}},
+	table = {fields = {"copy", "getn"}}
 }
 
 read_globals = {
@@ -56,8 +56,6 @@ files["mods/pk/lib_mount/init.lua"].ignore = { "eye_offset", "attach_at",
 -- These are unused functions/variables that might be used in the future.
 files["mods/pk/vehicle_mash/init.lua"].ignore = { "cars_def", "mesecar_def", "mesecar_names",
 	"boat_def", "boat_names" }
-
--- Code below taken from https://github.com/luk3yx/minetest-formspec_ast/blob/master/.luacheckrc
 
 -- This error is thrown for methods that don't use the implicit "self"
 -- parameter.

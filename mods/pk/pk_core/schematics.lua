@@ -20,16 +20,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
 USA
 --]]
 
-local modstorage = minetest.get_mod_storage()
+local modstorage = core_game.modstorage
 local S = minetest.get_translator(minetest.get_current_modname())
+local manual_setup = minetest.settings:get_bool("manual_setup")
 
-if minetest.settings:get_bool("manual_setup") == true and not minetest.settings:get_bool("manual_setup") == nil then
-	minetest.log("info", "[PANQKART] Manual setup is enabled. Schematics will not be placed on startup.")
-    return
+if manual_setup == true and not manual_setup == nil then
+    minetest.log("info", "[PANQKART] Manual setup is enabled. Schematics will not be placed on startup.")
 end
 
 minetest.register_on_newplayer(function(player)
-    if modstorage:get_string("schematic") ~= "false" then
+    if modstorage:get_string("schematic") ~= "false" and minetest.settings:get_bool("modgen_generation") == false and
+        manual_setup == false or manual_setup == nil then
+
         -- In case the player isn't in {0,0,0}, teleport them there.
         player:set_pos({x = 0, y = 0, z = 0})
 
@@ -73,8 +75,25 @@ minetest.register_on_newplayer(function(player)
         -- generate the `player_positions.txt` file. After that, the player must be teleported to the lobby.
         minetest.after(0.3, function() player:set_pos({x = 60, y = 310, z = 230}) end)
         minetest.after(0.8, function() core_game.spawn_initialize(player, 0) end)
+
+        modstorage:set_string("schematic", "false")
     end
-    modstorage:set_string("schematic", "false")
+
+    if minetest.settings:get_bool("modgen_generation") == true or minetest.settings:get_bool("modgen_generation") == nil then
+        -- Teleport where the level is located at (temporary).
+        -- This will be removed once the multiple-map system is added.
+
+        if modstorage:get_string("schematic") ~= "false" then
+            player:set_pos({x = 55, y = 19, z = 65})
+
+            minetest.after(1, function() player:set_pos({x = -48, y = 232.5, z = -285}) end)
+            minetest.after(3, function() core_game.spawn_initialize(player, 0) end)
+        end
+
+        -- Prevents WorldEdit schematics from being placed if
+        -- `modgen_generation` is disabled AFTER `modgen` generated the maps.
+        modstorage:set_string("schematic", "false")
+    end
 end)
 
 minetest.register_on_joinplayer(function(_)
