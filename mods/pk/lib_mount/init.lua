@@ -919,7 +919,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				end
 			end)
 		end
-		minetest.chat_send_player(entity.driver:get_player_name(), S("Game's up! You finished the race in @1 seconds.", core_game.count[entity.driver]))
+		minetest.chat_send_player(entity.driver:get_player_name(), S("Game's up! You finished the race in @1 seconds.", string.format("%.2f", core_game.count[entity.driver])))
 	end
 
 	-- UNUSED:

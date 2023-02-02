@@ -21,17 +21,17 @@ USA
 --]]
 
 local S = core_game.S
-local run_once = {} -- An array to ensure a player hasn't run more than one time the select car formspec.
+local run_once = { } -- An array to ensure a player hasn't run more than one time the select car formspec.
 					-- This comes handy to not run this in the globalstep function.
-local use_hovercraft = {} -- An array to save the players who chose to use the Hovercraft.
-local use_car01 = {} -- An array to save the players who chose to use CAR01.
+local use_hovercraft = { } -- An array to save the players who chose to use the Hovercraft.
+local use_car01 = { } -- An array to save the players who chose to use CAR01.
 local pregame_count = 20 -- A variable to save the pregame countdown. This can be customized to any number.
 local already_ran = false -- A variable to make sure if the pregame countdown has been already run.
 local pregame_count_ended = false -- A variable to remove the pregame countdown HUD for those who weren't the first to run the countdown.
 
 local racecount_check = {} -- An array used to store the value if a player's countdown already started.
 local max_racecount = tonumber(minetest.settings:get("max_racecount")) or 130 -- Maximum value for the race count (default 130)
-local ended_race = {} -- This array is useful when:
+local ended_race = { } -- This array is useful when:
 					  -- 1. A player joins a race. The minimum player count requirement is not satisifed.
 					  -- 2. Another player joins the race. The count is now satisfied.
 					  -- 3. The race lasts less than 90 seconds, which is the limit to teleport a player back to the lobby if they're waiting for more players to join.
@@ -176,11 +176,11 @@ local function start(player)
 	-- End: car selection formspec
 
 	-- Start: cleanup race count and ending booleans
-	core_game.is_end = {}
-	core_game.count = {}
-	core_game.is_waiting = {}
-	core_game.players_that_won = {}
-	lib_mount.win_count = 1
+	core_game.is_end = { }
+	core_game.count = { }
+	core_game.is_waiting = { }
+	core_game.players_that_won = { }
+	lib_mount.win_count = 0
 	-- End: cleanup race count and ending booleans
 
 	minetest.chat_send_player(player:get_player_name(), S("The race will start in a few seconds. Please wait..."))
@@ -301,7 +301,7 @@ function core_game.show_scoreboard(name)
 
         table.insert(formspec,
             text .. " 					" .. core_game.players_that_won[i]:get_player_name() ..
-                "												" .. core_game.count[core_game.players_that_won[i]] .. " " ..  S("seconds") .. ",")
+                "												" .. string.format("%.2f", core_game.count[core_game.players_that_won[i]]) .. " " ..  S("seconds") .. ",")
     end
 
 	table.insert(formspec, ";1]")
@@ -498,7 +498,7 @@ minetest.register_globalstep(function(dtime)
 					{type = "position", x = 0.9, y = 0.9},
 					{
 						type = "label", x = 0, y = 0,
-						label = S("Race count: @1", core_game.count[name])
+						label = S("Race count: @1", string.format("%.2f", core_game.count[name]))
 					}
 				})
 			else
@@ -507,7 +507,7 @@ minetest.register_globalstep(function(dtime)
 					{type = "position", x = 0.9, y = 0.9},
 					{
 						type = "label", x = 0, y = 0,
-						label = S("You finished at: @1 seconds!", core_game.count[name])
+						label = S("You finished at: @1 seconds!", string.format("%.2f", core_game.count[name]))
 					}
 				})
 			end
