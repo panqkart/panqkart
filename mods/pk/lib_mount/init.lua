@@ -67,11 +67,6 @@ local function node_is(pos)
 		return "special_asphalt"
 	elseif node.name == "pk_nodes:lava_node" then
 		return "special_lava"
-		-- Grass nodes
-	elseif node.name == "maptools:grass" then
-		return "maptools_grass"
-	elseif node.name == "default:dirt_with_grass" then
-		return "default_grass"
 	end
 
 	if minetest.get_item_group(node.name, "liquid") ~= 0 then
@@ -215,6 +210,25 @@ local function slow_down_on_grass(entity, max_spd) -- luacheck: ignore
 		max_spd = entity.max_speed_reverse / 2
 		if get_sign(entity.v) >= 0 then
 			max_spd = entity.max_speed_forward / 2
+		end
+		if math.abs(entity.v) > max_spd then
+			entity.v = entity.v - get_sign(entity.v)
+		end
+	end
+end
+
+local function slow_down(entity, max_spd, nodename, value) -- luacheck: ignore
+	if not entity or not entity.object then return end -- Safety check
+
+	local pos = entity.object:get_pos() or {x = 0, y = 0, z = 0}
+	pos.y = pos.y - 0.5
+
+	local node = minetest.get_node(pos)
+	-- Slow down speed when standing on certain node.
+	if node.name == nodename then
+		max_spd = entity.max_speed_reverse / value
+		if get_sign(entity.v) >= 0 then
+			max_spd = entity.max_speed_forward / value
 		end
 		if math.abs(entity.v) > max_spd then
 			entity.v = entity.v - get_sign(entity.v)
@@ -498,7 +512,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 						if math.abs(entity.v) > max_spd then
 							entity.v = entity.v - get_sign(entity.v)
 						end
-						slow_down_on_grass(entity, max_spd)
+						slow_down(entity, max_spd, "default:dirt_with_grass", 2)
+						slow_down(entity, max_spd, "maptools:grass", 2)
+						slow_down(entity, max_spd, "pk_nodes:slow_down", 3)
 					else
 						local max_spd = entity.max_speed_reverse
 						if get_sign(entity.v) >= 0 then
@@ -507,7 +523,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 						if math.abs(entity.v) > max_spd then
 							entity.v = entity.v - get_sign(entity.v)
 						end
-						slow_down_on_grass(entity, max_spd)
+						slow_down(entity, max_spd, "default:dirt_with_grass", 2)
+						slow_down(entity, max_spd, "maptools:grass", 2)
+						slow_down(entity, max_spd, "pk_nodes:slow_down", 3)
 					end
 				else
 					local max_spd = entity.max_speed_reverse
@@ -517,7 +535,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 					if math.abs(entity.v) > max_spd then
 						entity.v = entity.v - get_sign(entity.v)
 					end
-					slow_down_on_grass(entity, max_spd)
+					slow_down(entity, max_spd, "default:dirt_with_grass", 2)
+					slow_down(entity, max_spd, "maptools:grass", 2)
+					slow_down(entity, max_spd, "pk_nodes:slow_down", 3)
 				end
 
 			else
@@ -538,7 +558,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				if math.abs(entity.v) > max_spd then
 					entity.v = entity.v - get_sign(entity.v)
 				end
-				slow_down_on_grass(entity, max_spd)
+				slow_down(entity, max_spd, "default:dirt_with_grass", 2)
+				slow_down(entity, max_spd, "maptools:grass", 2)
+				slow_down(entity, max_spd, "pk_nodes:slow_down", 3)
 			else
 				-- enforce speed limit forward and reverse
 				local max_spd = entity.max_speed_reverse
@@ -548,7 +570,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				if math.abs(entity.v) > max_spd then
 					entity.v = entity.v - get_sign(entity.v)
 				end
-				slow_down_on_grass(entity, max_spd)
+				slow_down(entity, max_spd, "default:dirt_with_grass", 2)
+				slow_down(entity, max_spd, "maptools:grass", 2)
+				slow_down(entity, max_spd, "pk_nodes:slow_down", 3)
 			end
 		end
 	end
@@ -561,6 +585,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		if math.abs(entity.v) > max_spd then
 			entity.v = entity.v - get_sign(entity.v)
 		end
+
+		slow_down(entity, max_spd, "default:dirt_with_grass", 2)
+		slow_down(entity, max_spd, "maptools:grass", 2)
+		slow_down(entity, max_spd, "pk_nodes:slow_down", 3)
 	end
 
 	-- Stop!
@@ -665,14 +693,14 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 --		new_acce.y = 1
 	end
 
-	-- Set the variable to true if on grass
+	--[[ Set the variable to true if on grass
 	if entity.driver then
 		if ni == "maptools_grass" or ni == "default_grass" then
 			is_on_grass[entity.driver] = true
 		elseif ni ~= "maptools_grass" or ni ~= "default_grass" then
 			is_on_grass[entity.driver] = false
 		end
-	end
+	end--]]
 
 	-- Teleport the player 35 nodes back when touching this node.
 	if entity.driver and ni == "special_lava" and not core_game.is_end[entity.driver] then
