@@ -108,6 +108,39 @@ if minetest.get_modpath("wool") then
 	})
 end
 
+-- Based off from `streets_solid_center_line_wide` node registration. Thanks!
+minetest.register_node("pk_nodes:slow_down", {
+	description = "Slows down an entity when on top",
+	tiles = {"pk_nodes_invisible.png"},
+	inventory_image = "default_cobble.png",
+	paramtype = "light",
+	sunlight_propagates = true,
+	paramtype2 = "facedir",
+	is_ground_content = false,
+	walkable = true,
+	pointable = false,
+	buildable_to = false,
+	drawtype = "nodebox",
+	groups = {not_in_creative_inventory = 1, unbreakable = 1},
+	use_texture_alpha = "clip",
+	node_box = {
+		type = "fixed",
+		fixed = { -0.5, -0.5, -0.5, 0.5, -0.499, 0.5 }
+	},
+	selection_box = {
+		type = "fixed",
+		fixed = { -1 / 2, -1 / 2, -1 / 2, 1 / 2, -1 / 2 + 1 / 16, 1 / 2 }
+	},
+	on_place = function(itemstack, placer, pointed_thing)
+		if minetest.check_player_privs(placer, { core_admin = true }) or minetest.check_player_privs(placer, { builder = true }) then
+			return minetest.item_place(itemstack, placer, pointed_thing)
+		else
+			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
+			return itemstack
+		end
+	end,
+})
+
 -- In case the user doesn't install the `mobs` mod, make an alias for the fence node.
 -- Start: code taken from https://notabug.org/TenPlus1/mobs_redo/src/master/crafts.lua#L157-L171
 if not minetest.get_modpath("mobs") then
