@@ -26,7 +26,7 @@ minetest.register_on_joinplayer(function(player)
 	player:set_lighting({ shadows = { intensity = 0.33 } })
 	core_game.spawn_initialize(player, 0.2)
 
-	core_game.nametags(player)
+	core_game.nametags(player:get_player_name())
 end)
 
 minetest.register_on_respawnplayer(function(player)
