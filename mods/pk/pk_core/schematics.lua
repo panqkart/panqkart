@@ -78,7 +78,9 @@ minetest.register_on_newplayer(function(player)
 
         modstorage:set_string("schematic", "false")
     end
+end)
 
+minetest.register_on_joinplayer(function(player)
     if minetest.settings:get_bool("modgen_generation") == true or minetest.settings:get_bool("modgen_generation") == nil then
         -- Teleport where the level is located at (temporary).
         -- This will be removed once the multiple-map system is added.
@@ -94,11 +96,10 @@ minetest.register_on_newplayer(function(player)
         -- `modgen_generation` is disabled AFTER `modgen` generated the maps.
         modstorage:set_string("schematic", "false")
     end
-end)
-
-minetest.register_on_joinplayer(function(_)
+        
     -- At the point of fixing the lights, it might get bugged if Minetest shows the password field.
     if modstorage:get_string("schematic") == "false" then
+        -- TODO: fix positions
         local lobby_count = worldedit.fixlight({x = 5, y = 5, z = 105}, {x = 92, y = 37, z = 0})
         local level_count = worldedit.fixlight({x = 0, y = 325, z = 0}, {x = 187, y = 300, z = 317})
 
