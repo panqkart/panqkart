@@ -96,7 +96,7 @@ minetest.register_on_joinplayer(function(player)
         -- `modgen_generation` is disabled AFTER `modgen` generated the maps.
         modstorage:set_string("schematic", "false")
     end
-        
+
     -- At the point of fixing the lights, it might get bugged if Minetest shows the password field.
     if modstorage:get_string("schematic") == "false" then
         -- TODO: fix positions
