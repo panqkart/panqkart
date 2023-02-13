@@ -32,7 +32,7 @@ function core_game.nametags(name)
 
 	-- Administrators
 	minetest.after(0, function()
-		if minetest.check_player_privs(player, { core_admin = true } ) then
+		if minetest.check_player_privs(player:get_player_name(), { core_admin = true } ) then
 			player:set_nametag_attributes({
 				text = "[STAFF] " .. player:get_player_name(),
 				color = {r = 255, g = 0, b = 0},
@@ -50,7 +50,7 @@ function core_game.nametags(name)
 		end
 
 		-- VIP/Premium users
-		if minetest.get_modpath("premium") and minetest.check_player_privs(player, { has_premium = true } ) then
+		if minetest.get_modpath("pk_premium") and minetest.check_player_privs(player:get_player_name(), { has_premium = true } ) then
 			player:set_nametag_attributes({
 				text = "[VIP] " .. player:get_player_name(),
 				color = {r = 255, g = 255, b = 0},
