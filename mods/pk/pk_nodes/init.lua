@@ -562,6 +562,7 @@ minetest.register_node("pk_nodes:lava_node", {
 
 -- Backward compatibility aliases
 minetest.register_alias("special_nodes:start_race", "pk_nodes:start_race")
+minetest.register_alias("special_nodes:slow_down", "pk_nodes:slow_down")
 minetest.register_alias("special_nodes:spawn_node", "pk_nodes:spawn_node")
 minetest.register_alias("special_nodes:tp_lobby", "pk_nodes:tp_lobby")
 minetest.register_alias("special_nodes:asphalt", "pk_nodes:asphalt")
