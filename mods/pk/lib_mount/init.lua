@@ -874,7 +874,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				text = S("You're in @1 place!", i .. S("th"))
 			end
 
-			if lib_mount.win_count == i then
+			if lib_mount.win_count == i or lib_mount.win_count == 0 then
 				minetest.chat_send_player(entity.driver:get_player_name(), text)
 				minetest.chat_send_player(entity.driver:get_player_name(),
 					S("You won @1 gold coins, @2 silver coins, and @3 bronze coins.", coin_amount[1], coin_amount[2], coin_amount[3]))
