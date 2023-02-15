@@ -7,6 +7,8 @@ if minetest.settings:get_bool("modgen_generation") == false or
 	minetest.settings:get_bool("manual_setup") == true or core_game.modstorage:get_string("schematic") == "false" then
 		minetest.log("info", "[PANQKART] Modgen generation is disabled, the schematics have been placed previously, or manual setup is enabled.")
 		return
+else
+	core_game.modstorage:set_string("schematic", "false")
 end
 
 -- mod name and path
