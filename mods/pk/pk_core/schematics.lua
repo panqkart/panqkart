@@ -1,5 +1,5 @@
 --[[
-Places the lobby and level schematics on the first run. Existing worlds will be affected.
+Places the lobby and level schematics on the first run.
 
 Copyright (C) 2022 David Leal (halfpacho@gmail.com)
 Copyright (C) Various other Minetest developers/contributors
@@ -24,13 +24,31 @@ local modstorage = core_game.modstorage
 local S = minetest.get_translator(minetest.get_current_modname())
 local manual_setup = minetest.settings:get_bool("manual_setup")
 
+local do_not_place = false
+
 if manual_setup == true and not manual_setup == nil then
     minetest.log("info", "[PANQKART] Manual setup is enabled. Schematics will not be placed on startup.")
+    do_not_place = true
+end
+
+-- Check if the `lobby_position.txt` file has any content.
+-- If any content is found, it means that the schematics have already been placed.
+local file = io.open(minetest.get_worldpath() .. "/lobby_position.txt", "r")
+if file then
+    local content = file:read("*a")
+    file:close()
+
+    if content ~= "" then
+        modstorage:set_string("schematic", "false")
+        do_not_place = true
+    end
 end
 
 minetest.register_on_newplayer(function(player)
     if modstorage:get_string("schematic") ~= "false" and minetest.settings:get_bool("modgen_generation") == false and
-        manual_setup == false or manual_setup == nil then
+        (manual_setup == false or manual_setup == nil) then
+
+        if do_not_place == true then return end
 
         -- In case the player isn't in {0,0,0}, teleport them there.
         player:set_pos({x = 0, y = 0, z = 0})
@@ -98,8 +116,8 @@ minetest.register_on_joinplayer(function(player)
     end
 
     -- At the point of fixing the lights, it might get bugged if Minetest shows the password field.
+    -- TODO: fix positions
     if modstorage:get_string("schematic") == "false" then
-        -- TODO: fix positions
         local lobby_count = worldedit.fixlight({x = 5, y = 5, z = 105}, {x = 92, y = 37, z = 0})
         local level_count = worldedit.fixlight({x = 0, y = 325, z = 0}, {x = 187, y = 300, z = 317})
 
