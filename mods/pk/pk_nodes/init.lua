@@ -482,6 +482,10 @@ minetest.register_globalstep(function(dtime)
 					break
 				end
 			end
+
+			-- Checkpoint system initialization
+			pk_checkpoints.player_lap_count[player] = 1 -- Should always start at 1
+			pk_checkpoints.player_checkpoint_count[player] = 0
 		end
 	end
 end)

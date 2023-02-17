@@ -52,22 +52,8 @@ end
 --	return minetest.get_item_group(nn, group) ~= 0
 --end
 
-local function node_is(pos)
+local function node_is(pos, name, entity)
 	local node = minetest.get_node(pos)
-	if node.name == "air" then
-		return "air"
-	-- End/win blocks: white
-	elseif node.name == "maptools:white" then
-		return "maptools_white"
-	-- End/win blocks: black
-	elseif node.name == "maptools:black" then
-		return "maptools_black"
-	-- End/win blocks: special asphalt
-	elseif node.name == "pk_nodes:asphalt" then
-		return "special_asphalt"
-	elseif node.name == "pk_nodes:lava_node" then
-		return "special_lava"
-	end
 
 	if minetest.get_item_group(node.name, "liquid") ~= 0 then
 		return "liquid"
@@ -75,7 +61,53 @@ local function node_is(pos)
 	if minetest.get_item_group(node.name, "walkable") ~= 0 then
 		return "walkable"
 	end
-	return "other"
+
+	if node.name == name then
+		return true
+	end
+
+	if name == "pk_checkpoints:checkpoint" and entity and entity.driver then
+		local distance = vector.distance(pos, entity.object:get_pos())
+
+		-- Get nodes around the entity (if entity exists).
+		local minp = entity.object:get_pos()
+		local maxp = entity.object:get_pos()
+
+		minp.x = minp.x - 7
+		minp.y = minp.y - 7
+		minp.z = minp.z - 7
+
+		maxp.x = maxp.x + 7
+		maxp.y = maxp.y + 7
+		maxp.z = maxp.z + 7
+
+		local nodes = minetest.find_nodes_in_area(minp, maxp, name)
+
+		for _, node_pos in pairs(nodes) do
+			local meta = minetest.get_meta(node_pos)
+			local distance2 = vector.distance(node_pos, entity.object:get_pos())
+
+			if distance2 < distance then
+				return false
+			else
+				if meta:get_string(entity.driver:get_player_name() .. "_has_been_checked") == "true" then
+					return false
+				end
+
+				-- Safety check.
+				if pk_checkpoints.player_checkpoint_count[entity.driver] == nil then
+					pk_checkpoints.player_checkpoint_count[entity.driver] = 0
+				end
+
+				meta:set_string(entity.driver:get_player_name() .. "_has_been_checked", "true")
+				pk_checkpoints.player_checkpoint_count[entity.driver] = pk_checkpoints.player_checkpoint_count[entity.driver] + 1
+
+				return true
+			end
+		end
+	end
+
+	return false
 end
 
 local function get_sign(i)
@@ -646,7 +678,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	local ni = node_is(p)
 	local v = entity.v
 
-	if ni == "air" then
+	if node_is(pos, "air") then
 		if can_fly == true then
 			new_acce.y = 0
 			acce_y = acce_y - get_sign(acce_y) -- When going down, this will prevent from exceeding the maximum speed.
@@ -702,13 +734,29 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		end
 	end--]]
 
+	if node_is(p, "pk_checkpoints:checkpoint", entity) then
+		minetest.log("action", "[PANQKART/lib_mount] Player " .. entity.driver:get_player_name() .. " has reached a checkpoint.")
+	end
+
 	-- Teleport the player 35 nodes back when touching this node.
 	if entity.driver and ni == "special_lava" and not core_game.is_end[entity.driver] then
 		entity.object:set_pos({x = p.x - -35, y = p.y + 1, z = p.z})
 	end
 
-	if node_is(p) == "maptools_black" or node_is(p) == "maptools_white" or node_is(p) == "special_asphalt" and entity.driver then
+	if node_is(p, "maptools:black") or node_is(p, "maptools:white") or node_is(p, "pk_nodes:asphalt") and entity.driver then
 		if core_game.is_end[entity.driver] == true or not core_game.game_started == true then return end
+
+		if pk_checkpoints.player_checkpoint_count[entity.driver] ~= core_game.checkpoint_count then
+			minetest.chat_send_player(entity.driver:get_player_name(), S("You have missed @1 checkpoints.", core_game.checkpoint_count - pk_checkpoints.player_checkpoint_count[entity.driver]))
+			return
+		end
+
+		if pk_checkpoints.player_lap_count[entity.driver] < core_game.laps_number then
+			pk_checkpoints.player_lap_count[entity.driver] = pk_checkpoints.player_lap_count[entity.driver] + 1
+			minetest.chat_send_player(entity.driver:get_player_name(), S("You're on the lap @1 out of @2.", pk_checkpoints.player_lap_count[entity.driver], core_game.laps_number))
+
+			return
+		end
 
 		if not core_game.players_on_race[entity.driver] == entity.driver
 		or core_game.players_on_race[entity.driver] == nil then
