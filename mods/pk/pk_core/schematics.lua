@@ -33,15 +33,17 @@ end
 
 -- Check if the `lobby_position.txt` file has any content.
 -- If any content is found, it means that the schematics have already been placed.
-local file = io.open(minetest.get_worldpath() .. "/lobby_position.txt", "r")
-if file then
-    local content = file:read("*a")
-    file:close()
+local lobby_file,err_msg = io.open(minetest.get_worldpath() .. "/lobby_position.txt", "r")
+if lobby_file then
+    local content = lobby_file:read("*a")
+    lobby_file:close()
 
     if content ~= "" then
         modstorage:set_string("schematic", "false")
         do_not_place = true
     end
+else
+    minetest.log("error", "[PANQKART] Error while reading lobby position: " .. err_msg .. ".")
 end
 
 minetest.register_on_newplayer(function(player)
