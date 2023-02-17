@@ -1,0 +1,3 @@
+# textdomain: pk_checkpoints
+
+Checkpoint. Do NOT place unless you know what you're doing.=
