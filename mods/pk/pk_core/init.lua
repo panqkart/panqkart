@@ -66,6 +66,7 @@ core_game.show_leaderboard = false -- Utility boolean to show the leaderboard at
 
 core_game.ran_once = { } -- Utility array to make sure the player hasn't stood on the start race block more than once.
 core_game.pregame_started = false -- The variable's name says it all. :)
+core_game.pregame_count = 20 -- A variable to save the pregame countdown. This can be customized to any number.
 
 -------------------
 -- Lobby/mapgen --

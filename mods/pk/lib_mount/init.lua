@@ -21,7 +21,6 @@
 --]]
 
 lib_mount = {
-	passengers = { },
 	win_count = 0
 }
 
@@ -912,7 +911,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 							minetest.chat_send_player(name:get_player_name(), S("Race ended! Heading back to the lobby..."))
 							core_game.player_lost(name)
 
-							core_game.players_on_race = {}
+							core_game.players_on_race = { }
 						end
 					end)
 					return
@@ -943,7 +942,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 					minetest.chat_send_player(name:get_player_name(), S("Race ended! Heading back to the lobby..."))
 					core_game.player_lost(name)
 
-					core_game.players_on_race = {}
+					core_game.players_on_race = { }
 				end
 			end)
 		end

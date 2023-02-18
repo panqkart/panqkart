@@ -25,11 +25,10 @@ local run_once = { } -- An array to ensure a player hasn't run more than one tim
 					-- This comes handy to not run this in the globalstep function.
 local use_hovercraft = { } -- An array to save the players who chose to use the Hovercraft.
 local use_car01 = { } -- An array to save the players who chose to use CAR01.
-local pregame_count = 20 -- A variable to save the pregame countdown. This can be customized to any number.
 local already_ran = false -- A variable to make sure if the pregame countdown has been already run.
 local pregame_count_ended = false -- A variable to remove the pregame countdown HUD for those who weren't the first to run the countdown.
 
-local racecount_check = {} -- An array used to store the value if a player's countdown already started.
+local racecount_check = { } -- An array used to store the value if a player's countdown already started.
 local max_racecount = tonumber(minetest.settings:get("max_racecount")) or 130 -- Maximum value for the race count (default 130)
 local ended_race = { } -- This array is useful when:
 					  -- 1. A player joins a race. The minimum player count requirement is not satisifed.
@@ -111,17 +110,17 @@ end
 --- @param player string the player that will be used to start the countdown
 --- @returns nil
 local function countDown(player)
-    pregame_count = pregame_count - 1
+    core_game.pregame_count = core_game.pregame_count - 1
 	for _,name in pairs(core_game.players_on_race) do
-		if pregame_count == 0 then
+		if core_game.pregame_count == 0 then
 			hud_fs.close_hud(name, "pk_core:pregame_count")
 			pregame_count_ended = true
-		elseif pregame_count == 3 then
+		elseif core_game.pregame_count == 3 then
 			hud_321(name)
 			pregame_count_ended = true
 		end
 	end
-	if pregame_count == 0 then
+	if core_game.pregame_count == 0 then
 		hud_fs.close_hud(player, "pk_core:pregame_count")
 	else
 		hud_fs.show_hud(player, "pk_core:pregame_count", {
@@ -129,7 +128,7 @@ local function countDown(player)
 			{type = "position", x = 0.9, y = 0.9},
 			{
 				type = "label", x = 0, y = 0,
-				label = S("The race will start in: @1", pregame_count)
+				label = S("The race will start in: @1", core_game.pregame_count)
 			}
 		})
 		minetest.after(1, function() countDown(player) end)
@@ -180,7 +179,7 @@ local function start(player)
 	core_game.count = { }
 	core_game.is_waiting = { }
 	core_game.players_that_won = { }
-	lib_mount.win_count = 0
+	lib_mount.win_count = 1
 	-- End: cleanup race count and ending booleans
 
 	minetest.chat_send_player(player:get_player_name(), S("The race will start in a few seconds. Please wait..."))
@@ -194,20 +193,20 @@ local function start(player)
 	if not already_ran == true then
 		startCountdown(player)
 	else
-		for i=1,pregame_count,1 do
+		for i=1,core_game.pregame_count,1 do
 			minetest.after(i, function()
 				if pregame_count_ended == true then hud_fs.close_hud(player, "pk_core:pregame_count") return end
-					hud_fs.show_hud(player, "pk_core:pregame_count", {
-						{type = "size", w = 40, h = 0.5},
-						{type = "position", x = 0.9, y = 0.9},
-						{
-							type = "label", x = 0, y = 0,
-							label = S("The race will start in: @1", pregame_count)
-						}
-					})
-				end)
-			end
+				hud_fs.show_hud(player, "pk_core:pregame_count", {
+					{type = "size", w = 40, h = 0.5},
+					{type = "position", x = 0.9, y = 0.9},
+					{
+						type = "label", x = 0, y = 0,
+						label = S("The race will start in: @1", core_game.pregame_count)
+					}
+				})
+			end)
 		end
+	end
 	-- End: HUD/count stuff
 end
 
@@ -605,6 +604,15 @@ function core_game.start_game(player)
 		if core_game.player_count < required_players and minetest:is_singleplayer() == false then
 			minetest.chat_send_player(player:get_player_name(), S("You might not be able to move. Meanwhile, wait until " .. required_players - core_game.player_count .. " more player(s) join."))
 		end
+
+		hud_fs.show_hud(player, "pk_core:waiting_for_players", {
+			{type = "size", w = 40, h = 0.5},
+			{type = "position", x = 0.9, y = 0.9},
+			{
+				type = "label", x = 0, y = 0,
+				label = S("Waiting for players (@1 required)...", required_players)
+			}
+		})
 
 		core_game.is_waiting[player] = player
 		player:set_physics_override({speed = 0.001, jump = 0.01})
