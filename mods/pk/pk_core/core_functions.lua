@@ -354,10 +354,10 @@ function core_game.player_lost(player)
 	core_game.nametags(player)
 
 	lib_mount.win_count = lib_mount.win_count + 1
-
 	already_ran = false
-	pregame_count = 20
+
 	pregame_count_ended = false
+	core_game.pregame_count = 20
 
 	core_game.show_leaderboard = true
 	local attached_to = player:get_attach()
