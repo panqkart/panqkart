@@ -69,7 +69,7 @@ core_game.pregame_started = false -- The variable's name says it all. :)
 core_game.pregame_count = 20 -- A variable to save the pregame countdown. This can be customized to any number.
 
 core_game.laps_number = 3 			-- The number of laps that the track has.
-core_game.checkpoint_count = 10		-- The number of checkpoints that the track has (per lap?). This number will be changed.
+core_game.checkpoint_count = 9		-- The number of checkpoints that the track has (per lap?). This number will be changed.
 
 -------------------
 -- Lobby/mapgen --

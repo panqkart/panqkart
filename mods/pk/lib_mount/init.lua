@@ -30,8 +30,10 @@ local S = minetest.get_translator(modname)
 local crash_threshold = 6.5		-- ignored if enable_crash is disabled
 
 local aux_timer = 0
-local is_sneaking = {}
-local is_on_grass = {}
+
+local is_sneaking = { }
+local is_on_grass = { }
+local message_delay = { }
 
 ------------------------------------------------------------------------------
 
@@ -65,45 +67,9 @@ local function node_is(pos, name, entity)
 		return true
 	end
 
+	-- Trigger the checkpoint system.
 	if name == "pk_checkpoints:checkpoint" and entity and entity.driver then
-		local distance = vector.distance(pos, entity.object:get_pos())
-
-		-- Get nodes around the entity (if entity exists).
-		local minp = entity.object:get_pos()
-		local maxp = entity.object:get_pos()
-
-		minp.x = minp.x - 7
-		minp.y = minp.y - 7
-		minp.z = minp.z - 7
-
-		maxp.x = maxp.x + 7
-		maxp.y = maxp.y + 7
-		maxp.z = maxp.z + 7
-
-		local nodes = minetest.find_nodes_in_area(minp, maxp, name)
-
-		for _, node_pos in pairs(nodes) do
-			local meta = minetest.get_meta(node_pos)
-			local distance2 = vector.distance(node_pos, entity.object:get_pos())
-
-			if distance2 < distance then
-				return false
-			else
-				if meta:get_string(entity.driver:get_player_name() .. "_has_been_checked") == "true" then
-					return false
-				end
-
-				-- Safety check.
-				if pk_checkpoints.player_checkpoint_count[entity.driver] == nil then
-					pk_checkpoints.player_checkpoint_count[entity.driver] = 0
-				end
-
-				meta:set_string(entity.driver:get_player_name() .. "_has_been_checked", "true")
-				pk_checkpoints.player_checkpoint_count[entity.driver] = pk_checkpoints.player_checkpoint_count[entity.driver] + 1
-
-				return true
-			end
-		end
+		pk_checkpoints.set_checkpoint(entity, pos)
 	end
 
 	return false
@@ -677,7 +643,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	local ni = node_is(p)
 	local v = entity.v
 
-	if node_is(pos, "air") then
+	if node_is(p, "air") then
 		if can_fly == true then
 			new_acce.y = 0
 			acce_y = acce_y - get_sign(acce_y) -- When going down, this will prevent from exceeding the maximum speed.
@@ -733,7 +699,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		end
 	end--]]
 
-	if node_is(p, "pk_checkpoints:checkpoint", entity) then
+	if node_is(p, "pk_checkpoints:checkpoint", entity) and core_game.game_started then
 		minetest.log("action", "[PANQKART/lib_mount] Player " .. entity.driver:get_player_name() .. " has reached a checkpoint.")
 	end
 
@@ -746,13 +712,30 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		if core_game.is_end[entity.driver] == true or not core_game.game_started == true then return end
 
 		if pk_checkpoints.player_checkpoint_count[entity.driver] ~= core_game.checkpoint_count then
-			minetest.chat_send_player(entity.driver:get_player_name(), S("You have missed @1 checkpoints.", core_game.checkpoint_count - pk_checkpoints.player_checkpoint_count[entity.driver]))
+			if not message_delay[entity.driver] then
+				minetest.chat_send_player(entity.driver:get_player_name(), S("You have missed @1 checkpoints.", core_game.checkpoint_count - pk_checkpoints.player_checkpoint_count[entity.driver]))
+				minetest.chat_send_player(entity.driver:get_player_name(), S("Please go back and complete the race properly. If this is a map mistake, please report it on the Discord community."))
+
+				-- NEEDS DISCUSSING.
+				--pk_checkpoints.show_waypoint(entity)
+
+				message_delay[entity.driver] = true
+				minetest.after(10, function()
+					message_delay[entity.driver] = false
+				end)
+			end
+
 			return
+		else
+			if pk_checkpoints.player_lap_count[entity.driver] ~= core_game.laps_number + 1 then
+				pk_checkpoints.player_checkpoint_count[entity.driver] = 0
+				pk_checkpoints.clear_metadata(entity.driver)
+			end
 		end
 
-		if pk_checkpoints.player_lap_count[entity.driver] < core_game.laps_number then
+		if pk_checkpoints.player_lap_count[entity.driver] < core_game.laps_number + 1 then
 			pk_checkpoints.player_lap_count[entity.driver] = pk_checkpoints.player_lap_count[entity.driver] + 1
-			minetest.chat_send_player(entity.driver:get_player_name(), S("You're on the lap @1 out of @2.", pk_checkpoints.player_lap_count[entity.driver], core_game.laps_number))
+			minetest.chat_send_player(entity.driver:get_player_name(), S("You're on the lap @1 out of @2! Keep going.", pk_checkpoints.player_lap_count[entity.driver], core_game.laps_number))
 
 			return
 		end
@@ -960,6 +943,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 							core_game.player_lost(name)
 
 							core_game.players_on_race = { }
+
+							-- Clear the checkpoint metadata.
+							pk_checkpoints.clear_metadata()
 						end
 					end)
 					return
@@ -991,6 +977,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 					core_game.player_lost(name)
 
 					core_game.players_on_race = { }
+
+					-- Clear the checkpoint metadata.
+					pk_checkpoints.clear_metadata()
 				end
 			end)
 		end
