@@ -22,10 +22,30 @@ pk_checkpoints = {
     player_lap_count = { },
     player_checkpoint_count = { },
     checkpoint_positions = { },
+    is_player_going_reverse = { },
+    player_checkpoint_distance = { },
+    storage = minetest.get_mod_storage(),
 }
 
 local S = minetest.get_translator(minetest.get_current_modname())
-local S2 = minetest.get_translator("pk_core") or S
+local S2 = minetest.get_translator("pk_core")
+
+local storage = pk_checkpoints.storage
+
+-------------
+-- Nodes --
+-------------
+
+local function show_formspec(name)
+    local formspec = {
+        "formspec_version[6]",
+        "size[4,3]",
+        "field[0.5,0.6;2.9,0.5;checkpoint_number;" .. S("") .. ";]",
+        "button_exit[0.9,1.7;2,1;save;" .. S("Save") .. "]",
+    }
+
+    return table.concat(formspec, "")
+end
 
 minetest.register_node("pk_checkpoints:checkpoint", {
     description = S("Checkpoint. Do NOT place unless you know what you're doing."),
@@ -54,6 +74,35 @@ minetest.register_node("pk_checkpoints:checkpoint", {
         end
         return true
     end,
+    on_construct = function(pos)
+        local meta = minetest.get_meta(pos)
+        meta:set_string("formspec", show_formspec())
+    end,
+    on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+        local meta = minetest.get_meta(pos)
+
+        if default.can_interact_with_node(clicker, pos) == false then
+            meta:set_string("formspec", "")
+            return
+        end
+
+        meta:set_string("formspec", show_formspec())
+    end,
+    on_receive_fields = function(pos, formname, fields, sender)
+        local meta = minetest.get_meta(pos)
+
+        if fields.save then
+            if fields.checkpoint == "" then
+                minetest.chat_send_player(sender:get_player_name(), S("Please specify a valid checkpoint number."))
+                return
+            end
+
+            meta:set_string("checkpoint_number", fields.checkpoint)
+            meta:set_string("map_name", "")
+
+            minetest.chat_send_player(sender:get_player_name(), S("Successfully updated checkpoint settings!"))
+        end
+    end,
 })
 
 ----------------
@@ -64,7 +113,7 @@ minetest.register_node("pk_checkpoints:checkpoint", {
 --- This is very useful for the multiple lap system.
 --- @param entity userdata the entity to check the player's checkpoint data
 --- @param pos table the position of the checkpoint node
---- @return nil
+--- @return boolean true if the checkpoint was successfully triggered, false otherwise
 function pk_checkpoints.set_checkpoint(entity, pos)
     local distance = vector.distance(pos, entity.object:get_pos())
 
@@ -96,6 +145,12 @@ function pk_checkpoints.set_checkpoint(entity, pos)
             -- Safety check.
             if pk_checkpoints.player_checkpoint_count[entity.driver] == nil then
                 pk_checkpoints.player_checkpoint_count[entity.driver] = 1
+            end
+
+            -- If the checkpoint order is incorrect, do NOT trigger the checkpoint.
+            -- This is very useful to prevent the player from triggering the checkpoint backwards.
+            if pk_checkpoints.player_checkpoint_count[entity.driver] ~= tonumber(meta:get_string("checkpoint_number")) then
+                return false
             end
 
             meta:set_string(entity.driver:get_player_name() .. "_has_been_checked", "true")
@@ -151,15 +206,22 @@ end
 
 --- @brief Function to clear the checkpoint metadata.
 --- Without clearing the metadata, the checkpoint triggers won't work properly.
+--- @param player userdata specific player to reset metadata (optional)
 --- @return nil
 function pk_checkpoints.clear_metadata(player)
-    for _,value in pairs(pk_checkpoints.checkpoint_positions) do
+    local checkpoint_array = storage:get_string("panqkart_checkpoint_positions") or pk_checkpoints.checkpoint_positions
+
+    for _,value in pairs(checkpoint_array) do
         local meta = minetest.get_meta(value)
 
         if meta and player then
-            meta:set_string(player:get_player_name() .. "_has_been_checked", "false")
+            meta:set_string(player:get_player_name() .. "_has_been_checked", "")
         else
+            -- Preserve checkpoint numbers, but delete everything else.
+            local checkpoint_number = meta:get_string("checkpoint_number")
+
             meta:from_table({ fields = { } })
+            meta:set_string("checkpoint_number", checkpoint_number)
         end
     end
 end
@@ -169,21 +231,48 @@ end
 --------------------
 
 minetest.register_on_shutdown(function()
-    -- Clear the checkpoint metadata.
+    -- Clear checkpoint metadata.
     pk_checkpoints.clear_metadata()
+
+    local players = minetest.get_connected_players()
+    for i = 1, #players do
+        pk_checkpoints.clear_metadata(players[i])
+    end
 end)
 
 -- Use an LBM to create a waypoint if a player misses one or more checkpoints.
 minetest.register_lbm({
-    label = "Create waypoints to the checkpoints",
-    name = "pk_checkpoints:waypoint_checkpoint",
+    label = "Clean up checkpoints and store in table",
+    name = "pk_checkpoints:checkpoint_management",
 
-    nodenames = { "pk_checkpoints:checkpoint"  },
+    nodenames = { "pk_checkpoints:checkpoint" },
     run_at_every_load = true,
 
     action = function(pos, node, dtime_s)
+        -- Clear the metadata of the checkpoints if there's no current game.
+        if not core_game.game_started then
+            if not table.contains(pk_checkpoints.checkpoint_positions, pos) then
+                table.insert(pk_checkpoints.checkpoint_positions, pos)
+            end
+            pk_checkpoints.clear_metadata()
+        end
+
+        -- Add to the checkpoint positions table without adding the same node twice.
         if not table.contains(pk_checkpoints.checkpoint_positions, pos) then
             table.insert(pk_checkpoints.checkpoint_positions, pos)
+        end
+
+        -- Make sure it's ordered in the correct checkpoint number.
+        table.sort(pk_checkpoints.checkpoint_positions, function(a, b)
+            local meta_a = minetest.get_meta(a)
+            local meta_b = minetest.get_meta(b)
+
+            return meta_a:get_string("checkpoint_number") < meta_b:get_string("checkpoint_number")
+        end)
+
+        if #pk_checkpoints.checkpoint_positions == core_game.checkpoint_count then
+            storage:set_string("panqkart_checkpoint_positions", minetest.pos_to_string(pk_checkpoints.checkpoint_positions))
+            minetest.log("action", "[PANQKART/pk_checkpoints] Stored all valid checkpoint positions.")
         end
     end
 })

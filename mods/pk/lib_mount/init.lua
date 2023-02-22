@@ -699,19 +699,30 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		end
 	end--]]
 
-	if node_is(p, "pk_checkpoints:checkpoint", entity) and core_game.game_started then
-		minetest.log("action", "[PANQKART/lib_mount] Player " .. entity.driver:get_player_name() .. " has reached a checkpoint.")
-	end
-
 	-- Teleport the player 35 nodes back when touching this node.
 	if entity.driver and ni == "special_lava" and not core_game.is_end[entity.driver] then
 		entity.object:set_pos({x = p.x - -35, y = p.y + 1, z = p.z})
 	end
 
+	if node_is(p, "pk_checkpoints:checkpoint", entity) and core_game.game_started then
+		minetest.log("action", "[PANQKART/lib_mount] Player " .. entity.driver:get_player_name() .. " has reached a checkpoint.")
+	end
+
 	if node_is(p, "maptools:black") or node_is(p, "maptools:white") or node_is(p, "pk_nodes:asphalt") and entity.driver then
 		if core_game.is_end[entity.driver] == true or not core_game.game_started == true then return end
 
-		if pk_checkpoints.player_checkpoint_count[entity.driver] ~= core_game.checkpoint_count then
+		if not core_game.players_on_race[entity.driver] == entity.driver
+		or core_game.players_on_race[entity.driver] == nil then
+			-- Do not allow people who are NOT on a race to end
+			return
+		end
+		if not entity.driver then return end
+
+		-------------------
+		-- CHECKPOINTS --
+		-------------------
+
+		if pk_checkpoints.player_checkpoint_count[entity.driver] - 1 ~= core_game.checkpoint_count then
 			if not message_delay[entity.driver] then
 				minetest.chat_send_player(entity.driver:get_player_name(), S("You have missed @1 checkpoints.", core_game.checkpoint_count - pk_checkpoints.player_checkpoint_count[entity.driver]))
 				minetest.chat_send_player(entity.driver:get_player_name(), S("Please go back and complete the race properly. If this is a map mistake, please report it on the Discord community."))
@@ -727,25 +738,27 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 
 			return
 		else
-			if pk_checkpoints.player_lap_count[entity.driver] ~= core_game.laps_number + 1 then
-				pk_checkpoints.player_checkpoint_count[entity.driver] = 0
+			if pk_checkpoints.player_lap_count[entity.driver] ~= core_game.laps_number then
+				pk_checkpoints.player_checkpoint_count[entity.driver] = 1
 				pk_checkpoints.clear_metadata(entity.driver)
 			end
 		end
 
-		if pk_checkpoints.player_lap_count[entity.driver] < core_game.laps_number + 1 then
+		if pk_checkpoints.player_lap_count[entity.driver] < core_game.laps_number then
 			pk_checkpoints.player_lap_count[entity.driver] = pk_checkpoints.player_lap_count[entity.driver] + 1
-			minetest.chat_send_player(entity.driver:get_player_name(), S("You're on the lap @1 out of @2! Keep going.", pk_checkpoints.player_lap_count[entity.driver], core_game.laps_number))
 
+			if pk_checkpoints.player_lap_count[entity.driver] == core_game.laps_number then
+				minetest.chat_send_player(entity.driver:get_player_name(), S("You're on the last lap (@1/@2)! Don't give up: you're almost there.", pk_checkpoints.player_lap_count[entity.driver], core_game.laps_number))
+			else
+				minetest.chat_send_player(entity.driver:get_player_name(), S("You're on the lap @1 out of @2! Keep going.", pk_checkpoints.player_lap_count[entity.driver], core_game.laps_number))
+			end
+
+			message_delay[entity.driver] = true
+			minetest.after(10, function()
+				message_delay[entity.driver] = false
+			end)
 			return
 		end
-
-		if not core_game.players_on_race[entity.driver] == entity.driver
-		or core_game.players_on_race[entity.driver] == nil then
-			-- Do not allow people who are NOT on a race to end
-			return
-		end
-		if not entity.driver then return end
 
 		local meta = entity.driver:get_meta()
 		local data = minetest.deserialize(meta:get_string("player_coins"))
@@ -946,6 +959,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 
 							-- Clear the checkpoint metadata.
 							pk_checkpoints.clear_metadata()
+							pk_checkpoints.checkpoint_positions = { }
 						end
 					end)
 					return
@@ -980,6 +994,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 
 					-- Clear the checkpoint metadata.
 					pk_checkpoints.clear_metadata()
+					pk_checkpoints.checkpoint_positions = { }
 				end
 			end)
 		end

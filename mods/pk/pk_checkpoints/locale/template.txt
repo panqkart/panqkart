@@ -1,3 +1,7 @@
 # textdomain: pk_checkpoints
 
 Checkpoint. Do NOT place unless you know what you're doing.=
+Checkpoint number=
+Save=
+Please specify a valid checkpoint number.=
+Successfully updated checkpoint settings!=
