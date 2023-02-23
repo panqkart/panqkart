@@ -486,8 +486,8 @@ minetest.register_globalstep(function(dtime)
 			-- Checkpoint system initialization.
 			pk_checkpoints.player_lap_count[player] = 1 -- Should always start at 1
 			pk_checkpoints.player_checkpoint_count[player] = 1 -- This is to check the checkpoint node number.
-			pk_checkpoints.is_player_going_reverse[player] = false
 			pk_checkpoints.player_checkpoint_distance[player] = 0
+			pk_checkpoints.can_win[player] = false
 		end
 	end
 end)

@@ -236,11 +236,14 @@ local function race_end()
 		if next(core_game.players_on_race,_) == nil then
 			minetest.after(0.1, function()
 				core_game.player_count = 0
-				core_game.players_on_race = {}
+				core_game.players_on_race = { }
 
-				minetest.log("action", "[PANQKART] Successfully resetted player count and players on race.")
+				-- Cleanup checkpoint information.
+				pk_checkpoints.cleanup()
+				minetest.log("action", "[PANQKART] Successfully resetted player count, players on race, and checkpoint data.")
 			end)
 		end
+
 		name:set_physics_override({
 			speed = 1, -- Set speed back to normal
 			jump = 1, -- Set jump back to normal

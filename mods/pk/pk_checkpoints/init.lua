@@ -21,10 +21,9 @@
 pk_checkpoints = {
     player_lap_count = { },
     player_checkpoint_count = { },
-    checkpoint_positions = { },
-    is_player_going_reverse = { },
     player_checkpoint_distance = { },
-    storage = minetest.get_mod_storage(),
+    can_win = { },
+    checkpoint_positions = { },
 }
 
 local S = minetest.get_translator(minetest.get_current_modname())
@@ -98,8 +97,6 @@ minetest.register_node("pk_checkpoints:checkpoint", {
             end
 
             meta:set_string("checkpoint_number", fields.checkpoint)
-            meta:set_string("map_name", "")
-
             minetest.chat_send_player(sender:get_player_name(), S("Successfully updated checkpoint settings!"))
         end
     end,
@@ -153,6 +150,9 @@ function pk_checkpoints.set_checkpoint(entity, pos)
                 return false
             end
 
+            -- Let the function calculate the distance later on.
+            pk_checkpoints.player_checkpoint_distance[entity.driver] = 0
+
             meta:set_string(entity.driver:get_player_name() .. "_has_been_checked", "true")
             pk_checkpoints.player_checkpoint_count[entity.driver] = pk_checkpoints.player_checkpoint_count[entity.driver] + 1
 
@@ -191,6 +191,111 @@ function pk_checkpoints.show_waypoint(entity)
     end
 end
 
+--- @brief If the player is going backwards, show a HUD message
+--- stating that they're going backwards and should go back.
+--- @param entity table the entity that's going to be used for the checks
+--- @return nil
+function pk_checkpoints.going_backwards(entity)
+    if core_game.game_started then
+		local number = 0
+
+		-- The checkpoint count is always above 1. This is needed when checking the metadata checkpoint number.
+		-- We must determine whether we subtract 1 value or keep it as-is for the check below.
+		if pk_checkpoints.player_checkpoint_count[entity.driver] - 1 == core_game.checkpoint_count then
+			number = 1
+		end
+
+		if (pk_checkpoints.player_checkpoint_distance[entity.driver] < vector.distance(entity.object:get_pos(),
+			pk_checkpoints.checkpoint_positions[pk_checkpoints.player_checkpoint_count[entity.driver] - number]))
+			and pk_checkpoints.player_checkpoint_distance[entity.driver] > 0 then
+
+			hud_fs.show_hud(entity.driver, "pk_checkpoints:reverse_hud", {{
+				hud_elem_type = "text",
+				name = "reverse_hud",
+				text = "You're going backwards!",
+				number = 0xFF0000,
+				position = { x = 0.5, y = 0.5 },
+				size = { x = 3.5, y = 3.5 },
+				style = 1,
+			}})
+		else
+			hud_fs.close_hud(entity.driver, "pk_checkpoints:reverse_hud")
+		end
+
+		-- Store the distance between the player and the checkpoint each 4 seconds, or if a checkpoint is triggered.
+		if os.time() % 4 == 0 then
+			for _,key in pairs(pk_checkpoints.checkpoint_positions) do
+				local meta = minetest.get_meta(key)
+
+				if tonumber(meta:get_string("checkpoint_number")) == pk_checkpoints.player_checkpoint_count[entity.driver] then
+					minetest.after(2.5, function()
+						pk_checkpoints.player_checkpoint_distance[entity.driver] = vector.distance(
+							entity.object:get_pos(),
+							key
+						)
+					end)
+
+					break -- No more looping.
+				end
+			end
+		end
+	end
+end
+
+--- @brief Function to trigger the next lap.
+--- The player won't be able to win if there's still a pending lap.
+--- @details
+---
+--- The function checks if the player's missing any checkpoints.
+--- If so, the lap won't be triggered and the player will need to complete the track properly.
+--- If the player passed all the checkpoints, the lap will count and it will reset the checkpoint count to 1.
+--- @param entity table the entity to trigger the lap for
+--- @return nil
+function pk_checkpoints.trigger_lap(entity, message_delay)
+    if pk_checkpoints.player_checkpoint_count[entity.driver] - 1 ~= core_game.checkpoint_count then
+        if not message_delay[entity.driver] then
+            minetest.chat_send_player(entity.driver:get_player_name(), S("You have missed @1 checkpoints.", core_game.checkpoint_count - pk_checkpoints.player_checkpoint_count[entity.driver] - 1))
+            minetest.chat_send_player(entity.driver:get_player_name(), S("Please go back and complete the race properly. If this is a map mistake, please report it on the Discord community."))
+
+            -- NEEDS DISCUSSING.
+            --pk_checkpoints.show_waypoint(entity)
+
+            message_delay[entity.driver] = true
+            minetest.after(10, function()
+                message_delay[entity.driver] = false
+            end)
+        end
+
+        pk_checkpoints.can_win[entity.driver] = false
+        return
+    else
+        if pk_checkpoints.player_lap_count[entity.driver] ~= core_game.laps_number then
+            pk_checkpoints.player_checkpoint_count[entity.driver] = 1
+            pk_checkpoints.clear_metadata(entity.driver)
+        end
+    end
+
+    if pk_checkpoints.player_lap_count[entity.driver] < core_game.laps_number then
+        pk_checkpoints.player_lap_count[entity.driver] = pk_checkpoints.player_lap_count[entity.driver] + 1
+
+        if pk_checkpoints.player_lap_count[entity.driver] == core_game.laps_number then
+            minetest.chat_send_player(entity.driver:get_player_name(), S("You're on the last lap (@1/@2)! Don't give up: you're almost there.", pk_checkpoints.player_lap_count[entity.driver], core_game.laps_number))
+        else
+            minetest.chat_send_player(entity.driver:get_player_name(), S("You're on the lap @1 out of @2! Keep going.", pk_checkpoints.player_lap_count[entity.driver], core_game.laps_number))
+        end
+
+        message_delay[entity.driver] = true
+        minetest.after(10, function()
+            message_delay[entity.driver] = false
+        end)
+
+        pk_checkpoints.can_win[entity.driver] = false
+        return
+    end
+
+    pk_checkpoints.can_win[entity.driver] = true
+end
+
 --- @brief Utility function to check if a table contains a value.
 --- @param table table the table to check
 --- @param value any the value to verify if it's in the given table
@@ -206,12 +311,9 @@ end
 
 --- @brief Function to clear the checkpoint metadata.
 --- Without clearing the metadata, the checkpoint triggers won't work properly.
---- @param player userdata specific player to reset metadata (optional)
 --- @return nil
 function pk_checkpoints.clear_metadata(player)
-    local checkpoint_array = storage:get_string("panqkart_checkpoint_positions") or pk_checkpoints.checkpoint_positions
-
-    for _,value in pairs(checkpoint_array) do
+    for _,value in pairs(pk_checkpoints.checkpoint_positions) do
         local meta = minetest.get_meta(value)
 
         if meta and player then
@@ -226,18 +328,27 @@ function pk_checkpoints.clear_metadata(player)
     end
 end
 
+--- @brief Utility function to cleanup all
+--- `pk_checkpoints` tables and information.
+--- This should be called only at the finish/start of a race
+--- or when the server is being shut down.
+--- @return nil
+function pk_checkpoints.cleanup()
+    pk_checkpoints.can_win = { }
+    pk_checkpoints.checkpoint_positions = { }
+    pk_checkpoints.player_checkpoint_count = { }
+    pk_checkpoints.player_lap_count = { }
+    pk_checkpoints.player_checkpoint_distance = { }
+
+    pk_checkpoints.clear_metadata()
+end
+
 --------------------
 -- Miscellaneous --
 --------------------
 
 minetest.register_on_shutdown(function()
-    -- Clear checkpoint metadata.
-    pk_checkpoints.clear_metadata()
-
-    local players = minetest.get_connected_players()
-    for i = 1, #players do
-        pk_checkpoints.clear_metadata(players[i])
-    end
+    pk_checkpoints.cleanup()
 end)
 
 -- Use an LBM to create a waypoint if a player misses one or more checkpoints.
@@ -248,13 +359,20 @@ minetest.register_lbm({
     nodenames = { "pk_checkpoints:checkpoint" },
     run_at_every_load = true,
 
-    action = function(pos, node, dtime_s)
+    action = function(pos)
         -- Clear the metadata of the checkpoints if there's no current game.
         if not core_game.game_started then
             if not table.contains(pk_checkpoints.checkpoint_positions, pos) then
                 table.insert(pk_checkpoints.checkpoint_positions, pos)
             end
             pk_checkpoints.clear_metadata()
+
+            table.sort(pk_checkpoints.checkpoint_positions, function(a, b)
+                local meta_a = minetest.get_meta(a)
+                local meta_b = minetest.get_meta(b)
+
+                return meta_a:get_string("checkpoint_number") < meta_b:get_string("checkpoint_number")
+            end)
         end
 
         -- Add to the checkpoint positions table without adding the same node twice.
@@ -269,10 +387,5 @@ minetest.register_lbm({
 
             return meta_a:get_string("checkpoint_number") < meta_b:get_string("checkpoint_number")
         end)
-
-        if #pk_checkpoints.checkpoint_positions == core_game.checkpoint_count then
-            storage:set_string("panqkart_checkpoint_positions", minetest.pos_to_string(pk_checkpoints.checkpoint_positions))
-            minetest.log("action", "[PANQKART/pk_checkpoints] Stored all valid checkpoint positions.")
-        end
     end
 })
