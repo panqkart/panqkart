@@ -487,7 +487,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 			set_animation(entity, moving_anim)
 		end
 	end
-	
+
 	if core_game.game_started and entity.driver then entity.owner = entity.driver:get_player_name() end
 
 	if entity.driver and entity.owner == entity.driver:get_player_name() then
