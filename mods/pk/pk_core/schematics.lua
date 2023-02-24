@@ -57,12 +57,14 @@ minetest.register_on_newplayer(function(player)
 
         minetest.chat_send_player(player:get_player_name(), S("Please wait while the schematics are being placed. It could take up to 15 minutes."))
         minetest.chat_send_player(player:get_player_name(), S("Do not pause if you're in singleplayer mode, otherwise, the schematics won't be placed."))
+
         minetest.chat_send_player(player:get_player_name(), "\n" .. S("Thank you for downloading PanqKart. Join our Discord server while you wait: https://discord.gg/HEweZuF3Vv"))
+        minetest.chat_send_player(player:get_player_name(), S("WARNING: Modgen-based generation is recommended. Enable `modgen_generation` in your Minetest settings for a faster setup."))
 
         local value
         local pos = player:get_pos()
 
-        local filenames = {"lobby.we", "level.we"}
+        local filenames = { "lobby.we", "level.we" }
         for _,name in pairs(filenames) do
 
             local file, err = io.open(minetest.get_modpath("pk_core") .. "/schems/" .. name, "rb")

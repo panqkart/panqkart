@@ -29,8 +29,6 @@ pk_checkpoints = {
 local S = minetest.get_translator(minetest.get_current_modname())
 local S2 = minetest.get_translator("pk_core")
 
-local storage = pk_checkpoints.storage
-
 -------------
 -- Nodes --
 -------------
@@ -39,7 +37,7 @@ local function show_formspec(name)
     local formspec = {
         "formspec_version[6]",
         "size[4,3]",
-        "field[0.5,0.6;2.9,0.5;checkpoint_number;" .. S("") .. ";]",
+        "field[0.5,0.6;2.9,0.5;checkpoint;" .. S("Checkpoint number") .. ";${checkpoint_number}]",
         "button_exit[0.9,1.7;2,1;save;" .. S("Save") .. "]",
     }
 
@@ -56,7 +54,7 @@ minetest.register_node("pk_checkpoints:checkpoint", {
     node_box = {
         type = "fixed",
         fixed = {
-            { -1.45, -0.5, -1.45, 1.45, 0, 1.45 },
+            { -1.45, -0.5, -1.45, 1.45, (0.1 / 16) - 0.5, 1.45 },
         },
     },
     on_place = function(itemstack, placer, pointed_thing)
@@ -118,17 +116,17 @@ function pk_checkpoints.set_checkpoint(entity, pos)
     local minp = entity.object:get_pos()
     local maxp = entity.object:get_pos()
 
-    minp.x = minp.x - 5
-    minp.y = minp.y - 5
-    minp.z = minp.z - 5
+    minp.x = minp.x - 6
+    minp.y = minp.y - 6
+    minp.z = minp.z - 6
 
-    maxp.x = maxp.x + 5
-    maxp.y = maxp.y + 5
-    maxp.z = maxp.z + 5
+    maxp.x = maxp.x + 6
+    maxp.y = maxp.y + 6
+    maxp.z = maxp.z + 6
 
     local nodes = minetest.find_nodes_in_area(minp, maxp, "pk_checkpoints:checkpoint")
 
-    for _, node_pos in pairs(nodes) do
+    for _, node_pos in pairs(nodes) do -- luacheck: ignore
         local meta = minetest.get_meta(node_pos)
         local distance2 = vector.distance(node_pos, entity.object:get_pos())
 
@@ -218,6 +216,8 @@ function pk_checkpoints.going_backwards(entity)
 				size = { x = 3.5, y = 3.5 },
 				style = 1,
 			}})
+
+            minetest.log("action", "[PANQKART/pk_checkpoints] Shown \"going reverse\" HUD for player " .. entity.driver:get_player_name() .. ".")
 		else
 			hud_fs.close_hud(entity.driver, "pk_checkpoints:reverse_hud")
 		end
@@ -228,13 +228,15 @@ function pk_checkpoints.going_backwards(entity)
 				local meta = minetest.get_meta(key)
 
 				if tonumber(meta:get_string("checkpoint_number")) == pk_checkpoints.player_checkpoint_count[entity.driver] then
-					minetest.after(2.5, function()
+					minetest.after(0, function()
 						pk_checkpoints.player_checkpoint_distance[entity.driver] = vector.distance(
 							entity.object:get_pos(),
 							key
 						)
 					end)
 
+
+                    minetest.log("info", "[PANQKART/pk_checkpoints] Saving distance between current checkpoint and the player.")
 					break -- No more looping.
 				end
 			end
@@ -266,12 +268,16 @@ function pk_checkpoints.trigger_lap(entity, message_delay)
             end)
         end
 
+        minetest.log("info", "[PANQKART/pk_checkpoints] Player " .. entity.driver:get_player_name() .. " has not passed all the " .. core_game.checkpoint_count .. " checkpoints.")
         pk_checkpoints.can_win[entity.driver] = false
+
         return
     else
         if pk_checkpoints.player_lap_count[entity.driver] ~= core_game.laps_number then
             pk_checkpoints.player_checkpoint_count[entity.driver] = 1
             pk_checkpoints.clear_metadata(entity.driver)
+
+            minetest.log("action", "[PANQKART/pk_checkpoint] Successfully resetted checkpoint data.")
         end
     end
 
@@ -289,7 +295,10 @@ function pk_checkpoints.trigger_lap(entity, message_delay)
             message_delay[entity.driver] = false
         end)
 
+        minetest.log("action", "[PANQKART/pk_checkpoints] Player " .. entity.driver:get_player_name() .. "'s now on lap " .. pk_checkpoints.player_lap_count[entity.driver] ..
+            ". out of " .. core_game.laps_number .. ".")
         pk_checkpoints.can_win[entity.driver] = false
+
         return
     end
 
@@ -365,7 +374,6 @@ minetest.register_lbm({
             if not table.contains(pk_checkpoints.checkpoint_positions, pos) then
                 table.insert(pk_checkpoints.checkpoint_positions, pos)
             end
-            pk_checkpoints.clear_metadata()
 
             table.sort(pk_checkpoints.checkpoint_positions, function(a, b)
                 local meta_a = minetest.get_meta(a)
@@ -373,6 +381,8 @@ minetest.register_lbm({
 
                 return meta_a:get_string("checkpoint_number") < meta_b:get_string("checkpoint_number")
             end)
+
+            pk_checkpoints.clear_metadata()
         end
 
         -- Add to the checkpoint positions table without adding the same node twice.

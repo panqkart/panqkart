@@ -727,7 +727,10 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		entity.object:set_pos({x = p.x - -35, y = p.y + 1, z = p.z})
 	end
 
-	if node_is(p, "maptools:black") or node_is(p, "maptools:white") or node_is(p, "pk_nodes:asphalt") and entity.driver then
+	-- Check also below, because the player might be higher.
+	local pos_below = { x = p.x, y = p.y - 1.25, z = p.z }
+
+	if node_is(p, "maptools:black") or node_is(p, "maptools:white") or (node_is(p, "pk_nodes:asphalt") or node_is(pos_below, "pk_nodes:asphalt")) and entity.driver then
 		if core_game.is_end[entity.driver] == true or not core_game.game_started == true then return end
 
 		if not core_game.players_on_race[entity.driver] == entity.driver
@@ -750,7 +753,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		core_game.is_end[entity.driver] = true
 
 		local text
-		local coin_amount = {}
+		local coin_amount = { }
 
 		-- Maximum 12 players per race, so let's do this twelve times in a loop.
 		-- UNTESTED. May contains bugs or not work properly.
