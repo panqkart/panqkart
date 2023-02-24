@@ -27,3 +27,6 @@ manual_setup (Whether to setup the game/schematics manually or not) bool false
 
 #   Modgen-based generation (fast and recommended)
 modgen_generation (Uses `modgen` generation, otherwise, WorldEdit schematic placement) bool true
+
+#   Maximum race count in a race. This will be used if no players get to the finish line to prevent an infinite race.
+max_racecount (Maximum race count limit) int 230

@@ -29,7 +29,7 @@ local already_ran = false -- A variable to make sure if the pregame countdown ha
 local pregame_count_ended = false -- A variable to remove the pregame countdown HUD for those who weren't the first to run the countdown.
 
 local racecount_check = { } -- An array used to store the value if a player's countdown already started.
-local max_racecount = tonumber(minetest.settings:get("max_racecount")) or 200 -- Maximum value for the race count (default 130)
+local max_racecount = tonumber(minetest.settings:get("max_racecount")) or 230 -- Maximum value for the race count (default 230)
 local ended_race = { } -- This array is useful when:
 					  -- 1. A player joins a race. The minimum player count requirement is not satisifed.
 					  -- 2. Another player joins the race. The count is now satisfied.
