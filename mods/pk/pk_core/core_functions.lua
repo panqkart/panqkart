@@ -231,7 +231,7 @@ local function race_end()
 		end
 
 		-- Set nametags once the race ends
-		core_game.nametags(name)
+		core_game.nametags(name:get_player_name())
 
 		if next(core_game.players_on_race,_) == nil then
 			minetest.after(0.1, function()
@@ -354,7 +354,7 @@ end
 --- @returns nil
 function core_game.player_lost(player)
 	-- Set nametags once the race ends
-	core_game.nametags(player)
+	core_game.nametags(player:get_player_name())
 
 	lib_mount.win_count = lib_mount.win_count + 1
 	already_ran = false

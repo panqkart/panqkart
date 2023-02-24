@@ -21,6 +21,7 @@
 --]]
 
 lib_mount = {
+	passengers = { },
 	win_count = 0
 }
 
@@ -494,7 +495,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		end
 	end
 
-	if entity.driver and entity.owner then
+	if core_game.game_started and entity.driver then entity.owner = entity.driver:get_player_name() end
+
+	if entity.driver and entity.owner == entity.driver:get_player_name() then
 		local meta = entity.driver:get_meta()
 		if minetest.get_modpath("pk_shop") then
 			local hover_bought = minetest.deserialize(meta:get_string("hovercraft_bought"))
