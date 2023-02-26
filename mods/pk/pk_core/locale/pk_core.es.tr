@@ -42,3 +42,4 @@ You might not be able to move. Meanwhile, wait until @1 more player(s) join.=En 
 Please wait while the schematics are being placed. It could take up to 15 minutes.=Por favor espere a que el nivel/lobby se pongan. Puede tardar hasta 15 minutos
 Do not pause if you're in singleplayer mode, otherwise, the schematics won't be placed.=No hagas pausa si estás en modo un jugador, de lo contrario, no se inicializara correctamente.
 Thank you for downloading PanqKart. Join our Discord server while you wait: https://discord.gg/HEweZuF3Vv=Gracias por descargar PanqKart. Únete a nuestro servidor de Discord mientras esperas: https://discord.gg/HEweZuF3Vv
+WARNING: Modgen-based generation is recommended. Enable `modgen_generation` in your Minetest settings for a faster setup.=ADVERTENCIA: La generación basada en Modgen es recomendada. Activa `modgen_generation` en tu configuración de Minetest para una instalación más rápida.

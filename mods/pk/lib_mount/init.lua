@@ -29,10 +29,13 @@ local modname = minetest.get_current_modname()
 local S = minetest.get_translator(modname)
 
 local crash_threshold = 6.5		-- ignored if enable_crash is disabled
-
 local aux_timer = 0
-local is_sneaking = {}
-local is_on_grass = {}
+
+local is_sneaking = { }
+local is_on_grass = { }
+
+local message_delay = { }
+local first_trigger_distance = false
 
 ------------------------------------------------------------------------------
 
@@ -52,22 +55,8 @@ end
 --	return minetest.get_item_group(nn, group) ~= 0
 --end
 
-local function node_is(pos)
+local function node_is(pos, name, entity)
 	local node = minetest.get_node(pos)
-	if node.name == "air" then
-		return "air"
-	-- End/win blocks: white
-	elseif node.name == "maptools:white" then
-		return "maptools_white"
-	-- End/win blocks: black
-	elseif node.name == "maptools:black" then
-		return "maptools_black"
-	-- End/win blocks: special asphalt
-	elseif node.name == "pk_nodes:asphalt" then
-		return "special_asphalt"
-	elseif node.name == "pk_nodes:lava_node" then
-		return "special_lava"
-	end
 
 	if minetest.get_item_group(node.name, "liquid") ~= 0 then
 		return "liquid"
@@ -75,7 +64,17 @@ local function node_is(pos)
 	if minetest.get_item_group(node.name, "walkable") ~= 0 then
 		return "walkable"
 	end
-	return "other"
+
+	if node.name == name then
+		return true
+	end
+
+	-- Trigger the checkpoint system.
+	if name == "pk_checkpoints:checkpoint" and entity and entity.driver then
+		pk_checkpoints.set_checkpoint(entity, pos)
+	end
+
+	return false
 end
 
 local function get_sign(i)
@@ -328,6 +327,14 @@ function lib_mount.detach(player, offset)
 end
 
 function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_height, can_fly, can_go_down, can_go_up, enable_crash, moveresult)
+	if first_trigger_distance == false and entity.driver and core_game.game_started then
+		pk_checkpoints.player_checkpoint_distance[entity.driver] = vector.distance(
+				entity.object:get_pos(),
+				pk_checkpoints.checkpoint_positions[1]
+			)
+		first_trigger_distance = true
+	end
+
 	if entity.driver and not minetest.check_player_privs(entity.driver:get_player_name(), {core_admin = true}) then
 		if core_game.game_started == false then return end
 
@@ -648,7 +655,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	local ni = node_is(p)
 	local v = entity.v
 
-	if ni == "air" then
+	if node_is(p, "air") then
 		if can_fly == true then
 			new_acce.y = 0
 			acce_y = acce_y - get_sign(acce_y) -- When going down, this will prevent from exceeding the maximum speed.
@@ -704,12 +711,29 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		end
 	end--]]
 
+	-------------------------
+	-- Start: checkpoints --
+	--------------------------
+	if node_is(p, "pk_checkpoints:checkpoint", entity) then
+		minetest.log("action", "[PANQKART/lib_mount] Player " .. entity.driver:get_player_name() .. " has reached a checkpoint.")
+	end
+
+	-- If the player's going backwards, show a HUD message.
+	pk_checkpoints.going_backwards(entity)
+
+	-----------------------
+	-- End: checkpoints --
+	-----------------------
+
 	-- Teleport the player 35 nodes back when touching this node.
 	if entity.driver and ni == "special_lava" and not core_game.is_end[entity.driver] then
 		entity.object:set_pos({x = p.x - -35, y = p.y + 1, z = p.z})
 	end
 
-	if node_is(p) == "maptools_black" or node_is(p) == "maptools_white" or node_is(p) == "special_asphalt" and entity.driver then
+	-- Check also below, because the player might be higher.
+	local pos_below = { x = p.x, y = p.y - 1.25, z = p.z }
+
+	if node_is(p, "maptools:black") or node_is(p, "maptools:white") or (node_is(p, "pk_nodes:asphalt") or node_is(pos_below, "pk_nodes:asphalt")) and entity.driver then
 		if core_game.is_end[entity.driver] == true or not core_game.game_started == true then return end
 
 		if not core_game.players_on_race[entity.driver] == entity.driver
@@ -719,12 +743,20 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		end
 		if not entity.driver then return end
 
+		---------------------------
+		-- Lap/checkpoint check --
+		---------------------------
+		if pk_checkpoints.can_win[entity.driver] ~= true then
+			pk_checkpoints.trigger_lap(entity, message_delay)
+			return
+		end
+
 		local meta = entity.driver:get_meta()
 		local data = minetest.deserialize(meta:get_string("player_coins"))
 		core_game.is_end[entity.driver] = true
 
 		local text
-		local coin_amount = {}
+		local coin_amount = { }
 
 		-- Maximum 12 players per race, so let's do this twelve times in a loop.
 		-- UNTESTED. May contains bugs or not work properly.
@@ -915,6 +947,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 							core_game.player_lost(name)
 
 							core_game.players_on_race = { }
+
+							-- Cleanup checkpoint information.
+							pk_checkpoints.cleanup()
 						end
 					end)
 					return
@@ -943,9 +978,12 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				core_game.player_count = 0
 				for _,name in pairs(core_game.players_on_race) do
 					minetest.chat_send_player(name:get_player_name(), S("Race ended! Heading back to the lobby..."))
-					core_game.player_lost(name)
 
+					core_game.player_lost(name)
 					core_game.players_on_race = { }
+
+					-- Cleanup checkpoint information.
+					pk_checkpoints.cleanup()
 				end
 			end)
 		end

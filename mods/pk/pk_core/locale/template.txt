@@ -42,3 +42,4 @@ You might not be able to move. Meanwhile, wait until @1 more player(s) join.=
 Please wait while the schematics are being placed. It could take up to 15 minutes.=
 Do not pause if you're in singleplayer mode, otherwise, the schematics won't be placed.=
 Thank you for downloading PanqKart. Join our Discord server while you wait: https://discord.gg/HEweZuF3Vv=
+WARNING: Modgen-based generation is recommended. Enable `modgen_generation` in your Minetest settings for a faster setup.=
