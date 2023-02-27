@@ -5,3 +5,7 @@ Save=
 Checkpoint. Do NOT place unless you know what you're doing.=
 Please specify a valid checkpoint number.=
 Successfully updated checkpoint settings!=
+You have missed @1 checkpoints.=
+Please go back and complete the race properly. If this is a map mistake, please report it on the Discord community.=
+You're on the last lap (@1/@2)! Don't give up: you're almost there.=
+You're on the lap @1 out of @2! Keep going.=
