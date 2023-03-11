@@ -35,7 +35,7 @@ local is_sneaking = { }
 local is_on_grass = { }
 
 local message_delay = { }
-local first_trigger_distance = false
+local first_trigger_distance = { }
 
 ------------------------------------------------------------------------------
 
@@ -327,12 +327,12 @@ function lib_mount.detach(player, offset)
 end
 
 function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_height, can_fly, can_go_down, can_go_up, enable_crash, moveresult)
-	if first_trigger_distance == false and entity.driver and core_game.game_started then
+	if first_trigger_distance[entity.driver] ~= true and entity.driver and core_game.game_started then
 		pk_checkpoints.player_checkpoint_distance[entity.driver] = vector.distance(
 				entity.object:get_pos(),
 				pk_checkpoints.checkpoint_positions[1]
 			)
-		first_trigger_distance = true
+		first_trigger_distance[entity.driver] = true
 	end
 
 	if entity.driver and not minetest.check_player_privs(entity.driver:get_player_name(), {core_admin = true}) then
@@ -714,12 +714,14 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	-------------------------
 	-- Start: checkpoints --
 	--------------------------
-	if node_is(p, "pk_checkpoints:checkpoint", entity) then
+	if node_is(p, "pk_checkpoints:checkpoint", entity) and entity and entity.driver then
 		minetest.log("action", "[PANQKART/lib_mount] Player " .. entity.driver:get_player_name() .. " has reached a checkpoint.")
 	end
 
 	-- If the player's going backwards, show a HUD message.
-	pk_checkpoints.going_backwards(entity)
+	if entity and entity.driver then
+		pk_checkpoints.going_backwards(entity)
+	end
 
 	-----------------------
 	-- End: checkpoints --

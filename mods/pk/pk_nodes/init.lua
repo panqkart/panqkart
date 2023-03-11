@@ -472,6 +472,13 @@ minetest.register_globalstep(function(dtime)
 					core_game.reset_values(player) -- Reset values in case something was stored
 					core_game.start_game(player)
 					core_game.ran_once[player] = true
+
+					-- Checkpoint system initialization.
+					pk_checkpoints.player_lap_count[player] = 1 -- Should always start at 1
+					pk_checkpoints.player_checkpoint_count[player] = 1 -- This is to check the checkpoint node number.
+					pk_checkpoints.player_checkpoint_distance[player] = 0
+					pk_checkpoints.can_win[player] = false
+
 					return
 				else
 					minetest.chat_send_player(player:get_player_name(), "One or more positionss are invalid. Cannot start race. Aborting.")
@@ -482,12 +489,6 @@ minetest.register_globalstep(function(dtime)
 					break
 				end
 			end
-
-			-- Checkpoint system initialization.
-			pk_checkpoints.player_lap_count[player] = 1 -- Should always start at 1
-			pk_checkpoints.player_checkpoint_count[player] = 1 -- This is to check the checkpoint node number.
-			pk_checkpoints.player_checkpoint_distance[player] = 0
-			pk_checkpoints.can_win[player] = false
 		end
 	end
 end)
