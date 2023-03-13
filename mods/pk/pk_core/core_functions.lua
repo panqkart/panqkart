@@ -46,7 +46,9 @@ local ended_race = { } -- This array is useful when:
 --- @returns nil
 local function player_count(player)
     for i = 1, core_game.player_count do
-        core_game.players_that_won[i] = player
+		if core_game.players_that_won[i] == nil then
+        	core_game.players_that_won[i] = player
+		end
     end
 end
 
@@ -618,7 +620,9 @@ function core_game.start_game(player)
 		})
 
 		core_game.is_waiting[player] = player
-		player:set_physics_override({speed = 0.001, jump = 0.01})
+
+		player:set_velocity({x = 0, y = 0, z = 0})
+		player:set_physics_override({speed = 0, jump = 0})
 
 		-- Teleport back to lobby if no players join in the next half and a minute (90 seconds)
 		minetest.after(90, function()
