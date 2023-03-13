@@ -45,11 +45,11 @@ local ended_race = { } -- This array is useful when:
 --- @param player string the player that will be saved in the array
 --- @returns nil
 local function player_count(player)
-    for i = 1, core_game.player_count do
+	for i = 1, core_game.player_count do
 		if core_game.players_that_won[i] == nil then
-        	core_game.players_that_won[i] = player
+			core_game.players_that_won[i] = player
 		end
-    end
+	end
 end
 
 --- @brief Show `3 2 1 GO!` HUD to the given player
