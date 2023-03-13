@@ -1,7 +1,7 @@
 --[[
 Minetest function callbacks such as `on_joinplayer`.
 
-Copyright (C) 2022 David Leal (halfpacho@gmail.com)
+Copyright (C) 2022-2023 David Leal (halfpacho@gmail.com)
 Copyright (C) Various other Minetest developers/contributors
 
 This library is free software; you can redistribute it and/or
@@ -24,13 +24,13 @@ local S = core_game.S
 
 minetest.register_on_joinplayer(function(player)
 	player:set_lighting({ shadows = { intensity = 0.33 } })
-	core_game.spawn_initialize(player, 0.2)
 
+	core_game.spawn_initialize(player, 0.2)
 	core_game.nametags(player:get_player_name())
 end)
 
 minetest.register_on_respawnplayer(function(player)
-	player:set_pos(core_game.position)
+	core_game.spawn_initialize(player, 0.1)
 	minetest.log("action", "[PANQKART] Player " .. player:get_player_name() .. " died. Teleported to the lobby successfully.")
 end)
 
@@ -39,7 +39,7 @@ minetest.register_on_newplayer(function(player)
 end)
 
 minetest.register_on_leaveplayer(function(player)
-	-- Reset all values to prevent crashes
+	-- Reset all values to prevent crashes.
 	core_game.reset_values(player)
 
 	if core_game.game_started == true then
@@ -51,6 +51,15 @@ minetest.register_on_leaveplayer(function(player)
 				lib_mount.detach(player, {x=0, y=0, z=0})
 				entity.object:remove()
 			end
+		end
+
+		-- Is the player the last player to win? If so, end the race immediately.
+		for _,name in pairs(core_game.players_on_race) do
+			if #core_game.players_on_race == #core_game.players_that_won then
+				return -- Do nothing. This means all the players have won already.
+			end
+
+			core_game.race_end()
 		end
 	end
 end)

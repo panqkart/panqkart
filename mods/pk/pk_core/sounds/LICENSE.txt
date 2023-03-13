@@ -1,5 +1,5 @@
 Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
-Copyright (C) 2022 David Leal (halfpacho@gmail.com)
+Copyright (C) 2022-2023 David Leal (halfpacho@gmail.com)
 
 You are free to:
 Share — copy and redistribute the material in any medium or format

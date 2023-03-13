@@ -1,7 +1,7 @@
 --[[
 Lobby/map generation and configurations.
 
-Copyright (C) 2022 David Leal (halfpacho@gmail.com)
+Copyright (C) 2022-2023 David Leal (halfpacho@gmail.com)
 Copyright (C) Various other Minetest developers/contributors
 
 This library is free software; you can redistribute it and/or
@@ -55,7 +55,7 @@ end
 --- 2. A value in the Minetest settings (DEPRECATED).
 --- 3. Global variable that was updated each time the `spawn_node` node was detected (DEPRECATED).
 --- If none of these are found/valid, it will use a fallback position, or the current player's position.
---- @param player table the player that will be teleported to the lobby
+--- @param player userdata the player that will be teleported to the lobby
 --- @param time number the time in seconds that the player will be teleported to the lobby
 --- @return nil
 function core_game.spawn_initialize(player, time)
