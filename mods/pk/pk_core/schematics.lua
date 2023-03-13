@@ -1,7 +1,7 @@
 --[[
 Places the lobby and level schematics on the first run.
 
-Copyright (C) 2022 David Leal (halfpacho@gmail.com)
+Copyright (C) 2022-2023 David Leal (halfpacho@gmail.com)
 Copyright (C) Various other Minetest developers/contributors
 
 This library is free software; you can redistribute it and/or

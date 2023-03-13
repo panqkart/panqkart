@@ -1,6 +1,6 @@
 --[[
 	Checkpoint system for the use of multiple laps
-	Copyright (C) 2023 David Leal
+	Copyright (C) 2022-2023 David Leal
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -222,8 +222,8 @@ function pk_checkpoints.going_backwards(entity)
 			hud_fs.close_hud(entity.driver, "pk_checkpoints:reverse_hud")
 		end
 
-		-- Store the distance between the player and the checkpoint each 4 seconds, or if a checkpoint is triggered.
-		if os.time() % 4 == 0 then
+		-- Store the distance between the player and the checkpoint each 3 seconds, or if a checkpoint is triggered.
+		if os.time() % 3 == 0 then
 			for _,key in pairs(pk_checkpoints.checkpoint_positions) do
 				local meta = minetest.get_meta(key)
 
@@ -285,7 +285,7 @@ function pk_checkpoints.trigger_lap(entity, message_delay)
         pk_checkpoints.player_lap_count[entity.driver] = pk_checkpoints.player_lap_count[entity.driver] + 1
 
         if pk_checkpoints.player_lap_count[entity.driver] == core_game.laps_number then
-            minetest.chat_send_player(entity.driver:get_player_name(), S("You're on the last lap (@1/@2)! Don't give up: you're almost there.", pk_checkpoints.player_lap_count[entity.driver], core_game.laps_number))
+            minetest.chat_send_player(entity.driver:get_player_name(), S("You're on the last lap (@1 out of @2)! Don't give up: you're almost there.", pk_checkpoints.player_lap_count[entity.driver], core_game.laps_number))
         else
             minetest.chat_send_player(entity.driver:get_player_name(), S("You're on the lap @1 out of @2! Keep going.", pk_checkpoints.player_lap_count[entity.driver], core_game.laps_number))
         end

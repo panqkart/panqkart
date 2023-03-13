@@ -1,7 +1,7 @@
 --[[
 Local and global functions for the `pk_core` mod.
 
-Copyright (C) 2022 David Leal (halfpacho@gmail.com)
+Copyright (C) 2022-2023 David Leal (halfpacho@gmail.com)
 Copyright (C) Various other Minetest developers/contributors
 
 This library is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ local already_ran = false -- A variable to make sure if the pregame countdown ha
 local pregame_count_ended = false -- A variable to remove the pregame countdown HUD for those who weren't the first to run the countdown.
 
 local racecount_check = { } -- An array used to store the value if a player's countdown already started.
-local max_racecount = tonumber(minetest.settings:get("max_racecount")) or 230 -- Maximum value for the race count (default 230)
+local max_racecount = tonumber(minetest.settings:get("max_racecount")) or 320 -- Maximum value for the race count (default 230)
 local ended_race = { } -- This array is useful when:
 					  -- 1. A player joins a race. The minimum player count requirement is not satisifed.
 					  -- 2. Another player joins the race. The count is now satisfied.
@@ -333,7 +333,7 @@ end
 
 --- @brief Show a HUD to the specified player
 --- that there's a current race running.
---- @param player string the player to show the HUD to
+--- @param player userdata the player to show the HUD to
 --- @returns nil
 function core_game.waiting_to_end(player)
 	hud_fs.show_hud(player, "pk_core:pending_race", {
@@ -344,8 +344,9 @@ function core_game.waiting_to_end(player)
 			label = S("Waiting for the current race to finish...")
 		}
 	})
+
 	core_game.is_waiting_end[player] = true
-	player:set_pos(core_game.position)
+	core_game.spawn_initialize(player, 0.2)
 end
 
 --- @brief Utility function to reset the necessary
@@ -591,12 +592,19 @@ end)
 --- @brief Run start game function and ensure there are
 --- the minimum required players to join a race.
 --- Similar to the `start` local function above.
---- @param player string the player that will be used to start the race
+--- @param player userdata the player that will be used to start the race
 --- @returns nil
 function core_game.start_game(player)
 	-- Start: reset values in case something was stored
 	core_game.reset_values(player)
 	-- End: reset values in case something was stored
+
+	if core_game.player_count >= 12 then
+		minetest.chat_send_player(player:get_player_name(), S("The maximum number of players have been reached. Please wait until the current race ends."))
+
+		core_game.spawn_initialize(player, 0.1)
+		return
+	end
 
 	-- Start: player count checks
 	if not core_game.game_started == true and not core_game.pregame_started == true then

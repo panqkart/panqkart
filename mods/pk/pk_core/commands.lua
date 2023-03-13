@@ -1,7 +1,7 @@
 --[[
 All PanqKart Minetest commands.
 
-Copyright (C) 2022 David Leal (halfpacho@gmail.com)
+Copyright (C) 2022-2023 David Leal (halfpacho@gmail.com)
 Copyright (C) Various other Minetest developers/contributors
 
 This library is free software; you can redistribute it and/or
@@ -172,7 +172,7 @@ minetest.register_chatcommand("donate", {
     },
     func = function(name, param)
 		if param == "" then
-			minetest.show_formspec(name, "core_game:donate", donate_formspec(name))
+			minetest.show_formspec(name, "pk_core:donate", donate_formspec(name))
 			return
 		end
 
@@ -185,7 +185,7 @@ minetest.register_chatcommand("donate", {
 
 		local player = minetest.get_player_by_name(name)
 		if player then
-			minetest.show_formspec(param, "core_game:donate", donate_formspec(param))
+			minetest.show_formspec(param, "pk_core:donate", donate_formspec(param))
 			return true, S("Donation formspec shown to @1.", param)
 		else
 			return false, S("Player @1 does not exist or is not online.", param)
