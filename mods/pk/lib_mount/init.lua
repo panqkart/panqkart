@@ -652,7 +652,6 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	local new_acce = {x=0, y=-9.8, z=0}
 
 	p.y = p.y - 0.5
-	local ni = node_is(p)
 	local v = entity.v
 
 	if node_is(p, "air") then
@@ -660,7 +659,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 			new_acce.y = 0
 			acce_y = acce_y - get_sign(acce_y) -- When going down, this will prevent from exceeding the maximum speed.
 		end
-	elseif ni == "liquid" then
+	elseif node_is(p, "liquid") then
 		if entity.terrain_type == 2 or entity.terrain_type == 3 then
 			new_acce.y = 0
 			p.y = p.y + 1
@@ -728,7 +727,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	-----------------------
 
 	-- Teleport the player 35 nodes back when touching this node.
-	if entity.driver and ni == "special_lava" and not core_game.is_end[entity.driver] then
+	if entity.driver and node_is(p, "pk_nodes:lava_node") and not core_game.is_end[entity.driver] then
 		entity.object:set_pos({x = p.x - -35, y = p.y + 1, z = p.z})
 	end
 
