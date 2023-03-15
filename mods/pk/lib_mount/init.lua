@@ -203,19 +203,6 @@ local function force_detach(player)
 	end
 end
 
-local function slow_down_on_grass(entity, max_spd) -- luacheck: ignore
-	-- Slow down speed when on grass
-	if is_on_grass[entity.driver] == true then
-		max_spd = entity.max_speed_reverse / 2
-		if get_sign(entity.v) >= 0 then
-			max_spd = entity.max_speed_forward / 2
-		end
-		if math.abs(entity.v) > max_spd then
-			entity.v = entity.v - get_sign(entity.v)
-		end
-	end
-end
-
 local function slow_down(entity, max_spd, nodename, value) -- luacheck: ignore
 	if not entity or not entity.object then return end -- Safety check
 
@@ -713,7 +700,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	-------------------------
 	-- Start: checkpoints --
 	--------------------------
-	if node_is(p, "pk_checkpoints:checkpoint", entity) and entity and entity.driver then
+	if entity and entity.driver and node_is(p, "pk_checkpoints:checkpoint", entity) then
 		minetest.log("action", "[PANQKART/lib_mount] Player " .. entity.driver:get_player_name() .. " has reached a checkpoint.")
 	end
 
@@ -727,7 +714,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	-----------------------
 
 	-- Teleport the player 35 nodes back when touching this node.
-	if entity.driver and node_is(p, "pk_nodes:lava_node") and not core_game.is_end[entity.driver] then
+	if entity and entity.driver and node_is(p, "pk_nodes:lava_node") and core_game.is_end[entity.driver] ~= true then
 		entity.object:set_pos({x = p.x - -35, y = p.y + 1, z = p.z})
 	end
 
@@ -760,7 +747,6 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		local coin_amount = { }
 
 		-- Maximum 12 players per race, so let's do this twelve times in a loop.
-		-- UNTESTED. May contains bugs or not work properly.
 		for i = 1, 12 do
 			if i == 1 then
 				text = S("You're in 1st place! Congratulations!")
