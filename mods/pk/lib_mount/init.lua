@@ -32,8 +32,6 @@ local crash_threshold = 6.5		-- ignored if enable_crash is disabled
 local aux_timer = 0
 
 local is_sneaking = { }
-local is_on_grass = { }
-
 local message_delay = { }
 local first_trigger_distance = { }
 
