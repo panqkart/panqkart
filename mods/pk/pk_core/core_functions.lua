@@ -215,14 +215,18 @@ end
 --- @brief Function that contains the
 --- code to successfully end a race at the given time.
 --- No player parameter included; this is ran for all players who are on a race.
---- @returns nil
-local function race_end()
+--- @return nil
+function core_game.race_end(show_scoreboard)
 	for _,name in pairs(core_game.players_on_race) do
-		if not core_game.is_end[name] == true then
+		if core_game.is_end[name] ~= true then
 			minetest.chat_send_player(name:get_player_name(), S("You lost the race for ending out of time."))
 		end
 		player_count(name)
-		minetest.after(0, function() minetest.show_formspec(name:get_player_name(), "pk_core:scoreboard", core_game.show_scoreboard(name)) end)
+
+		if show_scoreboard ~= false then
+			minetest.after(0, function() minetest.show_formspec(name:get_player_name(), "pk_core:scoreboard", core_game.show_scoreboard(name)) end)
+		end
+
 		core_game.player_lost(name)
 		minetest.chat_send_player(name:get_player_name(), S("Race ended! Heading back to the lobby..."))
 
@@ -260,7 +264,7 @@ end
 --- @brief Reset counters, variables, and savings
 --- from the current/previous race. This can prevent crashes/bugs.
 --- @param player string the player to reset the values to
---- @returns nil
+--- @return nil
 function core_game.reset_values(player)
 	if core_game.players_on_race[player] == player then
 		core_game.player_count = core_game.player_count - 1
@@ -365,7 +369,6 @@ function core_game.player_lost(player)
 	pregame_count_ended = false
 	core_game.pregame_count = 20
 
-	core_game.show_leaderboard = true
 	local attached_to = player:get_attach()
 	if attached_to then
 		local entity = attached_to:get_luaentity()
@@ -490,7 +493,7 @@ minetest.register_globalstep(function(dtime)
 			end
 
 			if core_game.count[name] >= max_racecount then
-				race_end() -- Run function to end a race
+				core_game.race_end() -- Run function to end a race
 			end
 
 			if minetest.get_player_by_name(name:get_player_name()) and not core_game.is_end[name] == true then

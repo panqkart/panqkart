@@ -61,6 +61,21 @@ minetest.register_on_leaveplayer(function(player)
 
 			core_game.race_end()
 		end
+
+		-- Have all the players on a race left, or the current players are lower than the minimum players?
+		if #core_game.players_on_race == 0 or core_game.player_count == 0 or
+			core_game.player_count < tonumber(minetest.settings:get("minimum_required_players")) or
+			#core_game.players_on_race < tonumber(minetest.settings:get("minimum_required_players")) then
+			-- Remove the waiting to end HUD for all players (if applicable).
+			for _,player_name in ipairs(minetest.get_connected_players()) do
+				core_game.is_waiting_end[player_name] = false
+				hud_fs.close_hud(player_name, "pk_core:pending_race")
+			end
+
+			-- Cleanup racing and checkpoint data.
+			pk_checkpoints.cleanup()
+			core_game.race_end(false)
+		end
 	end
 end)
 
