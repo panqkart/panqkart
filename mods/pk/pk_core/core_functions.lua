@@ -236,6 +236,11 @@ function core_game.race_end(show_scoreboard)
 			hud_fs.close_hud(player_name, "pk_core:pending_race")
 		end
 
+		-- Remove the reverse HUD from the checkpoints mod.
+		if minetest.get_modpath("pk_checkpoints") then
+			hud_fs.close_hud(name, "pk_checkpoints:reverse_hud")
+		end
+
 		-- Set nametags once the race ends
 		core_game.nametags(name:get_player_name())
 
