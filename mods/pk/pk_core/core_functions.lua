@@ -386,7 +386,7 @@ function core_game.player_lost(player)
 
 		-- Remove the reverse HUD from the checkpoints mod.
 		if minetest.get_modpath("pk_checkpoints") then
-			hud_fs.close_hud(name, "pk_checkpoints:reverse_hud")
+			hud_fs.close_hud(player, "pk_checkpoints:reverse_hud")
 		end
 	end)
 	core_game.is_end[player] = true
