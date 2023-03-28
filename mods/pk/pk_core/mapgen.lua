@@ -73,11 +73,11 @@ function core_game.spawn_initialize(player, time)
 
 		-- DEPRECATED CALLBACKS. Will be removed in future versions.
 		if not minetest.string_to_pos(value) then
-			if not minetest.setting_get_pos("lobby_position") and not core_game.position.x then -- Both setting/variable are nil
+			if not minetest.setting_get_pos("lobby_position") and not (core_game.position and core_game.position.x) then -- Both setting/variable are nil
 				position = player:get_pos()														-- To prevent crashes
-			elseif minetest.setting_get_pos("lobby_position") and not core_game.position.x then -- Setting is there, however, variable isn't
+			elseif minetest.setting_get_pos("lobby_position") and not (core_game.position and core_game.position.x) then -- Setting is there, however, variable isn't
 				position = minetest.setting_get_pos("lobby_position")
-			elseif core_game.position.x then													-- Position is set in the variable
+			elseif core_game.position and core_game.position.x then													-- Position is set in the variable
 				position = core_game.position
 			else																				-- Fallback
 				position = player:get_pos()
