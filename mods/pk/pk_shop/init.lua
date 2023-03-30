@@ -344,7 +344,7 @@ sfinv.register_page("pk_shop:upgrade_car", {
 
 			-- Refresh the inventory.
 			sfinv.set_player_inventory_formspec(player)
-				
+
 			minetest.log("action", "[PANQKART] Successfully updated maximum speed forward (CAR01) for player " .. player:get_player_name() .. "!")
 			minetest.log("action", "[PANQKART] Successfully updated maximum speed reverse (CAR01) for player " .. player:get_player_name() .. "!")
 		elseif fields.buy_hovercraft then
