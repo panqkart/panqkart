@@ -711,9 +711,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	-- End: checkpoints --
 	-----------------------
 
-	-- Teleport the player 35 nodes back when touching this node.
+	-- Teleport the player 34 nodes back when touching this node.
 	if entity and entity.driver and node_is(p, "pk_nodes:lava_node") and core_game.is_end[entity.driver] ~= true then
-		entity.object:set_pos({x = p.x - -35, y = p.y + 1, z = p.z})
+		entity.object:set_pos({x = p.x - -34, y = p.y + 1, z = p.z})
 	end
 
 	-- Check also below, because the player might be higher.
