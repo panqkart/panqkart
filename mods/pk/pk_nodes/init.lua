@@ -31,7 +31,7 @@ local S_nodes = minetest.get_translator(minetest.get_current_modname())
 
 local function start_race_formspec(meta)
 	local formspec = {
-		"formspec_version[4]",
+		"formspec_version[5]",
 		"size[12,9]",
 		"label[2.5,0.5;", minetest.formspec_escape(S_nodes("Set player positions before starting a race.")), "]",
 		"field[0.375,1.2;5.25,0.8;player_one;" .. S_nodes("1st player position") .. ";${player1}]",
@@ -429,10 +429,10 @@ minetest.register_globalstep(function(dtime)
 
 	for _, player in ipairs(minetest.get_connected_players()) do
 		local pos = player:get_pos()
-		local node = minetest.get_node(vector.subtract(pos, {x=0,y=0.5,z=0}))
+		local node = minetest.get_node(vector.subtract(pos, vector.new(0, 0.5, 0)))
 
 		if node.name == "pk_nodes:start_race" and not core_game.ran_once[player] == true then
-			local meta = minetest.get_meta({x = pos.x, y = pos.y - 0.5, z = pos.z})
+			local meta = minetest.get_meta(vector.new(pos.x, pos.y - 0.5, pos.z))
 
 			-- Loading positions from `.txt` file
 			local fileContent = {}
@@ -455,7 +455,7 @@ minetest.register_globalstep(function(dtime)
 				end
 
 				-- The player will be teleported inside the node, thus, teleport them a bit higher.
-				player:set_pos({x = player:get_pos().x, y = player:get_pos().y + 1, z = player:get_pos().z})
+				player:set_pos(vector.new(player:get_pos().x, player:get_pos().y + 1, player:get_pos().z))
 			else
 				if not file then
 					minetest.log("error", "[PANQKART] Error while reading player positions: " .. err .. ". Configured/metadata positions will be used instead.")

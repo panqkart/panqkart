@@ -9,25 +9,30 @@ local definition = {
 	can_fly = false,					-- if enabled, the specified vehicle will be able to fly around
 	can_go_down = false, 				-- applies only when `can_fly` is enabled
 	can_go_up = false, 	 				-- applies only when `can_fly` is enabled
-	player_rotation = {x=0,y=0,z=0},		-- rotate player so they sit facing the correct direction
-	driver_attach_at = {x=0,y=0,z=0},		-- attach the driver at
-	driver_eye_offset = {x=0, y=0, z=0},	-- offset for first person driver view
-	number_of_passengers = 0,			-- maximum number of passengers. Can have 3 passengers maximum
-	passenger_attach_at = {x=0,y=0,z=0},		-- attach the 1st passenger, if applicable, at the specified positions
-	passenger_eye_offset = {x=0, y=0, z=0},		-- offset for the 1st passenger in first-person view
-	passenger_detach_pos_offset = {x=0,y=0,z=0},	-- offset for the 1st passenger when they leave the vehicle
+	player_rotation = vector.new(0,0,0),		-- rotate player so they sit facing the correct direction
+	driver_attach_at = vector.new(0,0,0),		-- attach the driver at
+	driver_eye_offset = vector.new(0,0,0),	-- offset for first person driver view
+	number_of_passengers = 0,				-- maximum number of passengers. Can have 3 passengers maximum
 
-	passenger2_attach_at = {x=0,y=0,z=0},		-- attach the 2nd passenger, if applicable, at the specified positions
-	passenger2_eye_offset = {x=0,y=0,z=0},		-- offset for the 2nd passenger in first-person view
-	passenger2_detach_pos_offset = {x=0,y=0,z=0},	-- offset for the 2nd passenger when they leave the vehicle
-
-	passenger3_attach_at = {x=0,y=0,z=0},		-- attach the 3rd passenger, if applicable, at the specified positions
-	passenger3_eye_offset = {x=0,y=0,z=0},		-- offset for the 3rd passenger in first-person view
-	passenger3_detach_pos_offset = {x=0,y=0,z=0},	-- offset for the 3rd passenger when they leave the vehicle
+	-- Attachment positions and offset for all passengers (can be over 3 passengers)
+	passengers = {
+		{
+			attach_at = vector.new(0,0,0),
+			eye_offset = vector.new(0,0,0),
+		},
+		{
+			attach_at = vector.new(0,0,0),
+			eye_offset = vector.new(0,0,0),
+		},
+		{
+			attach_at = vector.new(0,0,0),
+			eye_offset = vector.new(0,0,0),
+		},
+	},
 
 	inventory_image = "filename.png",		-- image to use in inventory
 	wield_image = "filename.png",			-- image to use in hand
-	wield_scale = {x=1, y=1, z=1},			--
+	wield_scale = vector.new(1,1,1),		-- the size of the item in hand
 	visual = "mesh",				-- what type of object (mesh, cube, etc...)
 	mesh = "filename.ext",				-- mesh model to use
 	textures = {"filename.png"},			-- mesh texture(s)
@@ -41,7 +46,11 @@ local definition = {
 	braking = 2,					-- how fast can the vehicle stop
 	turn_speed = 2,					-- how quick can the vehicle turn
 	drop_on_destroy = {""},				-- what gets dropped when vehicle is destroyed
-	recipe = {}					-- crafting recipe
+	recipe = {},					-- crafting recipe
+	-- HP/Armor stuff.
+	min_hp = 1,
+	max_hp = 10,
+	armor = 25
 }
 
 -- nothing to change down here

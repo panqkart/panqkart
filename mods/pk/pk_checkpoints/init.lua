@@ -35,7 +35,7 @@ local S2 = minetest.get_translator("pk_core")
 
 local function show_formspec(name)
     local formspec = {
-        "formspec_version[6]",
+        "formspec_version[5]",
         "size[4,3]",
         "field[0.5,0.6;2.9,0.5;checkpoint;" .. S("Checkpoint number") .. ";${checkpoint_number}]",
         "button_exit[0.9,1.7;2,1;save;" .. S("Save") .. "]",
@@ -252,6 +252,7 @@ end
 --- If so, the lap won't be triggered and the player will need to complete the track properly.
 --- If the player passed all the checkpoints, the lap will count and it will reset the checkpoint count to 1.
 --- @param entity table the entity to trigger the lap for
+--- @param message_delay table whether the message will be shown or not
 --- @return nil
 function pk_checkpoints.trigger_lap(entity, message_delay)
     if pk_checkpoints.player_checkpoint_count[entity.driver] - 1 ~= core_game.checkpoint_count then
@@ -320,6 +321,7 @@ end
 
 --- @brief Function to clear the checkpoint metadata.
 --- Without clearing the metadata, the checkpoint triggers won't work properly.
+--- @param player userdata the player to reset the metadata for, specifically
 --- @return nil
 function pk_checkpoints.clear_metadata(player)
     for _,value in pairs(pk_checkpoints.checkpoint_positions) do
