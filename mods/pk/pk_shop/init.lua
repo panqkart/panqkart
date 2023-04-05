@@ -48,7 +48,7 @@ local function confirm_upgrade(name, is_hover)
 	if is_hover == false then
 		text = S("Are you sure you want\nto upgrade your CAR01?")
 		formspec = {
-			"formspec_version[4]",
+			"formspec_version[5]",
 			"size[7,4.5]",
 			"label[1.25,0.5;", minetest.formspec_escape(text), "]",
 			"label[1.25,2;", minetest.formspec_escape(text2), "]",
@@ -58,7 +58,7 @@ local function confirm_upgrade(name, is_hover)
 	elseif is_hover == true then
 		text = S("Are you sure you want to\nupgrade your Hovercraft?")
 		formspec = {
-			"formspec_version[4]",
+			"formspec_version[5]",
 			"size[7,4.5]",
 			"label[1.25,0.5;", minetest.formspec_escape(text), "]",
 			"label[1.25,2;", minetest.formspec_escape(text2), "]",
@@ -68,7 +68,7 @@ local function confirm_upgrade(name, is_hover)
 	elseif is_hover == "buy" then
 		text = S("Are you sure you want\nto buy the Hovercraft?")
 		formspec = {
-			"formspec_version[4]",
+			"formspec_version[5]",
 			"size[7,3.75]",
 			"label[1.75,0.5;", minetest.formspec_escape(text), "]",
 			"button_exit[0.3,2.3;3,0.8;yes_buy;" .. S("Yes") .. "]",

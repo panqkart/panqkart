@@ -28,7 +28,7 @@ local S = minetest.get_translator(modname)
 ----------------------
 local function show_formspec(meta)
 	local formspec = {
-		"formspec_version[4]",
+		"formspec_version[5]",
 		"size[7,5]",
 		"label[1.25,0.5;", minetest.formspec_escape(S("Customize the coin chest")), "]",
 		"field[0.375,1.2;5.25,0.8;bronze;" .. S("Bronze coins") .. ";${bronze}]",

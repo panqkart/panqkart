@@ -287,7 +287,7 @@ end
 --- @returns the formspec table
 function core_game.show_scoreboard(name)
 	local formspec = {
-        "formspec_version[4]",
+        "formspec_version[5]",
         "size[12,6]",
         "label[0.5,0.5;", minetest.formspec_escape(S("Final scoreboard, places, and race count.")), "]",
 		"table[0.3,1.25;10,3;scoreboard;" .. minetest.formspec_escape(S("Place					Player name					Race count")) .. ",,"
@@ -324,7 +324,7 @@ function core_game.ask_vehicle(name)
     local text = S("Which car/vehicle do you want to use?")
 
     local formspec = {
-        "formspec_version[4]",
+        "formspec_version[5]",
         "size[7,3.75]",
         "label[0.5,0.5;", minetest.formspec_escape(text), "]",
         "button_exit[0.3,2.3;3,0.8;use_hovercraft;Hovercraft]",
@@ -375,7 +375,7 @@ function core_game.player_lost(player)
 
 		if entity then
 			minetest.after(0.1, function()
-				lib_mount.detach(player, {x=0, y=0, z=0})
+				lib_mount.detach(player, vector.new(0,0,0))
 				entity.object:remove()
 			end)
 		end
@@ -447,7 +447,7 @@ end
 minetest.register_globalstep(function(dtime)
 	for _, player in ipairs(minetest.get_connected_players()) do
 		local pos = player:get_pos()
-		local node = minetest.get_node(vector.subtract(pos, {x=0,y=0.5,z=0}))
+		local node = minetest.get_node(vector.subtract(pos, vector.new(0, 0.5, 0)))
 
 		if minetest.get_modpath("pk_nodes") then
 			if node.name == "pk_nodes:tp_lobby" then
@@ -463,7 +463,7 @@ minetest.register_globalstep(function(dtime)
 
 		if not core_game.game_started == true and not core_game.is_end[name] == true then
 			-- Do not let users move before the race starts
-			minetest.after(0.13, function() name:set_velocity({x = 0, y = 0, z = 0}) end)
+			minetest.after(0.13, function() name:set_velocity(vector.new(0,0,0)) end)
 			minetest.after(0.1, function() name:set_physics_override({speed = 0, jump = 0}) end)
 		end
 
@@ -637,7 +637,7 @@ function core_game.start_game(player)
 
 		core_game.is_waiting[player] = player
 
-		player:set_velocity({x = 0, y = 0, z = 0})
+		player:set_velocity(vector.new(0,0,0))
 		player:set_physics_override({speed = 0, jump = 0})
 
 		-- Teleport back to lobby if no players join in the next half and a minute (90 seconds)

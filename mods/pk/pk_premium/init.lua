@@ -114,7 +114,7 @@ minetest.register_chatcommand("premium_location", {
 			return false, S("Wrong usage of command. Use <x y z>")
 		end
 		-- End: code taken from Minetest builtin teleport command
-		house_location = {x = p.x, y = p.y, z = p.z}
+		house_location = vector.new(p.x, p.y, p.z)
 		minetest.settings:set("premium_position", minetest.pos_to_string(house_location))
 
 		return true, S("Successfully changed premium's house location to: <@1>", param)

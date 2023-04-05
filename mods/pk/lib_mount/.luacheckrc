@@ -13,5 +13,5 @@ read_globals = {
     "minetest", "mobs", "vector",
 }
 
-files["init.lua"].ignore = { "eye_offset", "attach_at", 
+files["init.lua"].ignore = { "eye_offset", "attach_at",
     "set_animation", "new_velo" }

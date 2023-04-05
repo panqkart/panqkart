@@ -23,7 +23,10 @@ USA
 local S = core_game.S
 
 minetest.register_on_joinplayer(function(player)
-	player:set_lighting({ shadows = { intensity = 0.33 } })
+	-- Set shadows only if the game's running on Minetest 5.6.0 and above.
+	if player:get_lighting().shadows ~= nil then
+		player:set_lighting({ shadows = { intensity = 0.33 } })
+	end
 
 	core_game.spawn_initialize(player, 0.2)
 	core_game.nametags(player:get_player_name())
@@ -48,7 +51,7 @@ minetest.register_on_leaveplayer(function(player)
 			local entity = attached_to:get_luaentity()
 
 			if entity then
-				lib_mount.detach(player, {x=0, y=0, z=0})
+				lib_mount.detach(player, vector.new(0,0,0))
 				entity.object:remove()
 			end
 		end

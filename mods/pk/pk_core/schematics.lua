@@ -53,7 +53,7 @@ minetest.register_on_newplayer(function(player)
         if do_not_place == true then return end
 
         -- In case the player isn't in {0,0,0}, teleport them there.
-        player:set_pos({x = 0, y = 0, z = 0})
+        player:set_pos(vector.new(0,0,0))
 
         minetest.chat_send_player(player:get_player_name(), S("Please wait while the schematics are being placed. It could take up to 15 minutes."))
         minetest.chat_send_player(player:get_player_name(), S("Do not pause if you're in singleplayer mode, otherwise, the schematics won't be placed."))
@@ -81,8 +81,8 @@ minetest.register_on_newplayer(function(player)
                 minetest.log("action", "[PANQKART] The schematic " .. name .. " was placed.")
 
                 -- Sometimes, the lights can be messed up when placing the schematics.
-                local lobby_count = worldedit.fixlight({x = 5, y = 5, z = 105}, {x = 92, y = 37, z = 0})
-                local level_count = worldedit.fixlight({x = 0, y = 325, z = 0}, {x = 187, y = 300, z = 317})
+                local lobby_count = worldedit.fixlight(vector.new(5, 5, 105), vector.new(92, 37, 0))
+                local level_count = worldedit.fixlight(vector.new(0, 325, 0), vector.new(187, 300, 317))
 
                 minetest.log("action", "[PANQKART] " .. level_count .. " nodes were light-fixed in the level, " .. lobby_count .. " nodes were light-fixed in the lobby.")
             else
@@ -95,7 +95,7 @@ minetest.register_on_newplayer(function(player)
 
         -- Assuming the player spawned in 0,0,0, it will TP them to the level, which will then
         -- generate the `player_positions.txt` file. After that, the player must be teleported to the lobby.
-        minetest.after(0.3, function() player:set_pos({x = 60, y = 310, z = 230}) end)
+        minetest.after(0.3, function() player:set_pos(vector.new(60, 310, 230)) end)
         minetest.after(0.8, function() core_game.spawn_initialize(player, 0) end)
 
         modstorage:set_string("schematic", "false")
@@ -108,9 +108,9 @@ minetest.register_on_joinplayer(function(player)
         -- This will be removed once the multiple-map system is added.
 
         if modstorage:get_string("schematic") ~= "false" then
-            player:set_pos({x = 55, y = 19, z = 65})
+            player:set_pos(vector.new(55, 19, 65))
 
-            minetest.after(1, function() player:set_pos({x = -48, y = 232.5, z = -285}) end)
+            minetest.after(1, function() player:set_pos(vector.new(-48, 232.5, -285)) end)
             minetest.after(3, function() core_game.spawn_initialize(player, 0) end)
         end
 
@@ -122,8 +122,8 @@ minetest.register_on_joinplayer(function(player)
     -- At the point of fixing the lights, it might get bugged if Minetest shows the password field.
     -- TODO: fix positions
     if modstorage:get_string("schematic") == "false" then
-        local lobby_count = worldedit.fixlight({x = 5, y = 5, z = 105}, {x = 92, y = 37, z = 0})
-        local level_count = worldedit.fixlight({x = 0, y = 325, z = 0}, {x = 187, y = 300, z = 317})
+        local lobby_count = worldedit.fixlight(vector.new(5, 5, 105), vector.new(92, 37, 0))
+        local level_count = worldedit.fixlight(vector.new(0, 325, 0), vector.new(187, 300, 317))
 
         minetest.log("action", "[PANQKART] " .. level_count .. " nodes were light-fixed in the level, " .. lobby_count .. " nodes were light-fixed in the lobby.")
     end

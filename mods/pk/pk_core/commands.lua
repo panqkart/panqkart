@@ -37,7 +37,7 @@ local S = core_game.S
 			return false, S("Wrong usage of the command. Use <x y z>")
 		end
 		-- End: code taken from Minetest builtin teleport command
-		core_game.position = {x = p.x, y = p.y, z = p.z}
+		core_game.position = vector.new(p.x, p.y, p.z)
 		return true, S("Changed the lobby's position to: <@1>", param)
     end,
 })--]]
@@ -151,7 +151,7 @@ end
 --- @returns the formspec table
 local function donate_formspec(name)
     local formspec = {
-        "formspec_version[4]",
+        "formspec_version[5]",
         "size[10,11]",
         "label[0.375,0.5;", minetest.formspec_escape("Thanks for your interest! When donating, you will get\nin-game perks, a shoutout, a special role, and more!"), "]",
 		"label[0.375,1.75;", minetest.formspec_escape("No matter how many amount you donate to us, you will get:"), "]",
