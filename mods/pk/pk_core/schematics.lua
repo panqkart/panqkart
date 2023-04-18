@@ -118,13 +118,4 @@ minetest.register_on_joinplayer(function(player)
         -- `modgen_generation` is disabled AFTER `modgen` generated the maps.
         modstorage:set_string("schematic", "false")
     end
-
-    -- At the point of fixing the lights, it might get bugged if Minetest shows the password field.
-    -- TODO: fix positions
-    if modstorage:get_string("schematic") == "false" then
-        local lobby_count = worldedit.fixlight(vector.new(5, 5, 105), vector.new(92, 37, 0))
-        local level_count = worldedit.fixlight(vector.new(0, 325, 0), vector.new(187, 300, 317))
-
-        minetest.log("action", "[PANQKART] " .. level_count .. " nodes were light-fixed in the level, " .. lobby_count .. " nodes were light-fixed in the lobby.")
-    end
 end)

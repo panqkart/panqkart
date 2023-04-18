@@ -2,25 +2,13 @@
 -- writes the mapblocks back to the world
 -- hard-dependency- and global-free
 
--- If the file has any content, this means the lobby has been placed already.
-local file = io.open(minetest.get_worldpath() .. "/lobby_position.txt", "r")
-if file then
-    local content = file:read("*a")
-    file:close()
-
-    if content ~= "" then
-        core_game.modstorage:set_string("schematic", "false")
-		return
-    end
-end
-
 -- Make sure the setting is enabled AND that the schematics haven't been placed in the past (older PanqKart versions).
 if minetest.settings:get_bool("modgen_generation") == false or
 	minetest.settings:get_bool("manual_setup") == true or core_game.modstorage:get_string("schematic") == "false" then
 		minetest.log("info", "[PANQKART] Modgen generation is disabled, the schematics have been placed previously, or manual setup is enabled.")
 		return
 else
-	core_game.modstorage:set_string("schematic", "false")
+	minetest.after(10, function() core_game.modstorage:set_string("schematic", "false") end)
 end
 
 -- mod name and path
