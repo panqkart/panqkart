@@ -135,6 +135,11 @@ minetest.register_node("pk_chest:chest", {
 				minetest.sound_play("default_chest_open", {gain = 0.3,
 					pos = pos, max_hear_distance = 10}, true)
 
+				minetest.after(3, function()
+					minetest.sound_play("default_chest_close", { gain = 0.3,
+						pos = pos, max_hear_distance = 10 }, true)
+				end)
+
 				-- If no name found, store new value
 				if no_coins(meta) ~= true then
 					playerlist[#playerlist + 1] = clicker:get_player_name()
@@ -146,11 +151,6 @@ minetest.register_node("pk_chest:chest", {
 			meta:set_string("formspec", show_formspec(meta))
 			minetest.sound_play("default_chest_open", { gain = 0.3,
 				pos = pos, max_hear_distance = 10 }, true)
-
-			minetest.after(3, function()
-				minetest.sound_play("default_chest_close", { gain = 0.3,
-					pos = pos, max_hear_distance = 10 }, true)
-			end)
         end
 	end,
 	on_punch = function(pos, node, puncher, pointed_thing)
