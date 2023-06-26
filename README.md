@@ -21,14 +21,10 @@ place it in `../minetest/games/`
 - GNU/Linux: If you use a system-wide installation place
     it in `~/.minetest/games/`
 
-**In order to keep Git modules (which some of them are mods on this repository), you will have to clone the repository using Git.**\
-You can download the Git software on this website: <https://git-scm.com>
-
-```bash
-git clone --recurse-submodules https://github.com/panqkart/panqkart
-```
-
-**If you're downloading through ContentDB, there's no need for this command.**
+> **Note**
+>
+> [Git Software](https://git-scm.com) was required in the past due to Git Submodules usage.\
+> You can freely download the ZIP file now, and all of the submodules will be cloned ([tool](https://github.com/Panquesito7/submodules-alternative)).
 
 ## 🏁 Making your own maps 🏁
 
