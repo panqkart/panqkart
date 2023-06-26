@@ -1,0 +1,14 @@
+version: "3.6"
+
+services:
+ sut:
+  build:
+   context: ./test
+   args:
+    ENGINE_VERSION: ${ENGINE_VERSION:-5.5.0}
+  volumes:
+    - "./:/root/.minetest/worlds/world/worldmods/modgen/"
+    - "world:/root/.minetest/worlds/world"
+
+volumes:
+  world: {}

@@ -1,0 +1,20 @@
+on: [push, pull_request]
+name: build
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: lint
+        uses: Roang-zero1/factorio-mod-luacheck@master
+        with:
+          luacheckrc_url: ""
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run unit tests
+        uses: lunarmodules/busted@v2.1.2
+        with:
+          args: --verbose test.lua

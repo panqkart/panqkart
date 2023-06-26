@@ -1,0 +1,6 @@
+# This file contains settings of streets mod that can be changed in
+# minetest.conf
+
+#    When enabled, stairsplus nodes will only be registered for very basic roadmarkings.
+#    This will improve loading time.
+streets.only_basic_stairsplus (Only basic stairplus support for faster loading) bool true

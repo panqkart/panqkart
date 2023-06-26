@@ -44,7 +44,10 @@ read_globals = {
 	"farming",
 	"stairsplus",
 	"creative",
-	"worldedit"
+	"worldedit",
+	"mtt",
+	"inventory_plus",
+	"unified_inventory"
 }
 
 -- Don't report on legacy definitions of globals.
@@ -60,3 +63,6 @@ files["mods/pk/vehicle_mash/init.lua"].ignore = { "cars_def", "mesecar_def", "me
 -- This error is thrown for methods that don't use the implicit "self"
 -- parameter.
 ignore = {"212/self"}
+
+-- Ignore WorldEdit warnings. Those should be fixed upstream.
+files["mods/building/Minetest-WorldEdit/*/*.lua"].ignore = { "" }
