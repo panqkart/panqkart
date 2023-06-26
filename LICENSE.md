@@ -33,7 +33,7 @@ The `PanqKart` text is licensed under [CC BY-SA 4.0 International](https://creat
 
 ## License of source code
 
-Copyright (C) 2022-203 David Leal (<halfpacho@gmail.com>)
+Copyright (C) 2022-2023 David Leal (<halfpacho@gmail.com>)
 
 All the mods fall under their respective licenses.\
 See their license/readme file for more information about that.
