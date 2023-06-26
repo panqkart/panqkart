@@ -1,0 +1,3 @@
+# If `true`, enables coin crafting recipes. If `false`, disables coin crafting recipes.
+# Takes effect only at load-time; runtime changes to this setting are ignored.
+maptools.enable_coin_crafting (Enable crafting recipes for coins) bool false

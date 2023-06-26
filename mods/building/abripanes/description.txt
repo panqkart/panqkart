@@ -1,0 +1,1 @@
+Adds faintly glowing coloured glass panes which can be used for stained glass windows or for gentle lighting. 

@@ -1,0 +1,29 @@
+name: Submodules Alternative
+on:
+  schedule:
+  #        ┌───────────── minute (0 - 59)
+  #        │  ┌───────────── hour (0 - 23)
+  #        │  │ ┌───────────── day of the month (1 - 31)
+  #        │  │ │ ┌───────────── month (1 - 12 or JAN-DEC)
+  #        │  │ │ │ ┌───────────── day of the week (0 - 6 or SUN-SAT)
+  #        │  │ │ │ │
+  #        │  │ │ │ │
+  #        │  │ │ │ │
+  #        *  * * * *
+  - cron: '0 0 * * *'
+jobs:
+  update-repos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: Panquesito7/submodules-alternative@main
+        with:
+          repos_filename: repos
+          use_pr: true
+          branch_name: repo-update
+          commit_message: "Bump repositories to their latest version"
+          add_repos: false
+          update_repos: true
+          squash_commits: false

@@ -1,0 +1,24 @@
+name: ldoc
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2.3.4
+    - name: apt
+      run: sudo apt-get install -y luarocks
+    - name: ldoc install
+      run: luarocks install --local ldoc
+    - name: ldoc run
+      run: $HOME/.luarocks/bin/ldoc .
+
+    - name: deploy
+      if: github.ref == 'refs/heads/master'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: docs
