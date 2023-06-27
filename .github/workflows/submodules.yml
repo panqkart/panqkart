@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: Panquesito7/submodules-alternative@v1.0.0
+      - uses: Panquesito7/submodules-alternative@main
         with:
           repos_filename: repos
           use_pr: true
