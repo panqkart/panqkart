@@ -24,7 +24,7 @@ place it in `../minetest/games/`
 > **Note**
 >
 > [Git Software](https://git-scm.com) was required in the past due to Git Submodules usage.\
-> You can freely download the ZIP file now, and all of the submodules will be cloned ([tool](https://github.com/Panquesito7/submodules-alternative)).
+> You can freely download the ZIP file now, and all of the subtrees will be cloned ([tool](https://github.com/Panquesito7/submodules-alternative)).
 
 ## 🏁 Making your own maps 🏁
 
