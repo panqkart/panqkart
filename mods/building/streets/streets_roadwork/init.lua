@@ -364,7 +364,7 @@ minetest.register_abm({
 })
 
 minetest.register_node("streets:roadwork_delineator_top", {
-	tile_images = {
+	tiles = {
 		"streets_roadwork_delineator_top.png",
 		"streets_tl_bg.png",
 		"streets_transparent.png",
@@ -393,7 +393,7 @@ minetest.register_node("streets:roadwork_delineator_bottom", {
 	description = "Roadwork Delineator",
 	inventory_image = "streets_roadwork_delineator.png",
 	wield_image = "streets_roadwork_delineator.png",
-	tile_images = {
+	tiles = {
 		"streets_roadwork_delineator_top.png",
 		"streets_tl_bg.png",
 		"streets_roadwork_delineator_bottom_side.png",
@@ -452,7 +452,7 @@ minetest.register_craft({
 
 
 minetest.register_node("streets:roadwork_delineator_light_off_top", {
-	tile_images = {
+	tiles = {
 		"streets_roadwork_delineator_top.png",
 		"streets_tl_bg.png",
 		"streets_transparent.png",
@@ -485,7 +485,7 @@ minetest.register_node("streets:roadwork_delineator_light_off_top", {
 })
 
 minetest.register_node("streets:roadwork_delineator_light_on_top", {
-	tile_images = {
+	tiles = {
 		"streets_roadwork_delineator_top.png",
 		"streets_tl_bg.png",
 		"streets_transparent.png",
@@ -522,7 +522,7 @@ minetest.register_node("streets:roadwork_delineator_light_bottom", {
 	description = "Roadwork Delineator with Blinking Light",
 	inventory_image = "streets_roadwork_delineator_light.png",
 	wield_image = "streets_roadwork_delineator_light.png",
-	tile_images = {
+	tiles = {
 		"streets_roadwork_delineator_top.png",
 		"streets_tl_bg.png",
 		"streets_roadwork_delineator_bottom_side.png",
