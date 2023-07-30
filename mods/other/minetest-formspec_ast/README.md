@@ -10,9 +10,10 @@ A Minetest mod library to make modifying formspecs easier.
     and returns a formspec string.
  - `formspec_ast.interpret(string_or_tree)`: Returns a formspec string after
     (optionally parsing) and unparsing the formspec provided.
- - `formspec_ast.walk(tree)`: Returns an iterator (use this directly in a for
+ - `formspec_ast.walk(tree, optional_container_set)`: Returns an iterator (use this directly in a for
     loop) that will return all nodes in a tree, including ones inside
-    containers.
+    containers. The containers are recognised by `type`, and can be overriden
+    with a table of `name` to `true` relationships in `optional_container_set`
  - `formspec_ast.find(tree, node_type)`: Similar to `walk(tree)`, however only
     returns `node_type` nodes.
  - `formspec_ast.get_element_by_name(tree, name)`: Returns the first element in

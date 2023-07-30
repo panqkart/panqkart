@@ -71,9 +71,9 @@ end
 
 -- Returns an iterator over all nodes in a formspec AST, including ones in
 -- containers.
-local container_elems = {container = true, scroll_container = true}
-function formspec_ast.walk(tree)
-    return walk_inner(tree, container_elems)
+local default_container_elems = {container = true, scroll_container = true}
+function formspec_ast.walk(tree, provided_container_elms)
+    return walk_inner(tree, provided_container_elms or default_container_elems)
 end
 
 -- Similar to formspec_ast.walk(), however only returns nodes which have a type
