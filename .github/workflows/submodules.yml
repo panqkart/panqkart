@@ -27,4 +27,3 @@ jobs:
           add_repos: false
           update_repos: true
           squash_commits: false
-          pr_label_update: "Dependencies 💻"
