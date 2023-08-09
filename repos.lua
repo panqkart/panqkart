@@ -1,3 +1,7 @@
+local config = {
+    labels_update = "Dependencies 💻"
+}
+
 local repos = {
     {
         name = "abriglass",
