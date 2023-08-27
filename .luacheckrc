@@ -7,7 +7,7 @@ globals = {
 	"lib_mount", "vehicle_mash", "mobs", "formspec_ast", "player_api",
 
 	string = {fields = {"split", "trim"}},
-	table = {fields = {"copy", "getn", "contains"}}
+	table = {fields = {"copy", "getn", "contains", "indexof"}}
 }
 
 read_globals = {
