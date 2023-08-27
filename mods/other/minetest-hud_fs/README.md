@@ -53,6 +53,7 @@ The following elements are supported:
     - The label has the same limitations as the `label` element.
     - The `noclip` option is ignored.
     - Item image buttons have the same limitations as `item_image`.
+ - `style`
 
 All valid formspec elements not listed above are ignored.
 
