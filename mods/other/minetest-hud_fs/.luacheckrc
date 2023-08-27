@@ -8,5 +8,5 @@ globals = {
 
 read_globals = {
     string = {fields = {'split', 'trim'}},
-    table = {fields = {'copy'}}
+    table = {fields = {'copy', 'indexof'}}
 }

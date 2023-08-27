@@ -32,7 +32,7 @@ end
 hud_fs.colorstring_to_number = colorstring_to_number
 
 -- Hacks to allow colorize() to work to some extent on labels
-local function get_label_number(label)
+local function get_label_number(label, style)
     local number, text = label:match("^\027%(c@([^%)]+)%)(.*)$")
 
     -- Remove trailing escape sequence added by minetest.colorize().
@@ -40,7 +40,8 @@ local function get_label_number(label)
         text = text:gsub("\027%(c@[^%)]+%)$", "")
     end
 
-    return text or label, number and colorstring_to_number(number) or 0xFFFFFF
+    return text or label, number and colorstring_to_number(number) or
+        (style.textcolor and colorstring_to_number(style.textcolor) or 0xFFFFFF)
 end
 
 -- Disable the race condition workaround in 5.4.1 singleplayer
@@ -55,14 +56,78 @@ if minetest.is_singleplayer() then
     end
 end
 
+local PLUS, TIMES = ("+*"):byte(1, 2)
+local function get_font_size(style)
+    local size = style.font_size
+    if not size then return end
+
+    local first_char = size:byte(1)
+    if first_char == TIMES then
+        size = tonumber(size:sub(2))
+    else
+        -- Approximate a multiple size based on the font size
+        if first_char == PLUS then
+            size = tonumber(size:sub(2))
+            if size then
+                size = size + 16
+            end
+        else
+            size = tonumber(size)
+        end
+
+        if size then
+            size = size / 16
+        end
+    end
+
+    return size and {x = size, y = 0}
+end
+
+local empty_table = {}
+local function get_style(node, styles_by_name, styles_by_type)
+    local style = styles_by_name[node.name]
+    if not style then
+        return styles_by_type[node.type] or empty_table
+    end
+
+    return setmetatable(style, {__index = styles_by_type[node.type]})
+end
+
+local function style_is_yes(value, default)
+    if value == nil then
+        return default
+    elseif type(value) == "string" then
+        return minetest.is_yes(value)
+    else
+        return value
+    end
+end
+
+local font_style_flags = {"bold", "italic", "mono"}
+local function get_style_flags(style)
+    local flags = 0
+    if style.font then
+        local options = style.font:split(",")
+        for i, flag in ipairs(font_style_flags) do
+            if table.indexof(options, flag) > 0 then
+                flags = flags + 2 ^ (i - 1)
+            end
+        end
+    end
+    return flags
+end
+
 local nodes = {}
-function nodes.label(node, scale)
-    local text, number = get_label_number(node.label)
+function nodes.label(node, scale, _, _, _, _, styles_by_type)
+    local style = styles_by_type.label or empty_table
+    local text, number = get_label_number(node.label, style)
     local elem = {
         hud_elem_type = "text",
         text = text,
         alignment = {x = 1, y = 0},
-        number = number
+        number = number,
+        size = get_font_size(style),
+        style = get_style_flags(style),
     }
 
     -- Hack for newlines. This will unfortunately break if the font size is
@@ -132,7 +197,8 @@ function nodes.box(node, scale)
     }
 end
 
-function nodes.textarea(node, scale, add_node)
+function nodes.textarea(node, scale, add_node, _, _, styles_by_name,
+        styles_by_type)
     -- Add in separate nodes for the label and background
     if node.label and node.label ~= "" then
         add_node("label", {
@@ -141,7 +207,9 @@ function nodes.textarea(node, scale, add_node)
             label = node.label
         })
     end
-    if node.name and node.name ~= "" then
+
+    local style = get_style(node, styles_by_name, styles_by_type)
+    if node.name and node.name ~= "" and style_is_yes(style.border, true) then
         add_node("box", {
             x = node.x,
             y = node.y,
@@ -162,7 +230,9 @@ function nodes.textarea(node, scale, add_node)
         text = table.concat(lines, "\n"),
         alignment = {x = 1, y = 1},
         number = 0xFFFFFF,
-        scale = {x = node.w * scale, y = node.h * scale}
+        scale = {x = node.w * scale, y = node.h * scale},
+        size = get_font_size(style),
+        style = get_style_flags(style),
     }
 end
 
@@ -197,9 +267,12 @@ function nodes.item_image(node, ...)
     return nodes.image(node, ...)
 end
 
-function nodes.button(node, _, add_node)
+function nodes.button(node, _, add_node, _, _, styles_by_name, styles_by_type)
+    local style = get_style(node, styles_by_name, styles_by_type)
+
     -- This function is used by image_button and item_image_button as well
-    if node.drawborder == nil or node.drawborder then
+    if node.drawborder or (node.drawborder == nil and
+            style_is_yes(style.border, true)) then
         add_node("box", {
             x = node.x,
             y = node.y,
@@ -208,6 +281,17 @@ function nodes.button(node, _, add_node)
             color = "#515151FF"
         })
     end
+
+    if style.bgimg then
+        add_node("image", {
+            x = node.x,
+            y = node.y,
+            w = node.w,
+            h = node.h,
+            texture_name = style.bgimg,
+        })
+    end
+
     if node.texture_name and node.texture_name ~= "" then
         add_node("image", node)
     elseif node.item_name and node.item_name ~= "" then
@@ -215,12 +299,14 @@ function nodes.button(node, _, add_node)
     end
     node.x = node.x + node.w / 2
     node.y = node.y + node.h / 2
-    local text, number = get_label_number(node.label)
+    local text, number = get_label_number(node.label, style)
     return {
         hud_elem_type = "text",
         text = text,
         alignment = {x = 0, y = 0},
-        number = number
+        number = number,
+        size = get_font_size(style),
+        style = get_style_flags(style),
     }
 end
 nodes.button_exit = nodes.button
@@ -254,10 +340,13 @@ local function render(tree, possibly_using_gles, scale, z_index, window)
     scale = scale or DEFAULT_SCALE
     z_index = z_index or DEFAULT_Z_INDEX
 
+    local styles_by_name = {}
+    local styles_by_type = {}
     local client_hud_scale = window and window.real_hud_scaling or 1
     local function add_node(node_type, node)
         local elem = nodes[node_type](node, scale, add_node,
-            possibly_using_gles, client_hud_scale)
+            possibly_using_gles, client_hud_scale, styles_by_name,
+            styles_by_type)
         elem.position = pos
         elem.z_index = z_index
         elem.offset = {
@@ -299,6 +388,23 @@ local function render(tree, possibly_using_gles, scale, z_index, window)
                 window.size.x * (1 - node.x * 2) / size_w,
                 window.size.y * (1 - node.y * 2) / size_h
             ) / client_hud_scale
+        elseif node_type == "style" or node_type == "style_type" then
+            local styles = node_type == "style" and styles_by_name or
+                styles_by_type
+            for _, name in ipairs(node.selectors or {node.name}) do
+                local props = styles[name]
+                if not props then
+                    props = {}
+                    styles[name] = props
+                end
+                for k, v in pairs(node.props) do
+                    if v == "" then
+                        props[k] = nil
+                    else
+                        props[k] = v
+                    end
+                end
+            end
         elseif nodes[node_type] then
             add_node(node_type, node)
         elseif node_type == nil and node.hud_elem_type then
