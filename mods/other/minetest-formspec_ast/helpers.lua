@@ -46,26 +46,47 @@ function formspec_ast.interpret(spec, custom_handlers)
 end
 
 local function walk_inner(tree, container_elems)
-    local parents = {}
-    local i = 1
+    -- Use two tables to store values so that a new table doesn't have to be
+    -- created every time a container is entered
+    local parent_trees = {}
+    local parent_indexes = {}
+
+    local parent_idx = 0
+    local i = 0
     return function()
-        local res = tree[i]
-        while not res do
-            local n = table.remove(parents)
-            if not n then
-                return
-            end
-            tree, i = n[1], n[2]
-            res = tree[i]
+        -- If the previously yielded element has children
+        if i > 0 and container_elems[tree[i].type] then
+            -- Save the parent element and the next index
+            parent_idx = parent_idx + 1
+            parent_trees[parent_idx] = tree
+            parent_indexes[parent_idx] = i + 1
+
+            -- Set the new tree
+            tree = tree[i]
+
+            -- Reset I to initial value (zero)
+            i = 0
         end
+
+        -- Point index to next child
         i = i + 1
 
-        if container_elems[res.type] then
-            table.insert(parents, {tree, i})
-            tree = res
-            i = 1
+        -- Get child at index
+        local elem = tree[i]
+        while not elem do -- current child is invalid
+            if parent_idx < 1 then
+                return
+            end
+
+            -- Restore parent's relative index
+            tree, i = parent_trees[parent_idx], parent_indexes[parent_idx]
+            parent_idx = parent_idx - 1
+
+            -- Get child at index
+            elem = tree[i]
         end
-        return res
+
+        return elem, tree, i
     end
 end
 
