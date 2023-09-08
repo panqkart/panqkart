@@ -620,3 +620,163 @@ it("does not parse invalid tabheader elements", function()
     assert.is_nil(formspec_ast.parse("tabheader[1,2;name;a,b,c;1;false]"))
     assert.is_nil(formspec_ast.parse("tabheader[1,2;3,4;name;a,b,c;1]"))
 end)
+
+describe("helpers", function ()
+    describe("walk", function ()
+        it("walks over every element", function ()
+            local tree = {
+                { type = "box", color = "green" },
+                { type = "label", label = "the text" },
+                {
+                    type = "container",
+                    { type = "label", label = "the text" }
+                }
+            }
+            for node in formspec_ast.walk(tree) do
+                node.visited = true
+            end
+            assert.same({
+                { type = "box", color = "green", visited = true },
+                { type = "label", label = "the text", visited = true },
+                {
+                    type = "container",
+                    visited = true,
+                    { type = "label", label = "the text", visited = true }
+                }
+            }, tree)
+        end)
+        it("can be stopped", function ()
+                local tree = {
+                { type = "box", color = "green" },
+                { type = "label", label = "the text" },
+                {
+                    type = "container",
+                    { type = "label", label = "the text" }
+                },
+                { type = "label", label = "the text" }
+            }
+            local count = 0
+            for node in formspec_ast.walk(tree) do
+                count = count + 1
+                node.visited = true
+                if count == 3 then break end
+            end
+            assert.same({
+                { type = "box", color = "green", visited = true },
+                { type = "label", label = "the text", visited = true },
+                {
+                    type = "container",
+                    visited = true,
+                    { type = "label", label = "the text" }
+                },
+                { type = "label", label = "the text" }
+            }, tree)
+        end)
+        it("can accept custom element list", function ()
+            local tree = {
+                { type = "box", color = "green" },
+                { type = "label", label = "the text" },
+                {
+                    type = "nonsensewordhere",
+                    { type = "label", label = "the text" }
+                },
+                {
+                    type = "container",
+                    { type = "label", label = "the text" }
+                },
+                { type = "label", label = "the text" }
+            }
+            for node in formspec_ast.walk(tree, {nonsensewordhere = true}) do
+                node.visited = true
+            end
+            assert.same({
+                { type = "box", color = "green", visited = true },
+                { type = "label", label = "the text", visited = true },
+                {
+                    type = "nonsensewordhere",
+                    visited = true,
+                    { type = "label", label = "the text", visited = true }
+                },
+                {
+                    type = "container",
+                    visited = true,
+                    { type = "label", label = "the text" }
+                },
+                { type = "label", label = "the text", visited = true }
+            }, tree)
+        end)
+        it("can provide parent info when walking", function ()
+            local tree = {
+                { type = "box", color = "green" },
+                { type = "label", label = "the text" },
+                {
+                    type = "container",
+                    { type = "label", label = "the text" }
+                },
+                { type = "label", label = "the text" }
+            }
+            local logged_indexes = {}
+            for node, parent, index in formspec_ast.walk(tree) do
+                node.visited = true
+                parent.parent_of = (parent.parent_of or 0) + 1
+                logged_indexes[#logged_indexes+1] = index
+            end
+            assert.same({
+                parent_of = 4,
+                { type = "box", color = "green", visited = true },
+                { type = "label", label = "the text", visited = true },
+                {
+                    type = "container",
+                    visited = true,
+                    parent_of = 1,
+                    { type = "label", label = "the text", visited = true }
+                },
+                { type = "label", label = "the text", visited = true },
+            }, tree)
+            -- NOTE: this is, in effect, asserting the order of the crawl
+            assert.same({ 1, 2, 3, 1, 4}, logged_indexes)
+        end)
+        it("parent info can be modified without failure", function ()
+            -- INFO: This test is a regression test.
+            local tree = {
+                { type = "box", color = "green" },
+                { type = "label", label = "the text" },
+                {
+                    type = "container",
+                    { type = "label", label = "the text" }
+                }
+            }
+            local found_child = false
+            for node, parent in formspec_ast.walk(tree) do
+                if node.type == "container" then
+                    node[#node+1] = { type = "label", label = "the new text" }
+                elseif parent.type == "container" then
+                    node.is_child_thingy = true
+                    if not found_child then
+                        found_child = true
+                        node.type = "container"
+                        node[1] = { type = "box", color = "red" }
+                        node.label = nil
+                    end
+                end
+            end
+            assert.same({
+                { type = "box", color = "green" },
+                { type = "label", label = "the text" },
+                {
+                    type = "container",
+                    {
+                        type = "container",
+                        is_child_thingy = true,
+                        { type = "box", color = "red", is_child_thingy = true }
+                    },
+                    {
+                        type = "label",
+                        label = "the new text",
+                        is_child_thingy = true
+                    }
+                }
+            }, tree)
+        end)
+    end)
+end)
