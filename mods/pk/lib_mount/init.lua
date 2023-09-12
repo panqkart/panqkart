@@ -323,7 +323,7 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	if entity.driver and not minetest.check_player_privs(entity.driver:get_player_name(), {core_admin = true}) then
 		if core_game.game_started == false then return end
 
-		if core_game.game_started == true and not core_game.players_on_race[entity.driver] == entity.driver
+		if core_game.game_started == true and core_game.players_on_race[entity.driver] == not entity.driver
 			or core_game.players_on_race[entity.driver] == nil then
 				return
 		end
@@ -720,9 +720,9 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 	local pos_below = vector.new(p.x, p.y - 1.25, p.z)
 
 	if node_is(p, "maptools:black") or node_is(p, "maptools:white") or (node_is(p, "pk_nodes:asphalt") or node_is(pos_below, "pk_nodes:asphalt")) and entity.driver then
-		if core_game.is_end[entity.driver] == true or not core_game.game_started == true then return end
+		if core_game.is_end[entity.driver] == true or core_game.game_started == not true then return end
 
-		if not core_game.players_on_race[entity.driver] == entity.driver
+		if core_game.players_on_race[entity.driver] == not entity.driver
 		or core_game.players_on_race[entity.driver] == nil then
 			-- Do not allow people who are NOT on a race to end
 			return

@@ -103,7 +103,7 @@ local function update_speed(player, fields)
 		if coins and coins.silver_coins < 10 or not coins then
 			minetest.chat_send_player(player:get_player_name(), S("You don't have the enough silver coins to upgrade"))
 			return
-		elseif coins and coins.silver_coins >= 10 and not already_upgraded == true then
+		elseif coins and coins.silver_coins >= 10 and already_upgraded == not true then
 			minetest.chat_send_player(player:get_player_name(), S("Successfully updated car's forward speed to 10.60!"))
 			minetest.chat_send_player(player:get_player_name(), S("Successfully updated car's reverse speed to 8!"))
 
@@ -148,7 +148,7 @@ local function buy_hovercraft(player, fields)
 		if coins and coins.gold_coins < 5 then
 			minetest.chat_send_player(player:get_player_name(), S("You don't have the enough gold coins to buy the Hovercraft"))
 			return
-		elseif coins and coins.gold_coins >= 5 and not already_bought == true then
+		elseif coins and coins.gold_coins >= 5 and already_bought == not true then
 			minetest.chat_send_player(player:get_player_name(), S("Successfully bought the Hovercraft vehicle!"))
 			already_bought = true
 

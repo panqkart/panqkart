@@ -66,3 +66,4 @@ ignore = {"212/self"}
 
 -- Ignore WorldEdit warnings. Those should be fixed upstream.
 files["mods/building/Minetest-WorldEdit/*/*.lua"].ignore = { "" }
+files["mods/mtg/beds/api.lua"].ignore = { "" }

@@ -431,7 +431,7 @@ minetest.register_globalstep(function(dtime)
 		local pos = player:get_pos()
 		local node = minetest.get_node(vector.subtract(pos, vector.new(0, 0.5, 0)))
 
-		if node.name == "pk_nodes:start_race" and not core_game.ran_once[player] == true then
+		if node.name == "pk_nodes:start_race" and core_game.ran_once[player] == not true then
 			local meta = minetest.get_meta(vector.new(pos.x, pos.y - 0.5, pos.z))
 
 			-- Loading positions from `.txt` file
