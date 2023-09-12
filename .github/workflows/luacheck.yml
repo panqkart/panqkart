@@ -6,5 +6,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Luacheck
+      - name: LuaCheck
         uses: lunarmodules/luacheck@master
+        with:
+          args: "mods"
