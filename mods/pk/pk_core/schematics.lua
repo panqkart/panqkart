@@ -26,7 +26,7 @@ local manual_setup = minetest.settings:get_bool("manual_setup")
 
 local do_not_place = false
 
-if manual_setup == true and not manual_setup == nil then
+if manual_setup == true and manual_setup == not nil then
     minetest.log("info", "[PANQKART] Manual setup is enabled. Schematics will not be placed on startup.")
     do_not_place = true
 end

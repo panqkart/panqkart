@@ -2,7 +2,7 @@
 
 ![screenshot](https://raw.githubusercontent.com/panqkart/panqkart/main/screenshot.png)
 
-[![build](https://github.com/panqkart/panqkart/actions/workflows/build.yml/badge.svg)](https://github.com/panqkart/panqkart/actions/)
+[![LuaCheck](https://github.com/panqkart/panqkart/actions/workflows/luacheck.yml/badge.svg)](https://github.com/panqkart/panqkart/actions/)
 [![ContentDB](https://content.minetest.net/packages/Panquesito7/panqkart/shields/downloads/)](https://content.minetest.net/packages/Panquesito7/panqkart/)
 [![Discord chat](https://img.shields.io/discord/984496578922442753.svg?logo=discord&colorB=5865F2)](https://discord.gg/HEweZuF3Vv)
 [![Donate](https://liberapay.com/assets/widgets/donate.svg)](https://en.liberapay.com/Panquesito7/donate)

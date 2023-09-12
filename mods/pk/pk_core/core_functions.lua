@@ -192,7 +192,7 @@ local function start(player)
 	})
 
 	-- Start: HUD/count stuff
-	if not already_ran == true then
+	if already_ran ~= true then
 		startCountdown(player)
 	else
 		for i=1,core_game.pregame_count,1 do
@@ -461,7 +461,7 @@ minetest.register_globalstep(function(dtime)
 	for _,name in pairs(core_game.players_on_race) do
 		if not minetest.get_player_by_name(name:get_player_name()) then return end
 
-		if not core_game.game_started == true and not core_game.is_end[name] == true then
+		if core_game.game_started == not true and core_game.is_end[name] == not true then
 			-- Do not let users move before the race starts
 			minetest.after(0.13, function() name:set_velocity(vector.new(0,0,0)) end)
 			minetest.after(0.1, function() name:set_physics_override({speed = 0, jump = 0}) end)
@@ -474,7 +474,7 @@ minetest.register_globalstep(function(dtime)
 			})
 
 			local attached_to = name:get_attach()
-			if not attached_to and not core_game.is_end[name] == true then
+			if not attached_to and core_game.is_end[name] == not true then
 				local pos = name:get_pos()
 
 				if use_hovercraft[name] == true then
@@ -501,11 +501,11 @@ minetest.register_globalstep(function(dtime)
 				core_game.race_end() -- Run function to end a race
 			end
 
-			if minetest.get_player_by_name(name:get_player_name()) and not core_game.is_end[name] == true then
+			if minetest.get_player_by_name(name:get_player_name()) and core_game.is_end[name] == not true then
 				core_game.count[name] = core_game.count[name] + dtime
 			end
 
-			if not core_game.is_end[name] == true then
+			if core_game.is_end[name] == not true then
 				hud_fs.show_hud(name, "pk_core:race_count", {
 					{type = "size", w = 40, h = 0.5},
 					{type = "position", x = 0.9, y = 0.9},
@@ -530,7 +530,7 @@ minetest.register_globalstep(function(dtime)
 	-- Let's separate this from the code above to avoid issues
 	for _,name in pairs(core_game.players_on_race) do
 		if use_hovercraft[name] == true or use_car01[name] == true then return end
-		if core_game.pregame_started == true and not run_once[name] == true then
+		if core_game.pregame_started == true and run_once[name] == not true then
 			local meta = name:get_meta()
 			local data = minetest.deserialize(meta:get_string("hovercraft_bought"))
 
@@ -615,7 +615,7 @@ function core_game.start_game(player)
 	end
 
 	-- Start: player count checks
-	if not core_game.game_started == true and not core_game.pregame_started == true then
+	if core_game.game_started == not true and core_game.pregame_started == not true then
 		core_game.player_count = core_game.player_count + 1
 	end
 

@@ -139,7 +139,7 @@ function vehicle_mash.register_vehicle(name, def)
 			-- TODO: improve the physics and make them more realistic.
 			if moveresult.collides then
 				for index, _ in pairs(moveresult.collisions) do
-					if moveresult.collisions[index].type == "object" and not moveresult.collisions[2] == "y" then
+					if moveresult.collisions[index].type == "object" and moveresult.collisions[2] == not "y" then
 						self.object:move_to(vector.add(self.object:get_pos(), vector.multiply(vector.direction(moveresult.collisions[index].old_velocity,
 							moveresult.collisions[index].new_velocity), 1.80))) -- Credits to appgurueu for helping!
 					end
