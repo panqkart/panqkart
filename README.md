@@ -8,7 +8,7 @@
 [![Donate](https://liberapay.com/assets/widgets/donate.svg)](https://en.liberapay.com/Panquesito7/donate)
 
 A racing game with upgradable cars, fun races with up to 12 players, and so much more.\
-Built by [Panquesito7 (David Leal)](https://github.com/Panquesito7), Pixel852, Crystal741, and other Minetest contributors.
+Built by [Panquesito7 (David Leal)](https://github.com/Panquesito7), Pixel852, [Crystal741](https://github.com/Crystal741), and other Minetest contributors.
 
 **Please note that this is a work-in-progress game and is still in ALPHA stage.**\
 **More awesome features are coming in the future. Stay tuned!**
