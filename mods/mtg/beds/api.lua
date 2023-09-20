@@ -31,6 +31,7 @@ function beds.register_bed(name, def)
 		wield_image = def.wield_image,
 		drawtype = "nodebox",
 		tiles = def.tiles.bottom,
+		use_texture_alpha = "clip",
 		paramtype = "light",
 		paramtype2 = "facedir",
 		is_ground_content = false,
@@ -114,8 +115,8 @@ function beds.register_bed(name, def)
 			local dir = minetest.facedir_to_dir(node.param2)
 			local p = vector.add(pos, dir)
 			local node2 = minetest.get_node_or_nil(p)
-			if not node2 or not minetest.get_item_group(node2.name, "bed") == 2 or
-					not node.param2 == node2.param2 then
+			if not node2 or minetest.get_item_group(node2.name, "bed") ~= 2 or
+					node.param2 ~= node2.param2 then
 				return false
 			end
 			if minetest.is_protected(p, user:get_player_name()) then
@@ -150,6 +151,7 @@ function beds.register_bed(name, def)
 	minetest.register_node(name .. "_top", {
 		drawtype = "nodebox",
 		tiles = def.tiles.top,
+		use_texture_alpha = "clip",
 		paramtype = "light",
 		paramtype2 = "facedir",
 		is_ground_content = false,
