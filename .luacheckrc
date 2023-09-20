@@ -50,7 +50,6 @@ read_globals = {
 	"unified_inventory"
 }
 
--- Don't report on legacy definitions of globals.
 files["mods/mtg/default/legacy.lua"].global = false
 
 files["mods/pk/lib_mount/init.lua"].ignore = { "eye_offset", "attach_at",
@@ -66,4 +65,3 @@ ignore = {"212/self"}
 
 -- Ignore WorldEdit warnings. Those should be fixed upstream.
 files["mods/building/Minetest-WorldEdit/*/*.lua"].ignore = { "" }
-files["mods/mtg/beds/api.lua"].ignore = { "" }
