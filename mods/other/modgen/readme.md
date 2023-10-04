@@ -42,6 +42,11 @@ secure.trusted_mods = modgen
 
 Afterwards if you mark a region and execute `/export` the chunks are written to the exported mod itself
 
+> **Note**
+>
+> After exporting, the mod won't have a `name` field in `mod.conf`, which\
+> needs to be added in order for Minetest to detect and run the mod properly.
+
 # Ignored nodes
 
 Per default the `ignore` node is ignored from export/serialization (mapped to `air` internally)
