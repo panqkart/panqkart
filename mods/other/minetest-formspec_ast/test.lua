@@ -74,6 +74,7 @@ it("can round-trip most elements", function()
         image[1,2;3,4;air.png;5]
         image[1,2;3,4;air.png;5,6]
         image[1,2;3,4;air.png;5,6,7,8]
+        field_enter_after_edit[test;true]
     ]]
     fs = ('\n' .. fs):gsub('\n[ \n]*', '')
 
@@ -370,6 +371,11 @@ it("can round-trip most elements", function()
             middle_y = 6,
             middle_x2 = 7,
             middle_y2 = 8,
+        },
+        {
+            type = "field_enter_after_edit",
+            name = "test",
+            enter_after_edit = true,
         },
     })
 end)
