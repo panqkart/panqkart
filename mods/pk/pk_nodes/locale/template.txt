@@ -23,3 +23,6 @@ Spawn node. Do not place multiple nodes.=
 Teleport back to lobby node.=
 Asphalt node. Used for ending blocks.=
 Teleport back to a few nodes when an entity touches it.=
+Slows down an entity when on top=
+One or more player initial positions are invalid. Cannot start race.=
+If you think this is a mistake, please report it on the official's PanqKart Discord server or contact the server administrator.=

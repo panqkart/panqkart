@@ -5,12 +5,12 @@ local config = {
 local repos = {
     {
         name = "abriglass",
-        url = "https://github.com/panqkart/abriglass",
+        url = "https://github.com/mt-mods/abriglass",
         dir = "mods/building/"
     },
     {
         name = "abripanes",
-        url = "https://github.com/panqkart/abripanes",
+        url = "https://github.com/mt-mods/abripanes",
         dir = "mods/building/"
     },
     {
@@ -71,6 +71,11 @@ local repos = {
     {
         name = "flowers",
         url = "https://github.com/minetest-game/flowers",
+        dir = "mods/mtg/"
+    },
+    {
+        name = "player_api",
+        url = "https://github.com/minetest-game/player_api",
         dir = "mods/mtg/"
     },
     {

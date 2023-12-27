@@ -2,7 +2,7 @@
 	An API framework for mounting objects.
 
 	Copyright (C) 2016 blert2112 and contributors
-	Copyright (C) 2019-2023 David Leal (halfpacho@gmail.com) and contributors
+	Copyright (C) 2019-2024 David Leal (halfpacho@gmail.com) and contributors
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -16,8 +16,7 @@
 
     You should have received a copy of the GNU Lesser General Public
     License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
-	  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 --]]
 
 lib_mount = {
@@ -31,18 +30,10 @@ local S = minetest.get_translator(modname)
 local crash_threshold = 6.5		-- ignored if enable_crash is disabled
 local aux_timer = 0
 
-local is_sneaking = { }
 local message_delay = { }
 local first_trigger_distance = { }
 
 ------------------------------------------------------------------------------
-
-local mobs_redo = false
-if minetest.get_modpath("mobs") then
-	if mobs.mod and mobs.mod == "redo" then
-		mobs_redo = true
-	end
-end
 
 --
 -- Helper functions
@@ -395,22 +386,8 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				entity.v = entity.v - entity.braking/10
 			end
 		end
-		local pname = entity.driver:get_player_name()
-		if ctrl.sneak then -- Start: Code by rubenwardy, thanks!
-			if not is_sneaking[pname] then
-				minetest.sound_play("lib_mount.horn", {
-					max_hear_distance = 48,
-					pitch = 1,
-					object = entity.object,
-					gain = 1,
-					position = entity.object}, true)
-			end
-			is_sneaking[pname] = true
-		else
-			is_sneaking[pname] = false
-		end -- End: Code by rubenwardy
-		if minetest.settings:get_bool("use_mouselook") == true or minetest.settings:get_bool("use_mouselook") == nil then
 
+		if minetest.settings:get_bool("use_mouselook") ~= false then
 			if entity.mouselook then
 				if ctrl.left then
 					entity.object:set_yaw(entity.object:get_yaw()+get_sign(entity.v)*math.rad(1+dtime)*entity.turn_spd)
@@ -418,24 +395,28 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 					entity.object:set_yaw(entity.object:get_yaw()-get_sign(entity.v)*math.rad(1+dtime)*entity.turn_spd)
 				end
 			else
-				-- Still WIP/testing. Contains a few bugs.
+				-- WIP and may contain bugs.
 				local yaw = entity.object:get_yaw()
-				local yaw_delta = entity.driver:get_look_horizontal() - yaw + math.rad(90)
+				local yaw_delta = entity.driver:get_look_horizontal() - yaw + math.rad(entity.player_rotation.y or 90)
 				if yaw_delta > math.pi then
-					yaw_delta = yaw_delta - math.pi *2
+					yaw_delta = yaw_delta - math.pi * 2
 				elseif yaw_delta < - math.pi then
-					yaw_delta = yaw_delta + math.pi* 2
+					yaw_delta = yaw_delta + math.pi * 2
 				end
+
 				local yaw_sign = get_sign(yaw_delta)
 				if yaw_sign == 0 then
 					yaw_sign = 1
 				end
+
 				yaw_delta = math.abs(yaw_delta)
 				if yaw_delta > math.pi / 2 then
 					yaw_delta = math.pi / 2
 				end
+
 				local yaw_speed = yaw_delta * entity.turn_spd
 				yaw_speed = yaw_speed * dtime
+
 				entity.object:set_yaw(yaw + yaw_sign*yaw_speed)
 			end
 		else
@@ -460,23 +441,6 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				velo.y = velo.y - 1
 				acce_y = acce_y - 1
 			end
-		end
-	end
-
-	-- if not moving then set animation and return
-	if entity.v == 0 and velo.x == 0 and velo.y == 0 and velo.z == 0 then
-		if is_mob and mobs_redo == true then
-			if stand_anim and stand_anim ~= nil then
-				set_animation(entity, stand_anim)
-			end
-		end
-		return
-	end
-
-	-- set animation
-	if is_mob and mobs_redo == true then
-		if moving_anim and moving_anim ~= nil then
-			set_animation(entity, moving_anim)
 		end
 	end
 
@@ -685,15 +649,6 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 --		v = 0
 --		new_acce.y = 1
 	end
-
-	--[[ Set the variable to true if on grass
-	if entity.driver then
-		if ni == "maptools_grass" or ni == "default_grass" then
-			is_on_grass[entity.driver] = true
-		elseif ni ~= "maptools_grass" or ni ~= "default_grass" then
-			is_on_grass[entity.driver] = false
-		end
-	end--]]
 
 	-------------------------
 	-- Start: checkpoints --
@@ -975,9 +930,6 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 		minetest.chat_send_player(entity.driver:get_player_name(), S("Game's up! You finished the race in @1 seconds.", string.format("%.2f", core_game.count[entity.driver])))
 	end
 
-	-- UNUSED:
-	--velo.y = 6 -- This will make the vehicle jump
-
 	new_velo = get_velocity(v, entity.object:get_yaw() - rot_view, velo.y)
 	new_acce.y = new_acce.y + acce_y
 
@@ -1023,13 +975,6 @@ function lib_mount.drive(entity, dtime, is_mob, moving_anim, stand_anim, jump_he
 				if i ~= j then
 					minetest.add_item(pos, entity.drop_on_destroy[j])
 				end
-
-				minetest.sound_play("lib_mount.crash", {
-					max_hear_distance = 48,
-					pitch = .7,
-					gain = 10,
-					object = entity.object
-				}, true)
 
 				entity.removed = true
 				-- delay remove to ensure player is detached

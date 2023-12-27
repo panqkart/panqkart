@@ -13,5 +13,5 @@ Successfully set VIP nametag for player @1.=
 Change the premium's house location.=
 Successfully set the premium house location to your current position.=
 Successfully changed premium's house location to <@1>=
-Wrong usage of command. Use <x y z>=
+Wrong command usage. Use <x y z>=
 Player @1 does not exist, not online, or the specified position is invalid.=

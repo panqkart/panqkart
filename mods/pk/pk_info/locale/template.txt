@@ -2,7 +2,7 @@
 
 Full server rules=
 Server rules=
-Not following these rules will result in a kick, ban, or permanent ban, depending on the situation.=
+Not following these rules will result in a kick or (permanent) ban, depending on the situation.=
 Close=
 About=
 1. No swearing and dating. We do not allow any kind of bad=
@@ -29,13 +29,11 @@ bugs, etc., just report it to us, and we will help you ASAP.=
 This game was developed by David Leal (Panquesito7), Crystal741,=
 Pixel852, among other Minetest contributors/developers.=
 Thanks to everyone else who has=
-contributed to this game! It's very appreciated.=
-These rules might change in the future, without any later notice or=
-announcement. We suggest you stay up-to-date with the rules being changed.=
-Big changes in the rules will be announced in our=
+contributed to this game. It's highly appreciated!=
+Any change in the rules will be announced in our=
 Discord server. Stay tuned for any new updates.=
 Like our game? Donate so we can keep doing more for=
 you and this game! https://github.com/sponsors/Panquesito7=
 Join our Discord community to stay tuned about new updates, chat with our community,=
-share your maps, races, and so much more.=
+share your maps, and much more.=
 We hope to see you there! https://discord.gg/HEweZuF3Vv=

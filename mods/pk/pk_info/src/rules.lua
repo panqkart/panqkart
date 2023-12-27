@@ -27,7 +27,7 @@ _rules = table.concat(rules, "\n")
 local function rules_formspec(name)
     local formspec = {
         "size[16,6.3]" ..
-        "label[0,0;" .. minetest.colorize("#02a2f7", S("Server Rules")) .. " | " .. S("Not following these rules will result in a kick, ban, or permanent ban, depending on the situation.") .. "]"..
+        "label[0,0;" .. minetest.colorize("#02a2f7", S("Server Rules")) .. " | " .. S("Not following these rules will result in a kick or (permanent) ban, depending on the situation.") .. "]"..
         "background[0,0;16,0.6;pk_info_dark_bg.png]"..
         "label[0,0.8;".. _rules .."]"..
         "background[0,0.8;16,5;pk_info_background.png]"..

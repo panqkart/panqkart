@@ -1,23 +1,22 @@
 --[[
-In-game shop to upgrade your vehicles. Part of the PanqKart game.
+	In-game shop to upgrade your vehicles. Part of the PanqKart game.
 
-Copyright (C) 2022-2023 David Leal (halfpacho@gmail.com)
-Copyright (C) Various other Minetest developers/contributors
+    Copyright (C) 2022-2024 David Leal (halfpacho@gmail.com) and contributors
+    Copyright (C) Various Minetest (Game) developers/contributors
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU Lesser General Public
+	License as published by the Free Software Foundation; either
+	version 2.1 of the License, or (at your option) any later version.
 
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+	This library is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+	Lesser General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
-USA
+	You should have received a copy of the GNU Lesser General Public
+	License along with this library; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 --]]
 
 car_shop = { }
@@ -289,11 +288,11 @@ sfinv.register_page("pk_shop:upgrade_car", {
 				formspec[#formspec + 1] = S("Ready to upgrade your vehicles' speed") .. "]"
 				formspec[#formspec + 1] = "button[0.15,3.3;3.50,1;update_speed;" .. S("Upgrade speed (CAR01)") .. "]"
 				--formspec[#formspec + 1] = "image[0.15,3.43;0.65,0.65;inv_car_red.png]" -- CAR01 red
-				--formspec[#formspec + 1] = "image[0.40,3.33;0.5,0.5;car_shop_arrow_update.png]" -- Arrow update
+				--formspec[#formspec + 1] = "image[0.40,3.33;0.5,0.5;pk_shop_arrow_update.png]" -- Arrow update
 				if not hover_speed then--hover_speed.forward_speed == 20 and not hover_speed.reverse_speed == 7 then
 					formspec[#formspec + 1] = "button[3.50,3.3;3.50,1;hover_speed;" .. S("Upgrade speed (Hover)") .. "]"
 					--formspec[#formspec + 1] = "image[3.50,3.43;0.63,0.63;hovercraft_blue_inv.png]" -- Blue Hovercraft
-					--formspec[#formspec + 1] = "image[3.75,3.33;0.5,0.5;car_shop_arrow_update.png]" -- Arrow update
+					--formspec[#formspec + 1] = "image[3.75,3.33;0.5,0.5;pk_shop_arrow_update.png]" -- Arrow update
 				end
 		-- Updates for CAR01, with no Hovercraft
 		elseif data and data.forward_speed == 12 and data.reverse_speed == 9
@@ -310,7 +309,7 @@ sfinv.register_page("pk_shop:upgrade_car", {
 					formspec[#formspec + 1] = S("Ready to upgrade your Hovercraft. All CAR01 updates done") .. "]"
 					formspec[#formspec + 1] = "button[0.15,3.3;3.50,1;hover_speed;" .. S("Upgrade speed (Hover)") .. "]"
 					--formspec[#formspec + 1] = "image[0.15,3.43;0.63,0.63;hovercraft_blue_inv.png]" -- Blue Hovercraft
-					--formspec[#formspec + 1] = "image[0.40,3.33;0.5,0.5;car_shop_arrow_update.png]" -- Arrow update
+					--formspec[#formspec + 1] = "image[0.40,3.33;0.5,0.5;pk_shop_arrow_update.png]" -- Arrow update
 				else
 					formspec[#formspec + 1] = ",," .. S("Nothing to see here. All updates done!") .. "]"
 				end

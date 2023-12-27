@@ -28,7 +28,7 @@ place it in `../minetest/games/`
 
 ## 🏁 Making your own maps 🏁
 
-### ❕ A new guide will be created soon as well as a multiple-map system.
+### ❕ A new guide will be created soon as well as a multiple-map system
 
 If you want to make a new level/map for our game (or just for yourself), that's amazing! We have basic tools list below to get you started.\
 In the future, we will add multiple maps which will playable! Thank you for your interest in adding back to our community.
@@ -53,6 +53,6 @@ As always, if you need any help, do let us know about it and we will be glad to 
 
 Coming soon!
 
-## 📜 Legal/Licensing 📜
+## 📜 License 📜
 
-Refer to [`LICENSE.md`](https://github.com/panqkart/panqkart/blob/main/LICENSE.md) for more information.
+See [`LICENSE.md`](https://github.com/panqkart/panqkart/blob/main/LICENSE.md) for full information.

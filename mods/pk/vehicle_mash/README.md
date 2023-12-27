@@ -1,6 +1,6 @@
-# Vehicle Mash [![Build status](https://github.com/minetest-mods/vehicle_mash/workflows/build/badge.svg)](https://github.com/minetest-mods/vehicle_mash/actions) [![ContentDB](https://content.minetest.net/packages/Panquesito7/vehicle_mash/shields/downloads/)](https://content.minetest.net/packages/Panquesito7/vehicle_mash/)
+# Vehicle Mash [![LuaCheck status](https://github.com/minetest-mods/vehicle_mash/workflows/luacheck/badge.svg)](https://github.com/minetest-mods/vehicle_mash/actions) [![ContentDB](https://content.minetest.net/packages/Panquesito7/vehicle_mash/shields/downloads/)](https://content.minetest.net/packages/Panquesito7/vehicle_mash/)
 
-- Current version: 2.3.0
+- Current version: 2.4.0
 - By [blert2112](https://github.com/blert2112), and handed over to [Panquesito7](https://github.com/Panquesito7).
 
 ![Screenshot](https://raw.githubusercontent.com/minetest-mods/vehicle_mash/master/screenshot.png)
@@ -39,7 +39,7 @@ For further information or help, see:\
 
 ## Known issues
 
-- Attachments incorrectly ordered.
+- None as of now.
 
 ## License
 
@@ -66,6 +66,14 @@ See [`LICENSE.md`](LICENSE.md) for more information.
 There are no pending tasks to do yet.
 
 ## Changelog
+
+v2.4.0 1/12/2022
+
+- Added new API support for `lib_mount`.
+- Customizable HP/Armor for all vehicles. Players will be affected.
+- Short and tweak the code.
+- Cars can now be killed by players.
+- Support for 3+ passengers (beta).
 
 v2.3.0 2/12/2021
 

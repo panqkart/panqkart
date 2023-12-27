@@ -1,23 +1,22 @@
 --[[
-Includes the core premium features for the PanqKart game.
+	Includes the core premium features for the PanqKart game.
 
-Copyright (C) 2022-2023 David Leal (halfpacho@gmail.com)
-Copyright (C) Various other Minetest developers/contributors
+    Copyright (C) 2022-2024 David Leal (halfpacho@gmail.com) and contributors
+    Copyright (C) Various Minetest (Game) developers/contributors
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU Lesser General Public
+	License as published by the Free Software Foundation; either
+	version 2.1 of the License, or (at your option) any later version.
 
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+	This library is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+	Lesser General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
-USA
+	You should have received a copy of the GNU Lesser General Public
+	License along with this library; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 --]]
 
 local modname = minetest.get_current_modname()
@@ -106,14 +105,16 @@ minetest.register_chatcommand("premium_location", {
 			end
 		end
 
-		-- Start: code taken from Minetest builtin teleport command
+		-- Start: code taken from Minetest builtin teleport command.
+		-- Slightly modified and changed.
+		-- Thanks! https://github.com/minetest/minetest/blob/master/builtin/game/chat.lua#L883-L890
 		local p = {}
-		p.x, p.y, p.z = param:match("^([%d.-]+)[, ] *([%d.-]+)[, ] *([%d.-]+)$")
+		p.x, p.y, p.z = param:match("^([%d.~-]+)[, ] *([%d.~-]+)[, ] *([%d.~-]+)$")
 		p = vector.apply(p, tonumber)
-		if not p.x and not p.y and not p.z then
-			return false, S("Wrong usage of command. Use <x y z>")
+		if not (p and p.x and p.y and p.z) then
+			return false, S("Wrong command usage. Use <x y z>")
 		end
-		-- End: code taken from Minetest builtin teleport command
+		-- End: code taken from Minetest builtin teleport command.
 		house_location = vector.new(p.x, p.y, p.z)
 		minetest.settings:set("premium_position", minetest.pos_to_string(house_location))
 

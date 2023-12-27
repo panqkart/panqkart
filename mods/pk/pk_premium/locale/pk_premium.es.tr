@@ -13,5 +13,5 @@ Successfully set VIP nametag for player @1.=@1 ahora tiene nametag VIP.
 Change the premium's house location.=Cambiar la posición de la casa premium.
 Successfully set the premium house location to your current position.=La posición de la casa premium ha sido exitosamente actualizado a tu pocisión actual.
 Successfully changed premium's house location to <@1>=La pocisión de la casa premium ha sido exitosamente actualizado a <@1>
-Wrong usage of command. Use <x y z>=Mal uso del comando. Use <x y z>
+Wrong command usage. Use <x y z>==Mal uso del comando. Use <x y z>
 Player @1 does not exist, not online, or the specified position is invalid.=El jugador @1 no existe, no esta en línea, o la posición es invalida.

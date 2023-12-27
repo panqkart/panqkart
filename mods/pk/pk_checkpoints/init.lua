@@ -1,6 +1,6 @@
 --[[
 	Checkpoint system for the use of multiple laps
-	Copyright (C) 2022-2023 David Leal
+	Copyright (C) 2022-2024 David Leal (halfpacho@gmail.com) and contributors
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -14,8 +14,7 @@
 
     You should have received a copy of the GNU Lesser General Public
     License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
-	  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 --]]
 
 pk_checkpoints = {
@@ -162,6 +161,7 @@ end
 
 --- @brief Utility function to show the player a
 --- waypoint to the missing checkpoint(s).
+--- Needs to be discussed. Currently not being used.
 --- @param entity userdata entity to check the player's checkpoint data
 --- @return nil
 function pk_checkpoints.show_waypoint(entity)
@@ -362,7 +362,6 @@ minetest.register_on_shutdown(function()
     pk_checkpoints.cleanup()
 end)
 
--- Use an LBM to create a waypoint if a player misses one or more checkpoints.
 minetest.register_lbm({
     label = "Clean up checkpoints and store in table",
     name = "pk_checkpoints:checkpoint_management",

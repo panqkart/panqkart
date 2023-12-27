@@ -1,45 +1,38 @@
-# License of media (textures and sounds)
+# Licenses of media
 
-Copyright (C) 2022-2023 David Leal (<halfpacho@gmail.com>)\
-The following media/textures are licensed under [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/):
+Copyright (C) 2022-2024 David Leal (halfpacho@gmail.com)
 
-_Textures_
+Unless otherwise stated, all media fall under the [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/) license.\
+See the respective's mod license file for full information.
 
-- `pk_core_1.png`
-- `pk_core_2.png`
-- `pk_core_3.png`
-- `pk_core_go.png`
-
-_Sounds_
-
-- `pk_core.race_go.ogg`
-- `pk_core.race_start.ogg`
-
-All the other media and textures fall under their respective licenses.\
-See their license or readme file for information about it.
-
-If not yet specified, all media/textures fall under [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/).
-
-License of `menu/header.png`:
+Licenses of `menu/header.png`:
 
 - The green Hovercraft model was taken from <https://github.com/stujones11/hovercraft> ([CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/))
-  - The version's not specified. I'm going to assume they used CC BY-SA 3.0 (it was the last version when the last commit was made, July 2013. CC BY-SA 4.0 was released in November 2013).
-- The smiley face was made by [**Gabri**](https://liberapay.com/Methro), a.k.a. "Methro", "SiLeNT", "chocomint"; licensed under the [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/) license.
+  - The version's not specified. I'm going to assume they used CC BY-SA 3.0 (it was the last version when the last commit was made, July 2013. CC BY-SA 4.0 [was released](https://en.wikipedia.org/wiki/Creative_Commons_license#Version_4.0) in November 2013).
+- The smiley face was made by [**Gabri**](https://liberapay.com/Methro) (a.k.a. "Methro", "SiLeNT", "chocomint"), licensed under the [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/) license.
+- The `PanqKart` text is licensed under [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/) and was was made by me [David Leal](https://github.com/Panquesito7) and [Crystal741](https://github.com/Crystal741).
 
-Copyright (C) 2022-2023 David Leal (<halfpacho@gmail.com>)\
-The `PanqKart` text is licensed under [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/)
+Licenses of `screenshot.png`:
+
+- The blue Hovercraft model was taken from <https://github.com/stujones11/hovercraft> ([CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/))
+  - The version's not specified. I'm going to assume they used CC BY-SA 3.0 (it was the last version when the last commit was made, July 2013. CC BY-SA 4.0 [was released](https://en.wikipedia.org/wiki/Creative_Commons_license#Version_4.0) in November 2013).
+- The smiley face was made by [**Gabri**](https://liberapay.com/Methro) (a.k.a. "Methro", "SiLeNT", "chocomint"), licensed under the [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/) license.
+- The `PanqKart` text is licensed under [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/) and was was made by me [David Leal](https://github.com/Panquesito7) and [Crystal741](https://github.com/Crystal741).
+
+Licenses of `menu/overlay.*`:
+
+- All the assets/artwork were taken from [PanqKart](https://github.com/PanqKart) (this repository) via taking a screenshot in-game with the [Minetest](https://github.com/minetest/minetest) software, and belong to their respective copyright holders falling under their respective licenses. Screenshots taken by [David Leal](https://github.com/Panquesito7) with help from [Crystal741](https://github.com/Crystal741).
 
 `menu/icon.png` was taken from <https://github.com/minetest-mods/vehicle_mash/blob/master/textures/inv_car_red.png>
 
 ## License of source code
 
-Copyright (C) 2022-2023 David Leal (<halfpacho@gmail.com>)
+Copyright (C) 2022-2024 David Leal (halfpacho@gmail.com)
 
-All the mods fall under their respective licenses.\
-See their license/readme file for more information about that.
+Unless otherwise stated, all code falls under the [GNU LGPLv2.1+](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html) license.\
+See the respective's mod license file for full information.
 
-**Some mods are being modified. All that code falls under the mod's respective license.**\
-If not yet specified, code falls under the license below.
+**Some mods are being modified. All that modified code falls under the mod's respective license.**
 
                   GNU LESSER GENERAL PUBLIC LICENSE
                        Version 2.1, February 1999

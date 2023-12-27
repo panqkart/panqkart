@@ -1,29 +1,26 @@
 --[[
-Adds nodes that look like other nodes (or just new ones) with different functionalities.
+	Adds nodes that look like other nodes (or just new ones) with different functionalities.
 
-Copyright (C) 2022-2023 David Leal (halfpacho@gmail.com)
-Copyright (C) Various other Minetest developers/contributors
+    Copyright (C) 2022-2024 David Leal (halfpacho@gmail.com) and contributors
+    Copyright (C) Various Minetest (Game) developers/contributors
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU Lesser General Public
+	License as published by the Free Software Foundation; either
+	version 2.1 of the License, or (at your option) any later version.
 
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+	This library is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+	Lesser General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
-USA
+	You should have received a copy of the GNU Lesser General Public
+	License along with this library; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 --]]
 
-local S = minetest.get_translator("default") -- This is used as the nodes have the same name as the default ones
-local S2 = minetest.get_translator("pk_core")
-
-local S_nodes = minetest.get_translator(minetest.get_current_modname())
+local S_core = minetest.get_translator("pk_core")
+local S = minetest.get_translator(minetest.get_current_modname())
 
 -----------------------
 -- Local functions --
@@ -33,21 +30,21 @@ local function start_race_formspec(meta)
 	local formspec = {
 		"formspec_version[5]",
 		"size[12,9]",
-		"label[2.5,0.5;", minetest.formspec_escape(S_nodes("Set player positions before starting a race.")), "]",
-		"field[0.375,1.2;5.25,0.8;player_one;" .. S_nodes("1st player position") .. ";${player1}]",
-		"field[0.375,2.13;5.25,0.8;player_two;" .. S_nodes("2nd player position") .. ";${player2}]",
-		"field[0.375,3;5.25,0.8;player_three;" .. S_nodes("3rd player position") .. ";${player3}]",
-		"field[6,1.2;5.25,0.8;player_fourth;" .. S_nodes("4th player position") .. ";${player4}]",
-		"field[6,2.13;5.25,0.8;player_fifth;" .. S_nodes("5th player position") .. ";${player5}]",
-		"field[6,3;5.25,0.8;player_sixth;" .. S_nodes("6th player position") .. ";${player6}]",
-		"field[0.375,5;5.25,0.8;player_seventh;" .. S_nodes("7th player position") .. ";${player7}]",
-		"field[0.375,6;5.25,0.8;player_eighth;" .. S_nodes("8th player position") .. ";${player8}]",
-		"field[0.375,7;5.25,0.8;player_nineth;" .. S_nodes("9th player position") .. ";${player9}]",
-		"field[6,5;5.25,0.8;player_tenth;" .. S_nodes("10th player position") .. ";${player10}]",
-		"field[6,6;5.25,0.8;player_eleventh;" .. S_nodes("11th player position") .. ";${player11}]",
-		"field[6,7;5.25,0.8;player_twelveth;" .. S_nodes("12th player position") .. ";${player12}]",
-		"button_exit[4,4.05;3,0.8;apply;" .. S_nodes("Apply changes") .. "]",
-		"checkbox[0.375,8.5;use_meta;" .. S_nodes("Use metadata values") .. ";" .. meta:get_string("use_meta") .. "]",
+		"label[2.5,0.5;", minetest.formspec_escape(S("Set player positions before starting a race.")), "]",
+		"field[0.375,1.2;5.25,0.8;player_one;" .. S("1st player position") .. ";${player1}]",
+		"field[0.375,2.13;5.25,0.8;player_two;" .. S("2nd player position") .. ";${player2}]",
+		"field[0.375,3;5.25,0.8;player_three;" .. S("3rd player position") .. ";${player3}]",
+		"field[6,1.2;5.25,0.8;player_fourth;" .. S("4th player position") .. ";${player4}]",
+		"field[6,2.13;5.25,0.8;player_fifth;" .. S("5th player position") .. ";${player5}]",
+		"field[6,3;5.25,0.8;player_sixth;" .. S("6th player position") .. ";${player6}]",
+		"field[0.375,5;5.25,0.8;player_seventh;" .. S("7th player position") .. ";${player7}]",
+		"field[0.375,6;5.25,0.8;player_eighth;" .. S("8th player position") .. ";${player8}]",
+		"field[0.375,7;5.25,0.8;player_nineth;" .. S("9th player position") .. ";${player9}]",
+		"field[6,5;5.25,0.8;player_tenth;" .. S("10th player position") .. ";${player10}]",
+		"field[6,6;5.25,0.8;player_eleventh;" .. S("11th player position") .. ";${player11}]",
+		"field[6,7;5.25,0.8;player_twelveth;" .. S("12th player position") .. ";${player12}]",
+		"button_exit[4,4.05;3,0.8;apply;" .. S("Apply changes") .. "]",
+		"checkbox[0.375,8.5;use_meta;" .. S("Use metadata values") .. ";" .. meta:get_string("use_meta") .. "]",
 	}
 
     -- table.concat is faster than string concatenation - `..`
@@ -75,9 +72,9 @@ local function player_position(player, meta, table, position, use_meta)
 				end
 				minetest.after(0, function()
 					if use_meta == true then
-						player:move_to(minetest.string_to_pos(meta:get_string(position2)))
+						player:set_pos(minetest.string_to_pos(meta:get_string(position2)))
 					else -- Useful when loading `player_positions.txt` rather than metadata values.
-						player:move_to(minetest.string_to_pos(position2))
+						player:set_pos(minetest.string_to_pos(position2))
 					end
 				end)
 				return
@@ -91,7 +88,7 @@ end
 --------------
 
 minetest.register_node("pk_nodes:junglewood", {
-	description = S("Jungle Wood Planks"),
+	description = S("Jungle Wood Planks (fake)"),
 	paramtype2 = "facedir",
 	place_param2 = 0,
 	tiles = {"default_junglewood.png"},
@@ -109,19 +106,16 @@ if minetest.get_modpath("wool") then
 end
 
 -- Based off from `streets_solid_center_line_wide` node registration. Thanks!
+-- https://github.com/minetest-mods/streets/blob/699b30df8cc763666647c8615c24e6c28e777a41/api_register_all.lua#L248-L269
 minetest.register_node("pk_nodes:slow_down", {
-	description = "Slows down an entity when on top",
-	tiles = {"pk_nodes_invisible.png"},
+	description = S("Slows down an entity when on top"),
 	inventory_image = "default_cobble.png",
 	paramtype = "light",
-	sunlight_propagates = true,
-	paramtype2 = "facedir",
-	is_ground_content = false,
 	walkable = true,
 	pointable = false,
 	buildable_to = false,
-	drawtype = "nodebox",
-	groups = {not_in_creative_inventory = 1, unbreakable = 1},
+	drawtype = "airlike",
+	groups = { not_in_creative_inventory = 1, unbreakable = 1 },
 	use_texture_alpha = "clip",
 	node_box = {
 		type = "fixed",
@@ -135,7 +129,7 @@ minetest.register_node("pk_nodes:slow_down", {
 		if minetest.check_player_privs(placer, { core_admin = true }) or minetest.check_player_privs(placer, { builder = true }) then
 			return minetest.item_place(itemstack, placer, pointed_thing)
 		else
-			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
+			minetest.chat_send_player(placer:get_player_name(), S_core("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
 			return itemstack
 		end
 	end,
@@ -148,7 +142,7 @@ if not minetest.get_modpath("mobs") then
 		description = minetest.get_translator("mobs")("Mob Fence"),
 		texture = "default_wood.png",
 		material = "default:fence_wood",
-		groups = {choppy = 2, oddly_breakable_by_hand = 2, flammable = 2},
+		groups = { choppy = 2, oddly_breakable_by_hand = 2, flammable = 2 },
 		sounds = minetest.get_modpath("default") and default.node_sound_wood_defaults(),
 		collision_box = {
 			type = "fixed",
@@ -176,7 +170,7 @@ end
 
 for i = 1, 12, 1 do
 	minetest.register_node("pk_nodes:player_" .. i .. "_position", {
-		description = S_nodes("Player @1 position", i),
+		description = S("Player @1 position", i),
 		tiles = {"streets_asphalt.png"},
 		groups = { unbreakable = 1, not_in_creative_inventory = 1 },
 		drop = "",
@@ -203,7 +197,7 @@ for i = 1, 12, 1 do
 				return minetest.item_place(itemstack, placer, pointed_thing)
 			end
 
-			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
+			minetest.chat_send_player(placer:get_player_name(), S_core("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
 			return itemstack
 		end,
 		on_construct = function(pos)
@@ -215,7 +209,7 @@ for i = 1, 12, 1 do
 				return default.can_interact_with_node(player, pos)
 			end
 
-			minetest.chat_send_player(player:get_player_name(), S2("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
+			minetest.chat_send_player(player:get_player_name(), S_core("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
 			return false
 		end,
 		on_dig = function(pos, node, digger)
@@ -286,14 +280,14 @@ minetest.register_lbm({
 })
 
 minetest.register_node("pk_nodes:start_race", {
-	description = S_nodes("Start a race!"),
-	tiles = {"default_mossycobble.png"},
+	description = S("Start a race!"),
+	tiles = { "default_mossycobble.png" },
 	drop = "",
 	light_source = 7,
-	groups = {not_in_creative_inventory = 1, unbreakable = 1},
+	groups = { not_in_creative_inventory = 1, unbreakable = 1 },
 	on_place = function(itemstack, placer, pointed_thing)
 		if not minetest.check_player_privs(placer, { core_admin = true }) then
-			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
+			minetest.chat_send_player(placer:get_player_name(), S_core("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
 			return itemstack
 		end
 		return minetest.item_place(itemstack, placer, pointed_thing)
@@ -355,7 +349,7 @@ minetest.register_node("pk_nodes:start_race", {
 			-- Set `true` or `false` depending on the checkbox status.
 			for _,number in ipairs(field) do
 				if number == "0" then
-					minetest.chat_send_player(sender:get_player_name(), S_nodes("Please specify a valid value different than zero."))
+					minetest.chat_send_player(sender:get_player_name(), S("Please specify a valid value different than zero."))
 					return
 				end
 			end
@@ -364,19 +358,19 @@ minetest.register_node("pk_nodes:start_race", {
 				if minetest.string_to_pos(field[i]) then
 					meta:set_string(player_name, field[i])
 					if i == 1 and old_field ~= meta:get_string(player_name) then
-						minetest.chat_send_player(sender:get_player_name(), S_nodes("Successfully updated the @1st field!\n", i))
+						minetest.chat_send_player(sender:get_player_name(), S("Successfully updated the @1st field!\n", i))
 					elseif i == 2 and old_field ~= meta:get_string(player_name) then
-						minetest.chat_send_player(sender:get_player_name(), S_nodes("Successfully updated the @1nd field!\n", i))
+						minetest.chat_send_player(sender:get_player_name(), S("Successfully updated the @1nd field!\n", i))
 					elseif i == 3 and old_field ~= meta:get_string(player_name) then
-						minetest.chat_send_player(sender:get_player_name(), S_nodes("Successfully updated the @1rd field!\n", i))
+						minetest.chat_send_player(sender:get_player_name(), S("Successfully updated the @1rd field!\n", i))
 					elseif i >= 4 and old_field ~= meta:get_string(player_name) then
-						minetest.chat_send_player(sender:get_player_name(), S_nodes("Successfully updated the @1th field!\n", i))
+						minetest.chat_send_player(sender:get_player_name(), S("Successfully updated the @1th field!\n", i))
 					end
 				elseif field[i] == "" then
 					meta:set_string(player_name, field[i])
 				-- Tell the user the current position is invalid
 				else
-					minetest.chat_send_player(sender:get_player_name(), "\n" .. S_nodes("Certain fields are not a valid Minetest position. These will not be updated. Use: <x,y,z>"))
+					minetest.chat_send_player(sender:get_player_name(), "\n" .. S("Certain fields are not a valid Minetest position. These will not be updated. Use: <x,y,z>"))
 					break
 				end
 			end
@@ -448,9 +442,8 @@ minetest.register_globalstep(function(dtime)
 					player:move_to(minetest.string_to_pos(line_position))
 					player_position(player, meta, strings, line_position, false) -- Make sure positions are not repeated.
 				else
-					-- TODO: add translations
-					minetest.chat_send_player(player:get_player_name(), "One or more positions are invalid. Cannot start race. Aborting.")
-					minetest.chat_send_player(player:get_player_name(), "If you think this is a mistake, please report it on the official's PanqKart Discord server or contact the server administrator.")
+					minetest.chat_send_player(player:get_player_name(), S("One or more player initial positions are invalid. Cannot start race."))
+					minetest.chat_send_player(player:get_player_name(), S("If you think this is a mistake, please report it on the official's PanqKart Discord server or contact the server administrator."))
 					return
 				end
 
@@ -481,8 +474,8 @@ minetest.register_globalstep(function(dtime)
 
 					return
 				else
-					minetest.chat_send_player(player:get_player_name(), "One or more positionss are invalid. Cannot start race. Aborting.")
-					minetest.chat_send_player(player:get_player_name(), "If you think this is a mistake, please report it on the official's PanqKart Discord server or contact the server administrator.")
+					minetest.chat_send_player(player:get_player_name(), S("One or more player initial positions are invalid. Cannot start race."))
+					minetest.chat_send_player(player:get_player_name(), S("If you think this is a mistake, please report it on the official's PanqKart Discord server or contact the server administrator."))
 
 					core_game.ran_once[player] = true
 					minetest.after(10, function() core_game.ran_once[player] = false end)
@@ -494,17 +487,17 @@ minetest.register_globalstep(function(dtime)
 end)
 
 minetest.register_node("pk_nodes:spawn_node", {
-	description = S_nodes("Spawn node. Do not place multiple nodes."),
-	tiles = {},
+	description = S("Spawn node. Do not place multiple nodes."),
 	drop = "",
-	groups = {not_in_creative_inventory = 1, unbreakable = 1},
+	groups = { not_in_creative_inventory = 1, unbreakable = 1 },
 	drawtype = "airlike",
 	paramtype = "light",
 	pointable = false,
 	walkable = false,
+	use_texture_alpha = "clip",
 	on_place = function(itemstack, placer, pointed_thing)
 		if not minetest.check_player_privs(placer, { core_admin = true }) then
-			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
+			minetest.chat_send_player(placer:get_player_name(), S_core("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
 			return itemstack
 		end
 		return minetest.item_place(itemstack, placer, pointed_thing)
@@ -519,16 +512,16 @@ minetest.register_node("pk_nodes:spawn_node", {
 })
 
 minetest.register_node("pk_nodes:tp_lobby", {
-	description = S_nodes("Teleport back to lobby node."),
-	tiles = {"default_coral_brown.png"},
+	description = S("Teleport back to lobby node."),
+	tiles = { "default_coral_brown.png" },
 	drop = "",
-	groups = {not_in_creative_inventory = 1, unbreakable = 1},
+	groups = { not_in_creative_inventory = 1, unbreakable = 1 },
 	is_ground_content = false,
 	paramtype2 = "facedir",
 	legacy_facedir_simple = true,
 	on_place = function(itemstack, placer, pointed_thing)
 		if not minetest.check_player_privs(placer, { core_admin = true }) then
-			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
+			minetest.chat_send_player(placer:get_player_name(), S_core("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
 			return itemstack
 		end
 		return minetest.item_place(itemstack, placer, pointed_thing)
@@ -537,13 +530,13 @@ minetest.register_node("pk_nodes:tp_lobby", {
 
 minetest.register_node("pk_nodes:asphalt", {
 	description = S("Asphalt node. Used for ending blocks."),
-	tiles = {"streets_asphalt.png"},
+	tiles = { "streets_asphalt.png" },
 	drop = "",
-	groups = {unbreakable = 1, asphalt = 1},
+	groups = { unbreakable = 1, asphalt = 1 },
 	paramtype = "light",
 	on_place = function(itemstack, placer, pointed_thing)
 		if not minetest.check_player_privs(placer, { core_admin = true }) then
-			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
+			minetest.chat_send_player(placer:get_player_name(), S_core("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
 			return itemstack
 		end
 		return minetest.item_place(itemstack, placer, pointed_thing)
@@ -552,15 +545,15 @@ minetest.register_node("pk_nodes:asphalt", {
 
 minetest.register_node("pk_nodes:lava_node", {
 	description = S("Teleport back to a few nodes when an entity touches it."),
-	tiles = {"default_stone.png"},
+	tiles = { "default_stone.png" },
 	drop = "",
-	groups = {not_in_creative_inventory = 1, unbreakable = 1},
+	groups = { not_in_creative_inventory = 1, unbreakable = 1 },
 	is_ground_content = false,
 	paramtype2 = "facedir",
 	legacy_facedir_simple = true,
 	on_place = function(itemstack, placer, pointed_thing)
 		if not minetest.check_player_privs(placer, { core_admin = true }) then
-			minetest.chat_send_player(placer:get_player_name(), S2("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
+			minetest.chat_send_player(placer:get_player_name(), S_core("You don't have sufficient permissions to interact with this node. Missing privileges: core_admin"))
 			return itemstack
 		end
 		return minetest.item_place(itemstack, placer, pointed_thing)
