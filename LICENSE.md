@@ -5,11 +5,11 @@ The following media/textures are licensed under [CC BY-SA 4.0 International](htt
 
 _Textures_
 
-- `screenshot.png`
 - `pk_core_1.png`
 - `pk_core_2.png`
 - `pk_core_3.png`
 - `pk_core_go.png`
+- `menu/overlay.*`
 
 _Sounds_
 
@@ -26,7 +26,14 @@ License of `menu/header.png`:
 - The green Hovercraft model was taken from <https://github.com/stujones11/hovercraft> ([CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/))
   - The version's not specified. I'm going to assume they used CC BY-SA 3.0 (it was the last version when the last commit was made, July 2013. CC BY-SA 4.0 was released in November 2013).
 - The smiley face was made by [**Gabri**](https://liberapay.com/Methro), a.k.a. "Methro", "SiLeNT", "chocomint"; licensed under the [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/) license.
-- The `PanqKart` text is licensed under [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/), which was made by me ([Panquesito7)](https://github.com/Panquesito7).
+- The `PanqKart` text is licensed under [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/), which was made by me ([Panquesito7](https://github.com/Panquesito7)).
+
+License of `screenshot.png`:
+
+- The blue Hovercraft model was taken from <https://github.com/stujones11/hovercraft> ([CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/))
+  - The version's not specified. I'm going to assume they used CC BY-SA 3.0 (it was the last version when the last commit was made, July 2013. CC BY-SA 4.0 was released in November 2013).
+- The smiley face was made by [**Gabri**](https://liberapay.com/Methro), a.k.a. "Methro", "SiLeNT", "chocomint"; licensed under the [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/) license.
+- The `PanqKart` text is licensed under [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/), which was made by me ([Panquesito7](https://github.com/Panquesito7)).
 
 `menu/icon.png` was taken from <https://github.com/minetest-mods/vehicle_mash/blob/master/textures/inv_car_red.png>
 
