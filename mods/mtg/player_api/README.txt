@@ -19,7 +19,8 @@ stujones11, An0n3m0us (CC BY-SA 3.0):
   character.b3d
   character.blend
 
-Jordach (CC BY-SA 3.0):
+Original texture by Jordach (CC BY-SA 3.0).
+Modified by Panquesito7, Crystal741 (CC BY-SA 3.0):
   character.png
 
 celeron55, Perttu Ahola <celeron55@gmail.com> (CC BY-SA 3.0):
