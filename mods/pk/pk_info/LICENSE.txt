@@ -52,4 +52,4 @@ for your intended use. For example, other rights such as publicity, privacy, or 
 rights may limit how you use the material.
 
 For more details:
-https://creativecommons.org/licenses/by/4.0/
+<https://creativecommons.org/licenses/by/4.0/>
