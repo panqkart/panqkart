@@ -65,17 +65,20 @@ of HUD elements (the tables sent to `hud_add`) instead. Example:
 ```lua
 hud_fs.show_hud(player, "waypoints", {
     {
-        hud_elem_type = "waypoint",
+        type = "waypoint",
         world_pos = {x = 0, y = 0, z = 0},
         name = "Waypoint 1"
     },
     {
-        hud_elem_type = "waypoint",
+        type = "waypoint",
         world_pos = {x = 1, y = 2, z = 3},
         name = "Waypoint 2"
     }
 })
 ```
+
+The "type" field shown above is introduced in MT 5.9-dev. hud_fs will
+automatically convert this to hud_elem_type on older servers.
 
 ### Advanced API
 
