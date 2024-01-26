@@ -30,8 +30,6 @@ Copyright (C) 2017 TeTpaAka
 Copyright (C) 2017 Desour
 Copyright (C) 2018 stujones11
 Copyright (C) 2019 An0n3m0us
-Copyright (C) 2022 Panquesito7
-Copyright (C) 2022 Crystal741
 
 You are free to:
 Share — copy and redistribute the material in any medium or format.
