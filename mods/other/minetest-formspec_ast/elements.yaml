@@ -186,6 +186,9 @@ field:
 field_close_on_enter:
 - - [name, string]
   - [close_on_enter, boolean]
+field_enter_after_edit:
+- - [name, string]
+  - [enter_after_edit, boolean]
 formspec_version:
 - - [version, number]
 hypertext:
