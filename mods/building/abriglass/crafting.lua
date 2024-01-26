@@ -9,33 +9,7 @@ minetest.register_craft({
 	}
 })
 
-
--- glass light recipes
-local plain_colors = {
-	"green", "blue", "red", "yellow",
-}
-
-for i in ipairs(plain_colors) do
-	local name = plain_colors[i]
-	local nodesuffix = 'glass_light_'..name
-
-	minetest.register_craft({
-		output = 'abriglass:'..nodesuffix..' 4',
-		recipe = {
-			{'abriglass:clear_glass', 'default:torch', 'abriglass:clear_glass' },
-			{'abriglass:clear_glass', 'dye:'..name, 'abriglass:clear_glass' },
-		}
-	})
-
-	minetest.register_craft({
-		type = "cooking",
-		recipe = "abriglass:"..nodesuffix,
-		output = "abriglass:clear_glass",
-	})
-end
-
-
--- undecorated coloured glass recipes
+-- undecorated coloured glass recipes / light glass
 local dye_list = {
 	{"black", "black",},
 	{"blue", "blue",},
@@ -49,37 +23,47 @@ local dye_list = {
 	{"frosted", "white",},
 }
 
-for i in ipairs(dye_list) do
-	local name = dye_list[i][1]
-	local dye = dye_list[i][2]
+local sg_conversion_table = {}
+
+for k, v in pairs(dye_list) do
+    local out_item = ItemStack(minetest.itemstring_with_palette("abriglass:stained_glass_hardware", k - 1))
+    out_item:get_meta():set_string("description", v[1] .. " glass")
+    minetest.register_craft({
+        output = out_item:to_string(),
+        recipe = {
+			{'abriglass:clear_glass', '', 'abriglass:clear_glass' },
+			{'abriglass:clear_glass', 'dye:'..v[2], 'abriglass:clear_glass' },
+			{'abriglass:clear_glass', '', 'abriglass:clear_glass' },
+		}
+    })
 
 	minetest.register_craft({
-		output = 'abriglass:stained_glass_'..name..' 6',
+		type = "cooking",
+		recipe = out_item:to_string(),
+		output = "abriglass:clear_glass",
+	})
+
+	sg_conversion_table[v[1]] = out_item:to_string()
+
+	out_item = ItemStack(minetest.itemstring_with_palette("abriglass:glass_light_hardware", k - 1))
+    out_item:get_meta():set_string("description", v[1] .. " glass light")
+	minetest.register_craft({
+		output = out_item:to_string(),
 		recipe = {
-			{'abriglass:clear_glass', '', 'abriglass:clear_glass' },
-			{'abriglass:clear_glass', 'dye:'..dye, 'abriglass:clear_glass' },
-			{'abriglass:clear_glass', '', 'abriglass:clear_glass' },
+			{'abriglass:clear_glass', 'default:torch', 'abriglass:clear_glass' },
+			{'abriglass:clear_glass', 'dye:'..v[2], 'abriglass:clear_glass' },
 		}
 	})
 
 	minetest.register_craft({
 		type = "cooking",
-		recipe = "abriglass:stained_glass_"..name,
+		recipe = out_item:to_string(),
 		output = "abriglass:clear_glass",
 	})
 end
 
 
 -- patterned glass recipes
-minetest.register_craft({
-	output = 'abriglass:stainedglass_pattern01 9',
-	recipe = {
-		{'abriglass:stained_glass_yellow', 'abriglass:stained_glass_yellow', 'abriglass:stained_glass_yellow' },
-		{'abriglass:stained_glass_yellow', 'abriglass:stained_glass_blue', 'abriglass:stained_glass_yellow' },
-		{'abriglass:stained_glass_yellow', 'abriglass:stained_glass_yellow', 'abriglass:stained_glass_yellow' },
-	}
-})
-
 minetest.register_craft({
 	output = 'abriglass:stainedglass_pattern02 9',
 	recipe = {
@@ -89,54 +73,126 @@ minetest.register_craft({
 	}
 })
 
-minetest.register_craft({
-	output = 'abriglass:stainedglass_pattern03 9',
-	recipe = {
-		{'abriglass:stained_glass_red', 'abriglass:clear_glass', 'abriglass:stained_glass_red' },
-		{'abriglass:clear_glass', 'abriglass:clear_glass', 'abriglass:clear_glass' },
-		{'abriglass:stained_glass_red', 'abriglass:clear_glass', 'abriglass:stained_glass_red' },
-	}
-})
+--tldr: minetest with hardware coloring sucks | this is one massive hack to work around it
 
-minetest.register_craft({
-	output = 'abriglass:stainedglass_pattern04 9',
-	recipe = {
-		{'abriglass:stained_glass_green', 'abriglass:stained_glass_red', 'abriglass:stained_glass_green' },
-		{'abriglass:stained_glass_red', 'abriglass:stained_glass_blue', 'abriglass:stained_glass_red' },
-		{'abriglass:stained_glass_green', 'abriglass:stained_glass_red', 'abriglass:stained_glass_green' },
+--the last item of each set is what minetest will trigger on for these
+local hardware_colored_crafts_1 = {
+	--start first set
+	{
+		item = 'abriglass:stainedglass_tiles_dark 7',
+		craft = {
+			{sg_conversion_table['red'], sg_conversion_table['green'], sg_conversion_table['blue'] },
+			{sg_conversion_table['yellow'], sg_conversion_table['magenta'], sg_conversion_table['cyan'] },
+			{'', sg_conversion_table['black'], '' },
+		}
+	},
+	{
+		item = 'abriglass:stainedglass_tiles_pale 7',
+		craft = {
+			{sg_conversion_table['red'], sg_conversion_table['green'], sg_conversion_table['blue'] },
+			{sg_conversion_table['yellow'], sg_conversion_table['magenta'], sg_conversion_table['cyan'] },
+			{'', sg_conversion_table['frosted'], '' },
+		}
+	},
+	--end first set
+	--start second ser
+	{
+		item = "abriglass:stainedglass_pattern01 9",
+		craft = {
+			{sg_conversion_table['yellow'], sg_conversion_table['yellow'], sg_conversion_table['yellow'] },
+			{sg_conversion_table['yellow'], sg_conversion_table['yellow'], sg_conversion_table['yellow'] },
+			{sg_conversion_table['yellow'], sg_conversion_table['yellow'], sg_conversion_table['yellow'] },
+		}
+	},
+	{
+		item = "abriglass:stainedglass_pattern03 9",
+		craft = {
+			{sg_conversion_table['red'], 'abriglass:clear_glass', sg_conversion_table['red'] },
+			{'abriglass:clear_glass', 'abriglass:clear_glass', 'abriglass:clear_glass' },
+			{sg_conversion_table['red'], 'abriglass:clear_glass', sg_conversion_table['red'] },
+		}
+	},
+	{
+		item = "abriglass:stainedglass_pattern04 9",
+		craft = {
+			{sg_conversion_table['green'], sg_conversion_table['red'], sg_conversion_table['green'] },
+			{sg_conversion_table['red'], sg_conversion_table['blue'], sg_conversion_table['red'] },
+			{sg_conversion_table['green'], sg_conversion_table['red'], sg_conversion_table['green'] },
+		}
+	},
+	{
+		item = "abriglass:stainedglass_pattern05 9",
+		craft = {
+			{sg_conversion_table['blue'], sg_conversion_table['blue'], sg_conversion_table['blue'] },
+			{sg_conversion_table['blue'], sg_conversion_table['green'], sg_conversion_table['blue'] },
+			{sg_conversion_table['blue'], sg_conversion_table['blue'], sg_conversion_table['blue'] },
+		}
 	}
-})
+	--end second set
+}
 
-minetest.register_craft({
-	output = 'abriglass:stainedglass_pattern05 9',
-	recipe = {
-		{'abriglass:stained_glass_blue', 'abriglass:stained_glass_blue', 'abriglass:stained_glass_blue' },
-		{'abriglass:stained_glass_blue', 'abriglass:stained_glass_green', 'abriglass:stained_glass_blue' },
-		{'abriglass:stained_glass_blue', 'abriglass:stained_glass_blue', 'abriglass:stained_glass_blue' },
-	}
-})
+local hcc_encoded_1 = {}
 
-minetest.register_craft({
-	output = 'abriglass:stainedglass_tiles_dark 7',
-	recipe = {
-		{'abriglass:stained_glass_red', 'abriglass:stained_glass_green', 'abriglass:stained_glass_blue' },
-		{'abriglass:stained_glass_yellow', 'abriglass:stained_glass_magenta', 'abriglass:stained_glass_cyan' },
-		{'', 'abriglass:stained_glass_black', '' },
-	}
-})
+--encode things we care about, in order, since itemstack:to_string is worthless for comparisions
+local function craft_encode(input)
+	local output = ""
+	for _, v in ipairs(input) do --care about order
+		local row = ""
+		for _, j in ipairs(v) do --care about order
+			local item = ItemStack(j)
+			row = row..item:get_name()..(item:get_meta():get("description") or "")..(item:get_meta():get("palette_index") or "")
+		end
+		output = output .. "," .. row
+	end
+	return output
+end
 
-minetest.register_craft({
-	output = 'abriglass:stainedglass_tiles_pale 7',
-	recipe = {
-		{'abriglass:stained_glass_red', 'abriglass:stained_glass_green', 'abriglass:stained_glass_blue' },
-		{'abriglass:stained_glass_yellow', 'abriglass:stained_glass_magenta', 'abriglass:stained_glass_cyan' },
-		{'', 'abriglass:stained_glass_frosted', '' },
-	}
-})
+--we actually care about order
+for _,v in ipairs(hardware_colored_crafts_1) do
+	minetest.register_craft({
+		output = v.item,
+		recipe = v.craft
+	})
+
+	hcc_encoded_1[craft_encode(v.craft)] = v.item
+end
+
+local function hcc_1_func(itemstack, player, old_craft_grid, craft_inv)
+	--return things we dont care about | check for the last item of each set since everything does stuff in order
+	if itemstack:get_name()~="abriglass:stainedglass_pattern05"
+		and itemstack:get_name()~="abriglass:stainedglass_tiles_pale" then return end
+
+	local encoded = craft_encode({
+		{old_craft_grid[1], old_craft_grid[2], old_craft_grid[3]},
+		{old_craft_grid[4], old_craft_grid[5], old_craft_grid[6]},
+		{old_craft_grid[7], old_craft_grid[8], old_craft_grid[9]},
+	})
+	if (hcc_encoded_1[encoded]) then
+		return ItemStack(hcc_encoded_1[encoded])
+	else
+		return ItemStack("")
+	end
+end
+
+minetest.register_craft_predict(function(itemstack, player, old_craft_grid, craft_inv)
+	return hcc_1_func(itemstack, player, old_craft_grid, craft_inv)
+end)
+
+minetest.register_on_craft(function(itemstack, player, old_craft_grid, craft_inv)
+	return hcc_1_func(itemstack, player, old_craft_grid, craft_inv)
+end)
 
 
 -- cooking recipes
-local cook_list = { "stainedglass_pattern01", "stainedglass_pattern02", "stainedglass_pattern03", "stainedglass_pattern04", "stainedglass_pattern05", "stainedglass_tiles_dark", "stainedglass_tiles_pale"}
+local cook_list = {
+	"stainedglass_pattern01",
+	"stainedglass_pattern02",
+	"stainedglass_pattern03",
+	"stainedglass_pattern04",
+	"stainedglass_pattern05",
+	"stainedglass_tiles_dark",
+	"stainedglass_tiles_pale"
+}
 
 for i = 1, #cook_list do
 	local name = cook_list[i]
@@ -204,6 +260,15 @@ minetest.register_craft({
 		{'default:clay_lump', 'default:clay_lump', 'default:clay_lump'},
 		{'default:clay_lump', 'dye:white', 'default:clay_lump'},
 		{'default:clay_lump', 'default:clay_lump', 'default:clay_lump'},
+	}
+})
+
+minetest.register_craft({
+	output = 'abriglass:ghost_crystal 4',
+	recipe = {
+		{'dye:cyan', 'abriglass:clear_glass', 'dye:cyan'},
+		{'abriglass:clear_glass', 'default:meselamp', 'abriglass:clear_glass'},
+		{'dye:cyan', 'abriglass:clear_glass', 'dye:cyan'},
 	}
 })
 
