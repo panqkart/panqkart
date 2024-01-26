@@ -1,12 +1,25 @@
-allow_defined_top = true
 unused_args = false
-max_line_length = false
+allow_defined_top = true
+
+exclude_files = {".luacheckrc"}
 
 globals = {
-    "minetest", "default"
+    "minetest", "core",
+
+    --mod provided
+    "abripanes",
 }
 
 read_globals = {
-    string = {fields = {"split", "trim"}},
+    string = {fields = {"split"}},
     table = {fields = {"copy", "getn"}},
+
+    --luac
+    "math", "table",
+
+    -- Builtin
+    "vector", "ItemStack", "dump", "DIR_DELIM", "VoxelArea", "Settings", "PcgRandom", "VoxelManip", "PseudoRandom",
+
+    --mod produced
+    "default",
 }
