@@ -1,71 +1,74 @@
 
 -- undecorated coloured glass, all using plain glass texture
-local glass_list = {
+abriglass.glass_list = {
 	{"black", "Darkened", "292421",}, {"blue", "Blue", "0000FF",},
 	{"cyan", "Cyan", "00FFFF",}, {"green", "Green", "00FF00",},
 	{"magenta", "Magenta", "FF00FF",}, {"orange", "Orange", "FF6103",},
 	{"purple", "Purple", "800080",}, {"red", "Red", "FF0000",},
-	{"yellow", "Yellow", "FFFF00",}, {"frosted", "Frosted", "FFFFFF"}
+	{"yellow", "Yellow", "FFFF00",}, {"frosted", "Frosted", "FFFFFF",}
 }
 
-for i in ipairs(glass_list) do
-	local name = glass_list[i][1]
-	local description = glass_list[i][2]
-	local colour = glass_list[i][3]
-
-	minetest.register_node("abriglass:stained_glass_"..name, {
-		description = description.." Glass",
-		tiles = {"abriglass_plainglass.png^[colorize:#"..colour..":122"},
-		groups = {cracky = 3},
-		use_texture_alpha = true,
-		sunlight_propagates = true,
-		light_source = 4,
-		drawtype = "glasslike",
-		paramtype = "light",
-		sounds = default.node_sound_glass_defaults(),
-	})
+local palette = "[combine:16x16:"
+for k, v in ipairs(abriglass.glass_list) do
+	palette = palette .. ":" .. (k-1) .. ",0=[combine\\:1x1\\^[noalpha\\^[colorize\\:#" .. v[3] .. "\\:255"
 end
 
+minetest.register_node("abriglass:stained_glass_hardware", {
+	description = "Hardware Glass",
+	tiles = {"abriglass_baseglass.png"},
+	groups = {cracky = 3},
+	use_texture_alpha = "blend",
+	sunlight_propagates = true,
+	light_source = 4,
+	drawtype = "glasslike",
+	paramtype = "light",
+	paramtype2 = "color",
+	palette = palette,
+	sounds = default.node_sound_glass_defaults(),
+	preserve_metadata = function(pos, oldnode, oldmeta, drops)
+		if abriglass.glass_list[oldnode.param2 + 1] then
+			drops[1]:get_meta():set_string("description", abriglass.glass_list[oldnode.param2 + 1][1] .. " glass")
+		else
+			drops[1]:get_meta():set_string("description", "Hardware Glass")
+		end
+    end,
+})
 
 -- boring glass because why not?
 minetest.register_node("abriglass:clear_glass", {
 	description = "Clear Glass",
 	tiles = {"abriglass_clearglass.png"},
 	groups = {cracky = 3},
-	use_texture_alpha = true,
+	use_texture_alpha = "blend",
 	sunlight_propagates = true,
 	paramtype = "light",
 	drawtype = "glasslike",
 	sounds = default.node_sound_glass_defaults(),
 })
 
-
 -- glass lights
-local light_list = {
-	{"glass_light_green", "Green", "lightgreen",},
-	{"glass_light_blue", "Blue", "lightblue",},
-	{"glass_light_red", "Red", "lightred",},
-	{"glass_light_yellow", "Yellow", "lightyellow",},
-}
-
-for i in ipairs(light_list) do
-	local name = light_list[i][1]
-	local description = light_list[i][2]
-	local image = light_list[i][3]
-
-	minetest.register_node("abriglass:" ..name, {
-		description = description.. "Glass Light",
-		tiles = {"abriglass_" ..image.. ".png"},
-		groups = {cracky = 3},
-		use_texture_alpha = true,
-		sunlight_propagates = true,
-		light_source = 14,
-		drawtype = "glasslike",
-		paramtype = "light",
-		sounds = default.node_sound_glass_defaults(),
-	})
-end
-
+minetest.register_node("abriglass:glass_light_hardware", {
+	description = "Hardware Glass Light",
+	tiles = {"abriglass_baseglass.png"},
+	overlay_tiles = {
+        { name = "abriglass_clearglass.png", color = "white" }
+    },
+	groups = {cracky = 3},
+	use_texture_alpha = "blend",
+	sunlight_propagates = true,
+	paramtype = "light",
+	drawtype = "glasslike",
+	paramtype2 = "color",
+	palette = palette,
+	sounds = default.node_sound_glass_defaults(),
+	preserve_metadata = function(pos, oldnode, oldmeta, drops)
+		if abriglass.glass_list[oldnode.param2 + 1] then
+			drops[1]:get_meta():set_string("description", abriglass.glass_list[oldnode.param2 + 1][1] .. " glass light")
+		else
+			drops[1]:get_meta():set_string("description", "Hardware Glass Light")
+		end
+    end,
+})
 
 -- patterned glass
 local pattern_list = {   --{name, description, image}
@@ -87,7 +90,7 @@ for i in ipairs(pattern_list) do
 		description = description,
 		tiles = {"abriglass_"..image..".png"},
 		groups = {cracky = 3},
-		use_texture_alpha = true,
+		use_texture_alpha = "blend",
 		sunlight_propagates = true,
 		light_source = 5,
 		drawtype = "glasslike",
@@ -127,6 +130,7 @@ for i in ipairs(port_list) do
 				 },
 		is_ground_content = false,
 		sunlight_propagates = true,
+		use_texture_alpha = "clip",
 	})
 end
 
@@ -165,6 +169,7 @@ for i in ipairs(oneway_list) do
 				 "abriglass_"..image1, -- back
 				 image2, -- front
 				 },
+		use_texture_alpha = "blend",
 		is_ground_content = false,
 		sunlight_propagates = true,
 		inventory_image = minetest.inventorycube("abriglass_"..image1)
@@ -194,7 +199,7 @@ minetest.register_node("abriglass:ghost_crystal", {
 	tiles = {"abriglass_ghost_crystal.png"},
 	wield_image = "abriglass_ghost_crystal_wield.png",
 	groups = {cracky = 3},
-	use_texture_alpha = true,
+	use_texture_alpha = "blend",
 	sunlight_propagates = true,
 	light_source = 14,
 	drawtype = "glasslike",
@@ -202,16 +207,20 @@ minetest.register_node("abriglass:ghost_crystal", {
 	sounds = default.node_sound_glass_defaults(),
 })
 
-
--- hidden light node
-minetest.register_node("abriglass:hidden_light", {
-	description = "Hidden Light",
-	tiles = {"abriglass_oneway_plain_glass.png"},
-	groups = {cracky = 3, not_in_creative_inventory=1},
-	use_texture_alpha = true,
-	sunlight_propagates = true,
-	walkable = false,
-	light_source = 7,
-	drawtype = "glasslike",
-	paramtype = "light",
-})
+if not minetest.get_modpath("maptools") then
+	-- hidden light node
+	minetest.register_node("abriglass:hidden_light", {
+		description = "Hidden Light",
+		tiles = {"abriglass_oneway_plain_glass.png"},
+		groups = {cracky = 3, not_in_creative_inventory=1},
+		use_texture_alpha = "blend",
+		sunlight_propagates = true,
+		walkable = false,
+		light_source = 14,
+		drawtype = "glasslike",
+		paramtype = "light",
+		pointable = false,
+	})
+else
+	minetest.register_alias("abriglass:hidden_light", "maptools:lightbulb")
+end
