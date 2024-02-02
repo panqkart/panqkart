@@ -14,6 +14,7 @@ local DEFAULT_Z_INDEX = 0
 
 local floor, type, pairs = math.floor, type, pairs
 local max, min = math.max, math.min
+local legacy_type_field = not minetest.features.hud_def_type_field
 
 -- Attempt to use modlib's parser
 local colorstring_to_number
@@ -122,7 +123,7 @@ function nodes.label(node, scale, _, _, _, _, styles_by_type)
     local style = styles_by_type.label or empty_table
     local text, number = get_label_number(node.label, style)
     local elem = {
-        hud_elem_type = "text",
+        type = "text",
         text = text,
         alignment = {x = 1, y = 0},
         number = number,
@@ -169,7 +170,7 @@ function nodes.image(node, scale, _, possibly_using_gles, client_hud_scale)
     end
 
     return {
-        hud_elem_type = "image",
+        type = "image",
         text = texture,
         alignment = {x = 1, y = 1},
         scale = {x = 1 / client_hud_scale, y = 1 / client_hud_scale},
@@ -190,7 +191,7 @@ function nodes.box(node, scale)
 
     -- Since hud_fs_box.png is guaranteed to be 1x1, scale can be used directly
     return {
-        hud_elem_type = "image",
+        type = "image",
         text = 'hud_fs_box.png^[colorize:' .. col,
         alignment = {x = 1, y = 1},
         scale = {x = node.w * scale, y = node.h * scale},
@@ -226,7 +227,7 @@ function nodes.textarea(node, scale, add_node, _, _, styles_by_name,
         lines[i] = minetest.wrap_text(line, max_line_length)
     end
     return {
-        hud_elem_type = "text",
+        type = "text",
         text = table.concat(lines, "\n"),
         alignment = {x = 1, y = 1},
         number = 0xFFFFFF,
@@ -301,7 +302,7 @@ function nodes.button(node, _, add_node, _, _, styles_by_name, styles_by_type)
     node.y = node.y + node.h / 2
     local text, number = get_label_number(node.label, style)
     return {
-        hud_elem_type = "text",
+        type = "text",
         text = text,
         alignment = {x = 0, y = 0},
         number = number,
@@ -313,6 +314,13 @@ nodes.button_exit = nodes.button
 nodes.image_button = nodes.button
 nodes.image_button_exit = nodes.button
 nodes.item_image_button = nodes.button
+
+-- Used to decide which element types to pass through as-is
+-- "image" is a special case and is not included here
+local hud_elem_types = {
+    text = true, statbar = true, inventory = true, waypoint = true,
+    image_waypoint = true, compass = true, minimap = true,
+}
 
 local function render_error(err)
     minetest.log("error", "[hud_fs] Error rendering HUD: " .. tostring(err))
@@ -353,6 +361,13 @@ local function render(tree, possibly_using_gles, scale, z_index, window)
             x = (node.x + offset_x) * scale,
             y = (node.y + offset_y) * scale
         }
+
+        -- Convert to legacy type field
+        if legacy_type_field then
+            elem.hud_elem_type = elem.type
+            elem.type = nil
+        end
+
         hud_elems[#hud_elems + 1] = elem
         z_index = z_index + 1
     end
@@ -405,11 +420,29 @@ local function render(tree, possibly_using_gles, scale, z_index, window)
                     end
                 end
             end
+        elseif hud_elem_types[node_type] or (node_type == "image" and
+                node.texture_name == nil and node.text ~= nil) then
+            -- Pass through new HUD elements with type = "hud_type"
+            hud_elems[#hud_elems + 1] = node
+
+            -- Support new type field on MT 5.8 and older
+            if legacy_type_field then
+                node.hud_elem_type = node.type
+                node.type = nil
+            end
         elseif nodes[node_type] then
             add_node(node_type, node)
         elseif node_type == nil and node.hud_elem_type then
-            -- Pass through plain HUD elements
+            -- Pass through legacy HUD elements
             hud_elems[#hud_elems + 1] = node
+
+            -- Suppress deprecation warning for using "hud_elem_type", it may
+            -- still be useful for element types that hud_fs doesn't know about
+            -- yet
+            if not legacy_type_field then
+                node.type = node.hud_elem_type
+                node.hud_elem_type = nil
+            end
         end
     end
 
@@ -437,7 +470,9 @@ local function compare_elems(old_elem, new_elem)
             end
         elseif v ~= v2 then
             -- Sometimes the HUD element will need to be deleted/re-added.
-            if k == "hud_elem_type" or v2 == nil then return true, nil end
+            if k == "type" or k == "hud_elem_type" or v2 == nil then
+                return true, nil
+            end
             differences[#differences + 1] = k
         end
     end
