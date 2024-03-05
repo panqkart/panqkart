@@ -17,6 +17,7 @@ minetest.register_node("abriglass:stained_glass_hardware", {
 	description = "Hardware Glass",
 	tiles = {"abriglass_baseglass.png"},
 	groups = {cracky = 3},
+	is_ground_content = false,
 	use_texture_alpha = "blend",
 	sunlight_propagates = true,
 	light_source = 4,
@@ -31,7 +32,7 @@ minetest.register_node("abriglass:stained_glass_hardware", {
 		else
 			drops[1]:get_meta():set_string("description", "Hardware Glass")
 		end
-    end,
+	end,
 })
 
 -- boring glass because why not?
@@ -39,6 +40,7 @@ minetest.register_node("abriglass:clear_glass", {
 	description = "Clear Glass",
 	tiles = {"abriglass_clearglass.png"},
 	groups = {cracky = 3},
+	is_ground_content = false,
 	use_texture_alpha = "blend",
 	sunlight_propagates = true,
 	paramtype = "light",
@@ -51,9 +53,10 @@ minetest.register_node("abriglass:glass_light_hardware", {
 	description = "Hardware Glass Light",
 	tiles = {"abriglass_baseglass.png"},
 	overlay_tiles = {
-        { name = "abriglass_clearglass.png", color = "white" }
-    },
+		{ name = "abriglass_clearglass.png", color = "white" }
+	},
 	groups = {cracky = 3},
+	is_ground_content = false,
 	use_texture_alpha = "blend",
 	sunlight_propagates = true,
 	paramtype = "light",
@@ -67,7 +70,7 @@ minetest.register_node("abriglass:glass_light_hardware", {
 		else
 			drops[1]:get_meta():set_string("description", "Hardware Glass Light")
 		end
-    end,
+	end,
 })
 
 -- patterned glass
@@ -90,6 +93,7 @@ for i in ipairs(pattern_list) do
 		description = description,
 		tiles = {"abriglass_"..image..".png"},
 		groups = {cracky = 3},
+		is_ground_content = false,
 		use_texture_alpha = "blend",
 		sunlight_propagates = true,
 		light_source = 5,
@@ -121,13 +125,14 @@ for i in ipairs(port_list) do
 			},
 		},
 		groups = {choppy = 2, flammable = 2, wood = 1},
-		tiles = {"default_"..name.. ".png", -- up
-				 "default_"..name.. ".png", -- down
-				 "default_"..name.. ".png", -- right
-				 "default_"..name.. ".png", -- left
-				 "abriglass_porthole_"..name..".png", -- back
-				 "abriglass_porthole_"..name..".png", -- front
-				 },
+		tiles = {
+			"default_"..name.. ".png", -- up
+			"default_"..name.. ".png", -- down
+			 "default_"..name.. ".png", -- right
+			 "default_"..name.. ".png", -- left
+			 "abriglass_porthole_"..name..".png", -- back
+			 "abriglass_porthole_"..name..".png", -- front
+		},
 		is_ground_content = false,
 		sunlight_propagates = true,
 		use_texture_alpha = "clip",
@@ -162,13 +167,14 @@ for i in ipairs(oneway_list) do
 			},
 		},
 		groups = {cracky = 3},
-		tiles = {"abriglass_oneway_plain_glass.png", -- up
-				 "abriglass_oneway_plain_glass.png", -- down
-				 "abriglass_oneway_plain_glass.png", -- right
-				 "abriglass_oneway_plain_glass.png", -- left
-				 "abriglass_"..image1, -- back
-				 image2, -- front
-				 },
+		tiles = {
+			"abriglass_oneway_plain_glass.png", -- up
+			 "abriglass_oneway_plain_glass.png", -- down
+			 "abriglass_oneway_plain_glass.png", -- right
+			 "abriglass_oneway_plain_glass.png", -- left
+			 "abriglass_"..image1, -- back
+			 image2, -- front
+		},
 		use_texture_alpha = "blend",
 		is_ground_content = false,
 		sunlight_propagates = true,
@@ -182,6 +188,7 @@ minetest.register_node("abriglass:oneway_wall_dark", {
 	description = "Dark Block",
 	tiles = {"abriglass_oneway_wall.png"},
 	groups = {cracky = 3},
+	is_ground_content = false,
 	paramtype2 = "facedir",
 })
 
@@ -189,6 +196,7 @@ minetest.register_node("abriglass:oneway_wall_pale", {
 	description = "Pale Block",
 	tiles = {"abriglass_oneway_wall.png^[colorize:#E6E6FA:200"},
 	groups = {cracky = 3},
+	is_ground_content = false,
 	paramtype2 = "facedir",
 })
 
@@ -199,6 +207,7 @@ minetest.register_node("abriglass:ghost_crystal", {
 	tiles = {"abriglass_ghost_crystal.png"},
 	wield_image = "abriglass_ghost_crystal_wield.png",
 	groups = {cracky = 3},
+	is_ground_content = false,
 	use_texture_alpha = "blend",
 	sunlight_propagates = true,
 	light_source = 14,
@@ -213,6 +222,7 @@ if not minetest.get_modpath("maptools") then
 		description = "Hidden Light",
 		tiles = {"abriglass_oneway_plain_glass.png"},
 		groups = {cracky = 3, not_in_creative_inventory=1},
+		is_ground_content = false,
 		use_texture_alpha = "blend",
 		sunlight_propagates = true,
 		walkable = false,
