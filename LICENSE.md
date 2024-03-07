@@ -18,19 +18,24 @@ Licenses of `screenshot.png`:
   - The version's not specified. I'm going to assume they used CC BY-SA 3.0 (it was the last version when the last commit was made, July 2013. CC BY-SA 4.0 [was released](https://en.wikipedia.org/wiki/Creative_Commons_license#Version_4.0) in November 2013).
 - The smiley face was made by [**Gabri**](https://liberapay.com/Methro) (a.k.a. "Methro", "SiLeNT", "chocomint"), licensed under the [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/) license.
 - The `PanqKart` text is licensed under [CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/) and was was made by me [David Leal](https://github.com/Panquesito7) and [Crystal741](https://github.com/Crystal741).
+- The vehicles were taken from the [Vehicle Mash](https://github.com/minetest-mods/vehicle_mash) mod under [CC BY-NC-SA 3.0 Unported](https://creativecommons.org/licenses/by-nc-sa/3.0/) by [Melkor](https://forum.minetest.net/memberlist.php?mode=viewprofile&u=301).
+- The used character skins were:
+  - [`character.png`](https://github.com/panqkart/panqkart/blob/main/textures/character.png). See authors at <https://github.com/panqkart/panqkart/blob/main/textures/README.txt> ([CC BY-SA 3.0 Unported](https://creativecommons.org/licenses/by-sa/3.0/)).
+  - [`panqkart_modifications_crystal_skin.png`](https://github.com/panqkart/servermods/blob/main/panqkart_modifications/textures/panqkart_modifications_crystal_skin.png). See authors at <https://github.com/panqkart/servermods/blob/main/panqkart_modifications/README.txt> ([CC BY-SA 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/)).
+- All the other content was taken from [PanqKart](https://github.com/PanqKart) (this repository) via taking a screenshot in-game with the [Minetest](https://github.com/minetest/minetest) software, and belong to their respective copyright holders falling under their respective licenses. Screenshots taken by [David Leal](https://github.com/Panquesito7) with help from [Crystal741](https://github.com/Crystal741).
 
 Licenses of `menu/overlay.*`:
 
 - All the assets/artwork were taken from [PanqKart](https://github.com/PanqKart) (this repository) via taking a screenshot in-game with the [Minetest](https://github.com/minetest/minetest) software, and belong to their respective copyright holders falling under their respective licenses. Screenshots taken by [David Leal](https://github.com/Panquesito7) with help from [Crystal741](https://github.com/Crystal741).
 
-`menu/icon.png` was taken from <https://github.com/minetest-mods/vehicle_mash/blob/master/textures/inv_car_red.png>
+`menu/icon.png` was taken from <https://github.com/minetest-mods/vehicle_mash/blob/master/textures/inv_car_red.png> by [Melkor](https://forum.minetest.net/memberlist.php?mode=viewprofile&u=301) ([CC BY-NC-SA 3.0 Unported](https://creativecommons.org/licenses/by-nc-sa/3.0/)).
 
 ## License of source code
 
 Copyright (C) 2022-2024 David Leal (halfpacho@gmail.com)
 
 Unless otherwise stated, all code falls under the [GNU LGPLv2.1+](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html) license.\
-See the respective's mod license file for full information.
+See the respective mod license file for full information.
 
 **Some mods are being modified. All that modified code falls under the mod's respective license.**
 
