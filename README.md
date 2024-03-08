@@ -1,6 +1,6 @@
 # 🏎 PanqKart 🏎
 
-![screenshot](https://raw.githubusercontent.com/panqkart/panqkart/main/screenshot.png)
+![screenshot](https://content.minetest.net/uploads/6e9833d794.jpg)
 
 [![LuaCheck](https://github.com/panqkart/panqkart/actions/workflows/luacheck.yml/badge.svg)](https://github.com/panqkart/panqkart/actions/)
 [![ContentDB](https://content.minetest.net/packages/Panquesito7/panqkart/shields/downloads/)](https://content.minetest.net/packages/Panquesito7/panqkart/)
