@@ -168,10 +168,10 @@ for i in ipairs(oneway_list) do
 		},
 		groups = {cracky = 3},
 		tiles = {
-			"abriglass_oneway_plain_glass.png", -- up
-			 "abriglass_oneway_plain_glass.png", -- down
-			 "abriglass_oneway_plain_glass.png", -- right
-			 "abriglass_oneway_plain_glass.png", -- left
+			"blank.png", -- up
+			 "blank.png", -- down
+			 "blank.png", -- right
+			 "blank.png", -- left
 			 "abriglass_"..image1, -- back
 			 image2, -- front
 		},
@@ -220,7 +220,7 @@ if not minetest.get_modpath("maptools") then
 	-- hidden light node
 	minetest.register_node("abriglass:hidden_light", {
 		description = "Hidden Light",
-		tiles = {"abriglass_oneway_plain_glass.png"},
+		tiles = {"blank.png"},
 		groups = {cracky = 3, not_in_creative_inventory=1},
 		is_ground_content = false,
 		use_texture_alpha = "blend",
